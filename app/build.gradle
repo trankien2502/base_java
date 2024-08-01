@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.ghostdetector.ghost_detector'
+    namespace 'com.tkt.spin_wheel'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.ghostdetector.ghost_detector"
+        applicationId "com.tkt.spin_wheel"
         minSdk 21
         targetSdk 34
         versionCode 100
@@ -18,7 +18,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true // ADD THIS LINE
         def formattedDate = new Date().format('MMM.dd.yyyy')
-        archivesBaseName = "GhostDetector_v${versionName}(${versionCode})_${formattedDate}"
+        archivesBaseName = "SpinWheel_v${versionName}(${versionCode})_${formattedDate}"
     }
 
     bundle {
