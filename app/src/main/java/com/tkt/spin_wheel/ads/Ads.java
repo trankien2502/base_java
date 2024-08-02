@@ -1,34 +1,53 @@
 //    public void loadNativeAds() {
 //        try {
-//            if (IsNetWork.haveNetworkConnection(this) && ConstantIdAds.listIDAdsNativeHome.size() != 0 && ConstantRemote.native_home) {
-//                @SuppressLint("InflateParams") NativeAdView adViewLoad = (NativeAdView) LayoutInflater.from(HomeActivity.this).inflate(R.layout.layout_native_load_large_home, null);
-//                binding.nativeHome.removeAllViews();
-//                binding.nativeHome.addView(adViewLoad);
-//                binding.nativeHome.setVisibility(View.VISIBLE);
-//                Admob.getInstance().loadNativeAd(this, ConstantIdAds.listIDAdsNativeHome, new AdCallback() {
+//            if (IsNetWork.haveNetworkConnection(this) && ConstantIdAds.listIDAdsNativeLanguage.size() != 0 && ConstantRemote.native_language) {
+//                @SuppressLint("InflateParams") NativeAdView adViewLoad = (NativeAdView) LayoutInflater.from(LanguageStartActivity.this).inflate(R.layout.layout_native_load_large, null);
+//                binding.nativeLanguage.removeAllViews();
+//                binding.nativeLanguage.addView(adViewLoad);
+//                binding.nativeLanguage.setVisibility(View.VISIBLE);
+//                Admob.getInstance().loadNativeAd(this, ConstantIdAds.listIDAdsNativeLanguage, new AdCallback() {
 //                    @Override
 //                    public void onUnifiedNativeAdLoaded(@NonNull NativeAd unifiedNativeAd) {
-//                        @SuppressLint("InflateParams") NativeAdView adView = (NativeAdView) LayoutInflater.from(HomeActivity.this).inflate(R.layout.layout_native_show_large_home, null);
-//                        binding.nativeHome.removeAllViews();
-//                        binding.nativeHome.addView(adView);
+//                        @SuppressLint("InflateParams") NativeAdView adView = (NativeAdView) LayoutInflater.from(LanguageStartActivity.this).inflate(R.layout.layout_native_show_large, null);
+//                        binding.nativeLanguage.removeAllViews();
+//                        binding.nativeLanguage.addView(adView);
 //                        Admob.getInstance().populateUnifiedNativeAdView(unifiedNativeAd, adView);
 //                    }
 //
 //                    @Override
 //                    public void onAdFailedToLoad(@Nullable LoadAdError i) {
-//                        binding.nativeHome.removeAllViews();
+//                        binding.nativeLanguage.setVisibility(View.GONE);
 //                    }
 //                });
 //            } else {
-//                binding.nativeHome.setVisibility(View.GONE);
+//                binding.nativeLanguage.setVisibility(View.GONE);
 //            }
 //
 //        } catch (Exception e) {
 //            e.printStackTrace();
-//            binding.nativeHome.removeAllViews();
+//            binding.nativeLanguage.setVisibility(View.GONE);
 //        }
 //    }
 //
+//    private void initData() {
+//        listLanguage = new ArrayList<>();
+//        String lang = Locale.getDefault().getLanguage();
+//        listLanguage.add(new LanguageModel("English", "en", false));
+//        listLanguage.add(new LanguageModel("China", "zh", false));
+//        listLanguage.add(new LanguageModel("French", "fr", false));
+//        listLanguage.add(new LanguageModel("German", "de", false));
+//        listLanguage.add(new LanguageModel("Hindi", "hi", false));
+//        listLanguage.add(new LanguageModel("Indonesia", "in", false));
+//        listLanguage.add(new LanguageModel("Portuguese", "pt", false));
+//        listLanguage.add(new LanguageModel("Spanish", "es", false));
+//
+//        for (int i = 0; i < listLanguage.size(); i++) {
+//            if (listLanguage.get(i).getCode().equals(lang)) {
+//                listLanguage.add(0, listLanguage.get(i));
+//                listLanguage.remove(i + 1);
+//            }
+//        }
+//    }
 //    private void loadInterAll() {
 //        if (IsNetWork.haveNetworkConnection(this) && ConstantIdAds.mInterAll == null && ConstantIdAds.listIDAdsInterAll.size() != 0) {
 //            ConstantIdAds.mInterAll = CommonAd.getInstance().getInterstitialAds(this, ConstantIdAds.listIDAdsInterAll);
