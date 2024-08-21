@@ -3,8 +3,6 @@ package com.tkt.storage_manager.ui.splash;
 import android.os.Handler;
 
 import com.tkt.storage_manager.base.BaseActivity;
-import com.tkt.storage_manager.database.AppDatabase;
-import com.tkt.storage_manager.database.GhostDAO;
 import com.tkt.storage_manager.ui.language.LanguageStartActivity;
 import com.tkt.storage_manager.util.SPUtils;
 import com.tkt.storage_manager.util.SharePrefUtils;
