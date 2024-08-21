@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg"
-    tools:context="com.ghostdetctor.ghost_detector.ui.ghost.collection.CollectionActivity">
+    tools:context="com.tkt.storage_manager.ui.ghost.collection.CollectionActivity">
     <include
         android:id="@+id/header"
         layout="@layout/layout_header"

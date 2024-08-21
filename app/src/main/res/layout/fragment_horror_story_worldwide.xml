@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.ghostdetctor.ghost_detector.ui.ghost.story.HorrorStoryWorldwideFragment">
+    tools:context="com.tkt.storage_manager.ui.ghost.story.HorrorStoryWorldwideFragment">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clStory1"
         android:layout_marginHorizontal="16dp"

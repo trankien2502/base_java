@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.ghostdetector.ghost_detector'
+    namespace 'com.tkt.storage_manager'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.ghostdetector.ghost_detector"
+        applicationId "com.tkt.storage_manager"
         minSdk 21
         targetSdk 34
         versionCode 100

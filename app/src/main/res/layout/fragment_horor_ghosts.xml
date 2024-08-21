@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context="com.ghostdetctor.ghost_detector.ui.ghost.collection.HororGhostsFragment">
+    tools:context="com.tkt.storage_manager.ui.ghost.collection.HororGhostsFragment">
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcvHorrorGhosts"
         android:layout_width="match_parent"

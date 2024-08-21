@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg_ghost_scanning"
-    tools:context="com.ghostdetctor.ghost_detector.ui.ghost.GhostActivity">
+    tools:context="com.tkt.storage_manager.ui.ghost.GhostActivity">
 <!--    <View-->
 <!--        android:id="@+id/vScreen"-->
 <!--        android:visibility="visible"-->

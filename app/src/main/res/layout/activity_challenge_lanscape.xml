@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/img_background_challenge"
-    tools:context="com.ghostdetctor.ghost_detector.ui.challenge.ChallengeLanscapeActivity">
+    tools:context="com.tkt.storage_manager.ui.challenge.ChallengeLanscapeActivity">
 
     <ImageView
         android:id="@+id/ivBackChallenge"

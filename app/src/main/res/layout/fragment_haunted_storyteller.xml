@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
 
-    tools:context="com.ghostdetctor.ghost_detector.ui.ghost.story.HauntedStorytellerFragment">
+    tools:context="com.tkt.storage_manager.ui.ghost.story.HauntedStorytellerFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clStory1"

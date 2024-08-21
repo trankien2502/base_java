@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/bg"
-    tools:context="com.ghostdetctor.ghost_detector.ui.setting.SettingActivity">
+    tools:context="com.tkt.storage_manager.ui.setting.SettingActivity">
 
     <include
         android:id="@+id/header_setting"
