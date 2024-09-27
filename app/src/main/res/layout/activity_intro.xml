@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/white">
 
 
     <androidx.viewpager.widget.ViewPager
@@ -20,78 +21,144 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.6" />
+        app:layout_constraintGuide_percent="0.55" />
 
     <TextView
         android:id="@+id/tvIntro"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/guideline"
-        android:layout_marginTop="16dp"
-        android:layout_marginHorizontal="16dp"
-        android:maxLines="2"
-        android:ellipsize="end"
-        android:lineSpacingExtra="-10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/bowlby_one_sc"
-        android:paddingTop="10dp"
-        android:text="@string/app_name"
-        android:textColor="@color/white"
+        android:layout_marginHorizontal="16dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/be_vietnam_pro"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="0dp"
+        android:lines="2"
+        android:text="@string/intro_3"
+        android:textColor="#111827"
         android:textSize="22sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/guideline" />
 
+    <TextView
+        android:id="@+id/tvIntroContent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:ellipsize="end"
+        android:fontFamily="@font/be_vietnam_pro"
+        android:gravity="center_horizontal"
+        android:includeFontPadding="false"
+        android:lineSpacingExtra="0dp"
+        android:maxLines="3"
+        android:text="@string/content_intro_2"
+        android:textColor="#4B5563"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvIntro" />
 
     <RelativeLayout
-        android:id="@+id/view_bottom"
+        android:id="@+id/rl_bottom"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:layout_marginHorizontal="@dimen/_12sdp"
-        android:layout_marginBottom="@dimen/_2sdp"
-        app:layout_constraintBottom_toTopOf="@+id/ads"
+        app:layout_constraintBottom_toTopOf="@id/ads"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvIntro">
+        app:layout_constraintStart_toStartOf="parent">
 
         <LinearLayout
-            android:id="@+id/ll_circle"
+            android:id="@+id/ll_cricle1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/cricle_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_intro_s"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/cricle_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:src="@drawable/ic_intro_sn"
+                tools:ignore="ContentDescription" />
+
+            <ImageView
+                android:id="@+id/cricle_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_intro_sn"
+                tools:ignore="ContentDescription" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_bottom3"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="24dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/ads"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/ll_cricle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:orientation="horizontal"
-            android:padding="@dimen/_6sdp">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/iv_circle_01"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_intro_s" />
+                android:src="@drawable/ic_intro_sn"
+                tools:ignore="ContentDescription" />
 
             <ImageView
-                android:id="@+id/iv_circle_02"
+
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginHorizontal="5sp"
-                android:src="@drawable/ic_intro_sn" />
+                android:layout_marginHorizontal="8dp"
+                android:src="@drawable/ic_intro_sn"
+                tools:ignore="ContentDescription" />
 
             <ImageView
-                android:id="@+id/iv_circle_03"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_intro_sn" />
+                android:src="@drawable/ic_intro_s"
 
+                tools:ignore="ContentDescription" />
         </LinearLayout>
 
         <TextView
             android:id="@+id/btn_next2"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
             android:layout_alignParentEnd="true"
             android:fontFamily="@font/svn_gilroy"
-            android:padding="6dp"
-            android:text="@string/next"
-            android:textColor="@color/white"
+            android:gravity="center_vertical|end"
+            android:minWidth="48dp"
+            android:minHeight="48dp"
+            android:text="@string/get_started"
+            android:textColor="#111827"
             android:textSize="16sp"
             android:textStyle="bold"
             android:visibility="visible" />
@@ -99,13 +166,14 @@
     </RelativeLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
         android:id="@+id/ads"
+        android:layout_width="match_parent"
         android:layout_height="170dp"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/clNext"
             android:layout_width="0dp"
@@ -114,33 +182,32 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">
+
             <ImageView
                 android:id="@+id/ivNext"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
                 android:scaleType="fitXY"
+                android:src="@drawable/bg_button_next"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                android:src="@drawable/img_language_select"/>
+                app:layout_constraintStart_toStartOf="parent" />
+
             <TextView
                 android:id="@+id/btn_next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/svn_gilroy"
+                android:fontFamily="@font/be_vietnam_pro"
                 android:gravity="center"
                 android:text="@string/next"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="@id/ivNext"
                 app:layout_constraintBottom_toBottomOf="@id/ivNext"
                 app:layout_constraintEnd_toEndOf="@id/ivNext"
-                app:layout_constraintStart_toStartOf="@id/ivNext" />
+                app:layout_constraintStart_toStartOf="@id/ivNext"
+                app:layout_constraintTop_toTopOf="@id/ivNext" />
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-
 
 
         <RelativeLayout
@@ -157,7 +224,7 @@
 <!--                android:layout_height="wrap_content"-->
 <!--                android:visibility="visible">-->
 
-<!--                <include layout="@layout/layout_native_load_small" />-->
+<!--                <include layout="@layout/layout_native_show_small" />-->
 <!--            </FrameLayout>-->
         </RelativeLayout>
 
@@ -165,6 +232,7 @@
             android:id="@+id/nativeLoad"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent">

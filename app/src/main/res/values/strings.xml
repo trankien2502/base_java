@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">My Base Java</string>
+    <string name="app_name" translatable="false">Zip Lock Screen</string>
 
     <string name="english" translatable="false">English</string>
     <string name="french" translatable="false">French</string>
@@ -26,7 +26,7 @@
     <string name="feedback">Feedback</string>
     <string name="report_bugs_and_tell_us_what_to_improve">Report bugs and tell us what to improve</string>
     <string name="share_with_friends">Share with friends</string>
-    <string name="privacy_policy">Privacy Policy.</string>
+    <string name="privacy_policy">Privacy Policy</string>
     <string name="request">Request or feedback</string>
     <string name="send_email">Send by email&#8230;</string>
     <string name="email_clients_not_found">Not found any Email client</string>
@@ -47,5 +47,15 @@
     <string name="settings">Settings</string>
 
     <string name="reset">Reset</string>
+    <string name="content_intro_3">Choose what to appear when you open your zip lock screen</string>
+    <string name="intro_1">Zip lock your screen</string>
+    <string name="intro_2">Customize your zip and row</string>
+    <string name="intro_3">Get your wallpaper</string>
+    <string name="content_intro_1">Access your screen with style</string>
+    <string name="content_intro_2">Choose your zip and row from our collection</string>
+    <string name="get_started">Get started</string>
+    <string name="permission">Permission</string>
+    <string name="this_app_needs_permissions_below_to_work_properly">This app needs permissions below to work properly</string>
+    <string name="overlay_draw">Overlay Draw</string>
 
 </resources>

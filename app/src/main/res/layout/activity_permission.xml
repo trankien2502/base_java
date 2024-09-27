@@ -5,19 +5,127 @@
     android:layout_height="match_parent">
 
     <TextView
-        android:id="@+id/tv_continue"
+        android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="48dp"
         android:gravity="center"
         android:includeFontPadding="false"
-        android:text="@string/continue_"
-        android:textAllCaps="true"
+        android:text="@string/permission"
+        android:fontFamily="@font/be_vietnam_pro"
         android:textColor="@color/black"
-        android:textSize="@dimen/_16ssp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textSize="24sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvTitle">
+
+        <ImageView
+            android:id="@+id/ivPer"
+            android:layout_width="141dp"
+            android:layout_height="178dp"
+            android:src="@drawable/img_permission"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvPer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:fontFamily="@font/be_vietnam_pro"
+            android:text="@string/this_app_needs_permissions_below_to_work_properly"
+            android:textColor="#4B5563"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/ivPer" />
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="52dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_per_item"
+            android:paddingHorizontal="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvPer">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_centerVertical="true"
+                android:includeFontPadding="false"
+                android:fontFamily="@font/be_vietnam_pro"
+                android:text="@string/overlay_draw"
+                android:textColor="#111827"
+                android:textSize="16sp" />
+
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/swPer"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:theme="@style/Theme.AppCompat"
+                android:thumb="@drawable/custom_thumb"
+                app:track="@drawable/custom_track"
+
+                />
+<!--            -->
+<!--            android:thumb="@drawable/custom_thumb"-->
+<!--            app:track="@drawable/custom_track"-->
+
+        </RelativeLayout>
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/tv_continue"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginHorizontal="16dp"
+        android:fontFamily="@font/be_vietnam_pro"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/continue_"
+        android:textColor="#104243"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/nativePermission"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <RelativeLayout
+        android:id="@+id/nativePermission"
+        android:layout_width="match_parent"
+        android:layout_height="260dp"
+        android:layout_marginHorizontal="6dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+<!--        <FrameLayout-->
+<!--            android:id="@+id/fr_ads_intro"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:visibility="visible">-->
+
+<!--            <include layout="@layout/layout_native_load_large" />-->
+<!--        </FrameLayout>-->
+    </RelativeLayout>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

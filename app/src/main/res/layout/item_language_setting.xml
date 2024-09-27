@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:scaleType="fitXY"
-            android:src="@drawable/bg_lang_item_s"
+            android:src="@drawable/bg_lang_item_s2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
         <ImageView

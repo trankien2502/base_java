@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.tkt.spin_wheel.base.BaseActivity;
 import com.tkt.spin_wheel.ui.home.HomeActivity;
+import com.tkt.spin_wheel.ui.language.adapter.LanguageAdapter;
 import com.tkt.spin_wheel.ui.language.adapter.LanguageStartAdapter;
 import com.tkt.spin_wheel.ui.language.model.LanguageModel;
 import com.tkt.spin_wheel.util.SPUtils;
@@ -37,7 +38,7 @@ public class LanguageActivity extends BaseActivity<ActivityLanguageBinding> {
         binding.viewTop.tvTitle.setText(getString(R.string.language));
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
-        LanguageStartAdapter languageAdapter = new LanguageStartAdapter(listLanguage, languageModel -> {
+        LanguageAdapter languageAdapter = new LanguageAdapter(listLanguage, languageModel -> {
             codeLang = languageModel.getCode();
             nameLang = languageModel.getName();
         }, this);

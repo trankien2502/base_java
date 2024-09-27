@@ -12,12 +12,12 @@
         />
     <path
         android:pathData="M0 0V48H336V0"
-        android:fillColor="#331C8EB4"
+        android:fillColor="#B1E7D6"
         />
     <path
         android:pathData="M24 0H312C325.255 0 336 10.7452 336 24C336 37.2548 325.255 48 312 48H24C10.7452 48 0 37.2548 0 24C0 10.7452 10.7452 0 24 0Z"
         android:strokeWidth="2"
-        android:strokeColor="#1C8EB4"
+        android:strokeColor="#14C89B"
         />
   </group>
 </vector>

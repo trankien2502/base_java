@@ -45,53 +45,36 @@ public class LanguageStartAdapter extends RecyclerView.Adapter<LanguageStartAdap
             return;
         }
         holder.tvLang.setText(languageModel.getName());
-        holder.tvLangSelect.setText(languageModel.getName());
         if (languageModel.getActive()) {
-            holder.ivBackgroundLang.setImageResource(R.drawable.img_language_select);
-            holder.tvLang.setVisibility(View.GONE);
-            holder.tvLangSelect.setVisibility(View.VISIBLE);
-            holder.icLang.setVisibility(View.GONE);
-            holder.icLangSelect.setVisibility(View.VISIBLE);
+            holder.ivBackgroundLang.setImageResource(R.drawable.bg_lang_item_s);
         } else {
-            holder.ivBackgroundLang.setImageResource(R.drawable.img_language_unselect);
-            holder.tvLang.setVisibility(View.VISIBLE);
-            holder.tvLangSelect.setVisibility(View.GONE);
-            holder.icLang.setVisibility(View.VISIBLE);
-            holder.icLangSelect.setVisibility(View.GONE);
+            holder.ivBackgroundLang.setImageResource(R.drawable.bg_lang_item_sn);
         }
 
         switch (languageModel.getCode()) {
             case "fr":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_fr).into(holder.icLang);
-                Glide.with(context).asBitmap().load(R.drawable.ic_lang_fr).into(holder.icLangSelect);
                 break;
             case "es":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_es).into(holder.icLang);
-                Glide.with(context).asBitmap().load(R.drawable.ic_lang_es).into(holder.icLangSelect);
                 break;
             case "zh":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_zh).into(holder.icLang);
-                Glide.with(context).asBitmap().load(R.drawable.ic_lang_zh).into(holder.icLangSelect);
                 break;
             case "in":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_in).into(holder.icLang);
-                Glide.with(context).asBitmap().load(R.drawable.ic_lang_in).into(holder.icLangSelect);
                 break;
             case "hi":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_hi).into(holder.icLang);
-                Glide.with(context).asBitmap().load(R.drawable.ic_lang_hi).into(holder.icLangSelect);
                 break;
             case "de":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_ge).into(holder.icLang);
-                Glide.with(context).asBitmap().load(R.drawable.ic_lang_ge).into(holder.icLangSelect);
                 break;
             case "pt":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_pt).into(holder.icLang);
-                Glide.with(context).asBitmap().load(R.drawable.ic_lang_pt).into(holder.icLangSelect);
                 break;
             case "en":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_en).into(holder.icLang);
-                Glide.with(context).asBitmap().load(R.drawable.ic_lang_en).into(holder.icLangSelect);
                 break;
         }
 
@@ -117,8 +100,6 @@ public class LanguageStartAdapter extends RecyclerView.Adapter<LanguageStartAdap
         private final TextView tvLang;
         private final ImageView icLang;
         private final LinearLayout layoutItem;
-        private final TextView tvLangSelect;
-        private final ImageView icLangSelect;
 
         public LanguageViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -126,8 +107,6 @@ public class LanguageStartAdapter extends RecyclerView.Adapter<LanguageStartAdap
             icLang = itemView.findViewById(R.id.icLang);
             tvLang = itemView.findViewById(R.id.tvLang);
             layoutItem = itemView.findViewById(R.id.layoutItem);
-            icLangSelect = itemView.findViewById(R.id.icLangSelect);
-            tvLangSelect = itemView.findViewById(R.id.tvLangSelect);
         }
     }
 

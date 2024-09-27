@@ -34,7 +34,7 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Langug
     @NonNull
     @Override
     public LangugeViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_language, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_language_setting, parent, false);
         return new LangugeViewHolder(view);
     }
 
@@ -44,8 +44,12 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Langug
         if (languageModel == null) {
             return;
         }
+        if (languageModel.getActive()) {
+            holder.ivBackgroundLang.setImageResource(R.drawable.bg_lang_item_s2);
+        } else {
+            holder.ivBackgroundLang.setImageResource(R.drawable.bg_lang_item_sn);
+        }
         holder.tvLang.setText(languageModel.getName());
-
         switch (languageModel.getCode()) {
             case "fr":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_fr).into(holder.icLang);
@@ -94,12 +98,14 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Langug
         private final TextView tvLang;
         private final LinearLayout layoutItem;
         private final ImageView icLang;
+        private final ImageView ivBackgroundLang;
 
         public LangugeViewHolder(@NonNull View itemView) {
             super(itemView);
             icLang = itemView.findViewById(R.id.icLang);
             tvLang = itemView.findViewById(R.id.tvLang);
             layoutItem = itemView.findViewById(R.id.layoutItem);
+            ivBackgroundLang = itemView.findViewById(R.id.ivBackgroundLang);
         }
     }
 

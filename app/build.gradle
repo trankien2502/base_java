@@ -18,7 +18,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true // ADD THIS LINE
         def formattedDate = new Date().format('MMM.dd.yyyy')
-        archivesBaseName = "SpinWheel_v${versionName}(${versionCode})_${formattedDate}"
+        archivesBaseName = "ZipLockScreen_v${versionName}(${versionCode})_${formattedDate}"
     }
 
     bundle {
@@ -82,6 +82,10 @@ dependencies {
 //    // sdp
     implementation "com.intuit.sdp:sdp-android:1.1.0"
     implementation "com.intuit.ssp:ssp-android:1.1.0"
+
+    //database
+    implementation 'androidx.room:room-runtime:2.4.2'
+    annotationProcessor 'androidx.room:room-compiler:2.4.2'
 //
     //rate
     implementation 'com.google.android.play:asset-delivery-ktx:2.2.2'
