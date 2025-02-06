@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="208dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_result"
+        app:layout_constraintDimensionRatio="208:148"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/ivResultHeight"
+            android:layout_width="182dp"
+            android:layout_height="126dp"
+            android:layout_marginBottom="13.5dp"
+            android:src="@drawable/img_ar_ruler_step1"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="13dp"
+            android:layout_marginTop="13dp"
+            android:layout_marginEnd="100dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/svn_gilroy"
+            android:includeFontPadding="false"
+            android:maxLines="2"
+            android:text="@string/result"
+            android:textColor="#FFDC31"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/tvHumanHeight"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginBottom="30dp"
+            android:layout_marginEnd="130dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/svn_gilroy"
+            android:includeFontPadding="false"
+            android:maxLines="2"
+            android:text="80cm"
+            android:textColor="#ffffff"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+        <TextView
+            android:id="@+id/tvDistanceToObject"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="85dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginEnd="55dp"
+            android:ellipsize="end"
+            android:visibility="gone"
+            android:gravity="center"
+            android:fontFamily="@font/svn_gilroy"
+            android:includeFontPadding="false"
+            android:maxLines="2"
+            android:text="84cm"
+            android:textColor="#35FF35"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <armeasureapp.cameraruler.appcameratapemeasure.rulerwithcamera.measuringtape.base.VerticalTextView
+            android:id="@+id/tvObjectHeight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="right"
+            android:visibility="gone"
+            android:fontFamily="@font/svn_gilroy"
+            android:includeFontPadding="false"
+            android:maxLines="2"
+            android:layout_marginEnd="16dp"
+            android:text="123cm"
+            android:textColor="#35FF35"
+            android:textSize="12sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

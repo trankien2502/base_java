@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.tkt.spin_wheel'
+    namespace 'armeasureapp.cameraruler.appcameratapemeasure.rulerwithcamera.measuringtape'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.tkt.spin_wheel"
+        applicationId "armeasureapp.cameraruler.appcameratapemeasure.rulerwithcamera.measuringtape"
         minSdk 21
         targetSdk 34
         versionCode 100
@@ -18,7 +18,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true // ADD THIS LINE
         def formattedDate = new Date().format('MMM.dd.yyyy')
-        archivesBaseName = "Metal2_v${versionName}(${versionCode})_${formattedDate}"
+        archivesBaseName = "MeasureRuler2_v${versionName}(${versionCode})_${formattedDate}"
     }
 
     bundle {
@@ -72,7 +72,7 @@ dependencies {
     implementation("androidx.camera:camera-camera2:1.2.0-beta01")
     implementation("androidx.camera:camera-lifecycle:1.2.0-beta01")
     implementation("androidx.camera:camera-view:1.2.0-beta01")
-
+    implementation 'com.google.guava:guava:32.1.2-jre'
     //loadding...
     implementation "com.airbnb.android:lottie:6.3.0"
 

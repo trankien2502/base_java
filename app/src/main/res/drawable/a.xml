@@ -1,50 +1,12 @@
-<vector
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:aapt="http://schemas.android.com/aapt"
-    android:width="360dp"
-    android:height="800dp"
-    android:viewportWidth="360"
-    android:viewportHeight="800"
-    >
-    <group>
-        <clip-path
-            android:pathData="M0 0H360V800H0V0Z"
-            />
-        <path
-            android:pathData="M0 0V800H360V0"
-            android:fillColor="#1F1F1F"
-            />
-        <group
-            android:translateX="2.451"
-            android:translateY="-1"
-            android:pivotX="180"
-            android:pivotY="400"
-            android:scaleX="4"
-            android:scaleY="7.805"
-            android:rotation="90"
-            >
-            <path
-                android:pathData="M0 0V800H360V0"
-                >
-                <aapt:attr name="android:fillColor">
-                    <gradient
-                        android:type="radial"
-                        android:fillAlpha="0.2"
-                        android:centerX="180"
-                        android:centerY="400"
-                        android:gradientRadius="90"
-                        >
-                        <item
-                            android:color="#949494"
-                            android:offset="0"
-                            />
-                        <item
-                            android:color="#00212121"
-                            android:offset="0.565"
-                            />
-                    </gradient>
-                </aapt:attr>
-            </path>
-        </group>
-    </group>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="28dp"
+    android:height="28dp"
+    android:viewportWidth="28"
+    android:viewportHeight="28">
+  <path
+      android:pathData="M14,28C21.732,28 28,21.732 28,14C28,6.268 21.732,0 14,0C6.268,0 0,6.268 0,14C0,21.732 6.268,28 14,28Z"
+      android:fillColor="#5B4C00"/>
+  <path
+      android:pathData="M14,21C17.866,21 21,17.866 21,14C21,10.134 17.866,7 14,7C10.134,7 7,10.134 7,14C7,17.866 10.134,21 14,21Z"
+      android:fillColor="#FFDC31"/>
 </vector>
