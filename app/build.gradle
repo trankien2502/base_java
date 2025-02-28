@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.tkt.spin_wheel'
+    namespace 'com.tkt.basejava.basejava1.basejava2'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.tkt.spin_wheel"
+        applicationId "com.tkt.basejava.basejava1.basejava2"
         minSdk 21
         targetSdk 34
         versionCode 100
@@ -18,7 +18,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true // ADD THIS LINE
         def formattedDate = new Date().format('MMM.dd.yyyy')
-        archivesBaseName = "Baby Photo 3_v${versionName}(${versionCode})_${formattedDate}"
+        archivesBaseName = "ASY1xx_BaseJava_v${versionName}(${versionCode})_${formattedDate}"
     }
 
     bundle {
@@ -94,6 +94,8 @@ dependencies {
 
     //loadding...
     implementation "com.airbnb.android:lottie:6.3.0"
+    implementation("io.reactivex.rxjava3:rxjava:3.1.5")
+    implementation 'com.makeramen:roundedimageview:2.3.0'
 
     //database
     implementation 'androidx.room:room-runtime:2.4.2'
