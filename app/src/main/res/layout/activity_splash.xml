@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="#F2F4F8"
     android:gravity="center">
 
     <ImageView
@@ -48,8 +48,8 @@
             android:layout_height="wrap_content"
             android:indeterminate="true"
             android:visibility="visible"
-            app:indicatorColor="#715D00"
-            app:trackColor="#FFF2CE" />
+            app:indicatorColor="#3392FF"
+            app:trackColor="#ffffff" />
     </androidx.cardview.widget.CardView>
 
     <TextView
@@ -61,7 +61,7 @@
         android:fontFamily="@font/sf_pro_text_medium"
         android:singleLine="true"
         android:text="@string/this_action_may_contain_advertising"
-        android:textColor="#715D00"
+        android:textColor="#3392FF"
         android:textSize="@dimen/_11ssp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

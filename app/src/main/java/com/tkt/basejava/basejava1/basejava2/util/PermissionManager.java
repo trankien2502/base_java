@@ -32,7 +32,6 @@ public class PermissionManager {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return Settings.canDrawOverlays(context);
         } else return true;
-
     }
 
     public static boolean checkMicrophonePermission(Context context) {

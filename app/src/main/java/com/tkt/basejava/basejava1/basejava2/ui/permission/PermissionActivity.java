@@ -13,6 +13,7 @@ import android.util.Log;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 
 import com.tkt.basejava.basejava1.basejava2.R;
@@ -61,9 +62,21 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
             }
         });
         binding.swPer.setOnClickListener(view -> {
-            if (!PermissionManager.checkCameraPermission(this)) {
+            if (!PermissionManager.checkOverlayPermission(this)) {
                 EventTracking.logEvent(this, "permission_allow_click");
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_CAMERA_PERMISSION);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    try {
+                        //                        AppOpenManager.getInstance().disableAppResumeWithActivity(PermissionActivity.class);
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        resultLauncher.launch(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e("PermissionError", "Error opening settings: " + e.getMessage());
+                    }
+                }
             }
         });
     }
@@ -80,10 +93,10 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == REQUEST_CODE_CAMERA_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                checkSwCamera();
+                checkSwOverlay();
             }
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                checkSwCamera();
+                checkSwOverlay();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
                         countCamera++;
@@ -125,7 +138,7 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
         if (type == 1) {
             dialog.binding.tvContent.setText(R.string.content_dialog_per_noti);
         } else if (type == 2) {
-            dialog.binding.tvContent.setText(R.string.content_dialog_per_camera);
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_overlay);
         }
 
         dialog.binding.tvStay.setOnClickListener(view -> {
@@ -137,11 +150,27 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
         dialog.binding.tvAgree.setOnClickListener(view -> {
 //            AppOpenManager.getInstance().disableAppResumeWithActivity(PermissionActivity.class);
             dialog.dismiss();
-            Intent intent = new Intent();
-            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-            Uri uri = Uri.fromParts("package", getPackageName(), null);
-            intent.setData(uri);
-            resultLauncher.launch(intent);
+            if (type == 1) {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intent.setData(uri);
+                resultLauncher.launch(intent);
+            } else if (type == 2) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    try {
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        resultLauncher.launch(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e("PermissionError", "Error opening settings: " + e.getMessage());
+                    }
+
+                }
+            }
         });
         dialog.show();
     }
@@ -153,8 +182,8 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
 
 
     @SuppressLint("ClickableViewAccessibility")
-    private void checkSwCamera() {
-        if (PermissionManager.checkCameraPermission(this)) {
+    private void checkSwOverlay() {
+        if (PermissionManager.checkOverlayPermission(this)) {
             binding.swPer.setChecked(true);
             binding.swPer.setOnTouchListener((view, motionEvent) -> true);
         } else {
@@ -178,7 +207,7 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
     protected void onResume() {
         super.onResume();
         checkSwNotification();
-        checkSwCamera();
+        checkSwOverlay();
     }
 
     @Override

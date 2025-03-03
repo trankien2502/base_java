@@ -63,6 +63,22 @@
     <string name="notification">Notification</string>
     <string name="agree_and_continue">Agree and Continue</string>
     <string name="camera">Camera</string>
+    <string name="home">Home</string>
+    <string name="enable_assistive_touch">Enable Assistive Touch</string>
+    <string name="quickly_access_essential_functions_with_a_floating_button">Quickly access essential functions with a floating button</string>
+    <string name="floating_icon">Floating Icon</string>
+    <string name="custom_menu">Custom Menu</string>
+    <string name="enable_assistive_volume">Enable Assistive Volume</string>
+    <string name="adjust_volume_easily_with_a_floating_button">Adjust volume easily with a floating button</string>
+    <string name="volume_config">Volume Config</string>
+    <string name="button_style">Button Style</string>
+    <string name="icon_style">Icon Style</string>
+    <string name="single_tap">Single-tap</string>
+    <string name="open_menu">Open menu</string>
+    <string name="double_tap">Double-tap</string>
+    <string name="none">None</string>
+    <string name="long_press">Long Press</string>
+    <string name="set_action_successfully">Set action successfully!</string>
 
 
 </resources>

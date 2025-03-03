@@ -2,6 +2,8 @@ package com.tkt.basejava.basejava1.basejava2.ui.home;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -9,12 +11,16 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.tkt.basejava.basejava1.basejava2.base.BaseActivity;
+import com.tkt.basejava.basejava1.basejava2.dialog.GoToSettingDialog;
 import com.tkt.basejava.basejava1.basejava2.dialog.exit.ExitAppDialog;
 import com.tkt.basejava.basejava1.basejava2.dialog.exit.IClickDialogExit;
 import com.tkt.basejava.basejava1.basejava2.dialog.rate.IClickDialogRate;
 import com.tkt.basejava.basejava1.basejava2.dialog.rate.RatingDialog;
+import com.tkt.basejava.basejava1.basejava2.ui.home.touch.custom.CustomMenuActivity;
+import com.tkt.basejava.basejava1.basejava2.ui.home.touch.icon.FloatingIconActivity;
 import com.tkt.basejava.basejava1.basejava2.ui.setting.SettingActivity;
 import com.tkt.basejava.basejava1.basejava2.util.EventTracking;
+import com.tkt.basejava.basejava1.basejava2.util.PermissionManager;
 import com.tkt.basejava.basejava1.basejava2.util.SPUtils;
 import com.tkt.basejava.basejava1.basejava2.util.SharePrefUtils;
 import com.tkt.basejava.basejava1.basejava2.R;
@@ -23,6 +29,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
 import com.google.android.play.core.review.ReviewManagerFactory;
+import com.tkt.basejava.basejava1.basejava2.util.SystemUtil;
 //import com.google.android.gms.tasks.Task;
 //import com.google.android.play.core.review.ReviewInfo;
 //import com.google.android.play.core.review.ReviewManager;
@@ -44,13 +51,39 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
 
     @Override
     public void initView() {
-        EventTracking.logEvent(this,"home_view");
+        EventTracking.logEvent(this, "home_view");
     }
 
     @Override
     public void bindView() {
         binding.ivSetting.setOnClickListener(view -> {
-            startNextActivity(SettingActivity.class,null);
+            resultLauncher.launch(new Intent(this, SettingActivity.class));
+        });
+        binding.swTouch.setOnClickListener(view -> {
+            if (!PermissionManager.checkOverlayPermission(this)) {
+                showDialogGotoSetting(2);
+            } else {
+
+            }
+        });
+        binding.clMenuTouch.setOnClickListener(view -> {
+            resultLauncher.launch(new Intent(this, CustomMenuActivity.class));
+        });
+        binding.clIconTouch.setOnClickListener(view -> {
+            resultLauncher.launch(new Intent(this, FloatingIconActivity.class));
+        });
+        binding.swVolume.setOnClickListener(view -> {
+            if (!PermissionManager.checkOverlayPermission(this)) {
+                showDialogGotoSetting(2);
+            } else {
+
+            }
+        });
+        binding.clVolumeConfig.setOnClickListener(view -> {
+            resultLauncher.launch(new Intent(this, SettingActivity.class));
+        });
+        binding.clButtonVolume.setOnClickListener(view -> {
+            resultLauncher.launch(new Intent(this, SettingActivity.class));
         });
     }
 
@@ -68,9 +101,9 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     }
 
     ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-        if (result.getResultCode()==RESULT_OK){
+        if (result.getResultCode() == RESULT_OK) {
             //ads
-            Log.d("activity_check","home");
+            Log.d("activity_check", "home");
         }
     });
 
@@ -89,8 +122,8 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
                     finishAffinity();
                     startActivity(Intent.createChooser(sendIntent, getString(R.string.Send_Email)));
                     SharePrefUtils.forceRated(HomeActivity.this);
-                    int star = SPUtils.getInt(HomeActivity.this,SPUtils.RATE_STAR,0);
-                    EventTracking.logEvent(HomeActivity.this,"rate_submit","rate_star"+star,String.valueOf(star));
+                    int star = SPUtils.getInt(HomeActivity.this, SPUtils.RATE_STAR, 0);
+                    EventTracking.logEvent(HomeActivity.this, "rate_submit", "rate_star" + star, String.valueOf(star));
                 } catch (android.content.ActivityNotFoundException ex) {
                     Toast.makeText(HomeActivity.this, getString(R.string.There_is_no), Toast.LENGTH_SHORT).show();
                 }
@@ -106,8 +139,8 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
                         Task<Void> flow = manager.launchReviewFlow(HomeActivity.this, reviewInfo);
                         flow.addOnSuccessListener(result -> {
                             //binding.rlRate.setVisibility(View.GONE);
-                            int star = SPUtils.getInt(HomeActivity.this,SPUtils.RATE_STAR,0);
-                            EventTracking.logEvent(HomeActivity.this,"rate_submit","rate_star"+star,String.valueOf(star));
+                            int star = SPUtils.getInt(HomeActivity.this, SPUtils.RATE_STAR, 0);
+                            EventTracking.logEvent(HomeActivity.this, "rate_submit", "rate_star" + star, String.valueOf(star));
                             SharePrefUtils.forceRated(HomeActivity.this);
                             ratingDialog.dismiss();
                             finishAffinity();
@@ -120,16 +153,59 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
 
             @Override
             public void later() {
-                EventTracking.logEvent(HomeActivity.this,"rate_not_now");
+                EventTracking.logEvent(HomeActivity.this, "rate_not_now");
                 ratingDialog.dismiss();
                 finishAffinity();
             }
 
         });
         ratingDialog.show();
-        EventTracking.logEvent(this,"rate_show");
+        EventTracking.logEvent(this, "rate_show");
     }
 
+    private void showDialogGotoSetting(int type) {
+        GoToSettingDialog dialog = new GoToSettingDialog(this, true);
+        SystemUtil.setLocale(this);
+
+        if (type == 1) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_noti);
+        } else if (type == 2) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_overlay);
+        }
+
+        dialog.binding.tvStay.setOnClickListener(view -> {
+            dialog.dismiss();
+        });
+        dialog.binding.tvContent.setOnClickListener(view -> {
+            dialog.dismiss();
+        });
+        dialog.binding.tvAgree.setOnClickListener(view -> {
+//            AppOpenManager.getInstance().disableAppResumeWithActivity(HomeActivity.class);
+            dialog.dismiss();
+            if (type == 1) {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intent.setData(uri);
+                resultLauncher.launch(intent);
+            } else if (type == 2) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    try {
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        resultLauncher.launch(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e("PermissionError", "Error opening settings: " + e.getMessage());
+                    }
+
+                }
+            }
+        });
+        dialog.show();
+    }
 
     private void exitApp() {
         ExitAppDialog exitAppDialog = new ExitAppDialog(this, true);

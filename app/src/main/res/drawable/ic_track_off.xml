@@ -17,7 +17,7 @@ android:viewportHeight="30"
   <path
       android:pathData="M15 0H37C45.2843 0 52 6.71573 52 15C52 23.2843 45.2843 30 37 30H15C6.71573 30 0 23.2843 0 15C0 6.71573 6.71573 0 15 0Z"
       android:strokeWidth="2"
-      android:strokeColor="#4D818181"
+      android:strokeColor="#D6E9FF"
       />
 </group>
 </vector>

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="#f2f4f8"
     tools:context="com.tkt.basejava.basejava1.basejava2.ui.setting.AboutActivity">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clHeader"
@@ -18,9 +18,11 @@
             android:id="@+id/tvTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/_12sdp"
-            android:fontFamily="@font/svn_gilroy"
+            android:layout_marginStart="12dp"
+            android:layout_marginEnd="84dp"
+            android:fontFamily="@font/instrument_sans"
             android:text="@string/about"
+            android:gravity="center"
             android:textColor="#000000"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -32,9 +34,9 @@
             android:id="@+id/ivGone"
             android:layout_width="48dp"
             android:layout_height="48dp"
-            android:layout_marginStart="16dp"
-            android:padding="12dp"
-            android:src="@drawable/img_back"
+            android:layout_marginStart="20dp"
+            android:padding="4dp"
+            android:src="@drawable/back_round"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -48,7 +50,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/clHeader"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="16dp"
         android:src="@drawable/img_logo"/>
     <TextView
         android:id="@+id/ver"
@@ -60,9 +62,9 @@
         android:layout_marginTop="24dp"
         android:textStyle="normal"
         android:text="@string/version"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textColor="#000000"
-        android:fontFamily="@font/sf_pro_text_medium"/>
+        android:fontFamily="@font/instrument_sans"/>
     <TextView
         android:id="@+id/privacy"
         android:layout_width="wrap_content"
@@ -71,13 +73,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ver"
         android:layout_marginTop="63dp"
-        android:textStyle="bold"
         android:minHeight="48dp"
         android:minWidth="48dp"
         android:text="@string/privacy_policy"
-        android:textSize="20sp"
-        android:textColor="#0256FF"
-        android:fontFamily="@font/be_vietnam_pro"/>
+        android:textSize="24sp"
+        android:textColor="#3392FF"
+        android:fontFamily="@font/instrument_sans"/>
 
 
 
