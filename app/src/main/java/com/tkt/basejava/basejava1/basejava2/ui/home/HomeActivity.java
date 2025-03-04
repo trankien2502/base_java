@@ -1,5 +1,9 @@
 package com.tkt.basejava.basejava1.basejava2.ui.home;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -16,9 +20,12 @@ import com.tkt.basejava.basejava1.basejava2.dialog.exit.ExitAppDialog;
 import com.tkt.basejava.basejava1.basejava2.dialog.exit.IClickDialogExit;
 import com.tkt.basejava.basejava1.basejava2.dialog.rate.IClickDialogRate;
 import com.tkt.basejava.basejava1.basejava2.dialog.rate.RatingDialog;
+import com.tkt.basejava.basejava1.basejava2.service.ServiceControl;
+import com.tkt.basejava.basejava1.basejava2.service.ServiceScreen;
 import com.tkt.basejava.basejava1.basejava2.ui.home.touch.custom.CustomMenuActivity;
 import com.tkt.basejava.basejava1.basejava2.ui.home.touch.icon.FloatingIconActivity;
 import com.tkt.basejava.basejava1.basejava2.ui.setting.SettingActivity;
+import com.tkt.basejava.basejava1.basejava2.util.CheckUtils;
 import com.tkt.basejava.basejava1.basejava2.util.EventTracking;
 import com.tkt.basejava.basejava1.basejava2.util.PermissionManager;
 import com.tkt.basejava.basejava1.basejava2.util.SPUtils;
@@ -52,6 +59,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     @Override
     public void initView() {
         EventTracking.logEvent(this, "home_view");
+        binding.swTouch.setChecked(isMyServiceRunning(ServiceScreen.class));
     }
 
     @Override
@@ -60,10 +68,31 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
             resultLauncher.launch(new Intent(this, SettingActivity.class));
         });
         binding.swTouch.setOnClickListener(view -> {
-            if (!PermissionManager.checkOverlayPermission(this)) {
-                showDialogGotoSetting(2);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (!Settings.canDrawOverlays(this)) {
+                    showDialogGotoSetting(2);
+                    binding.swTouch.setChecked(false);
+                } else {
+                    if (binding.swTouch.isChecked()) {
+                        Intent serviceIntent = new Intent(this, ServiceScreen.class);
+                        startService(serviceIntent);
+                        Toast.makeText(this, R.string.enable_assistive_touch_success, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(this, R.string.disable_assistive_touch_success, Toast.LENGTH_SHORT).show();
+                        Intent serviceIntent = new Intent(this, ServiceScreen.class);
+                        stopService(serviceIntent);
+                    }
+                }
             } else {
-
+                if (binding.swTouch.isChecked()) {
+                    Intent serviceIntent = new Intent(this, ServiceScreen.class);
+                    startService(serviceIntent);
+                    Toast.makeText(this, R.string.enable_assistive_touch_success, Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, R.string.disable_assistive_touch_success, Toast.LENGTH_SHORT).show();
+                    Intent serviceIntent = new Intent(this, ServiceScreen.class);
+                    stopService(serviceIntent);
+                }
             }
         });
         binding.clMenuTouch.setOnClickListener(view -> {
@@ -76,7 +105,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
             if (!PermissionManager.checkOverlayPermission(this)) {
                 showDialogGotoSetting(2);
             } else {
-
+                requestAccessibilityPermission();
             }
         });
         binding.clVolumeConfig.setOnClickListener(view -> {
@@ -85,6 +114,34 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         binding.clButtonVolume.setOnClickListener(view -> {
             resultLauncher.launch(new Intent(this, SettingActivity.class));
         });
+    }
+
+    public boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void requestAccessibilityPermission() {
+        if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
+            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+            startActivity(intent);
+            Log.e("check_service", "off");
+        } else {
+            if (ServiceControl.instance != null) {
+                ServiceControl service = new ServiceControl();
+                service.turnOffScreen();
+                Log.e("check_service", "on");
+            } else {
+                Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                startActivity(intent);
+                Log.e("check_service", "null");
+            }
+        }
     }
 
     @Override

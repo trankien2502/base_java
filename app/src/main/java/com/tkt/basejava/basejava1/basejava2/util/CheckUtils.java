@@ -59,7 +59,7 @@ public class CheckUtils {
         return true;
     }
 
-    public static boolean isAccessibilitySettingsOn(Context context, Class<AccessibilityService> serviceClass) {
+    public static boolean isAccessibilitySettingsOn(Context context, Class<?> serviceClass) {
         int i;
         String string;
         String str = context.getPackageName() + "/" + serviceClass.getCanonicalName();
