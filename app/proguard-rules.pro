@@ -57,6 +57,7 @@
 -keep class com.yourpackage.model.** { *; }
 -keep class com.google.gson.** { *; }
 
+
 # google ads
 -keep class com.google.android.gms.internal.** { *; }
 

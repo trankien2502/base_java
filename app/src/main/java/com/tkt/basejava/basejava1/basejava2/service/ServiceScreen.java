@@ -43,6 +43,8 @@ import com.tkt.basejava.basejava1.basejava2.util.SystemUtil;
 
 public class ServiceScreen extends Service {
 
+    @SuppressLint("StaticFieldLeak")
+    public static ServiceScreen instance;
     private WindowManager windowManager;
     private View overlayView;
     private View floatingView, menuView;
@@ -115,6 +117,7 @@ public class ServiceScreen extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        instance = this;
         handler = new Handler(Looper.getMainLooper());
         createNotificationChannel();
         startForeground(1, createNotification());
@@ -187,7 +190,7 @@ public class ServiceScreen extends Service {
                         });
                         return true;
                     case MotionEvent.ACTION_MOVE:
-                        if (Math.abs((event.getRawX() - initialTouchX)) > 10 || Math.abs((event.getRawY() - initialTouchY)) > 10) {
+                        if (Math.abs((event.getRawX() - initialTouchX)) > 25f || Math.abs((event.getRawY() - initialTouchY)) > 25f) {
                             isMoving = true;
                             Log.e("check_service", "move");
                         }
@@ -266,6 +269,7 @@ public class ServiceScreen extends Service {
     public void onDestroy() {
         super.onDestroy();
         if (floatingView != null) windowManager.removeView(floatingView);
+        instance = null;
     }
 
     @SuppressLint({"RestrictedApi", "ObjectAnimatorBinding"})

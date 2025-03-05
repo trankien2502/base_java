@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:padding="@dimen/_16sdp"
+    android:padding="16dp"
     android:layout_height="wrap_content"
     android:visibility="visible">
 
@@ -107,7 +107,7 @@
                         android:gravity="center"
                         android:includeFontPadding="false"
                         android:maxLines="2"
-                        android:text="Volume up"
+                        android:text="@string/volume_up"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/_12sdp" />
 
@@ -322,7 +322,7 @@
                         android:gravity="center"
                         android:includeFontPadding="false"
                         android:maxLines="2"
-                        android:text="Volume down"
+                        android:text="@string/volume_down"
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/_12sdp" />
 

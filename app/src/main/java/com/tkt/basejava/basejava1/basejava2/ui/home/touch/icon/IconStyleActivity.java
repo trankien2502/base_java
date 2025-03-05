@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.tkt.basejava.basejava1.basejava2.R;
 import com.tkt.basejava.basejava1.basejava2.base.BaseActivity;
 import com.tkt.basejava.basejava1.basejava2.databinding.ActivityIconStyleBinding;
+import com.tkt.basejava.basejava1.basejava2.service.ServiceScreen;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +32,7 @@ public class IconStyleActivity extends BaseActivity<ActivityIconStyleBinding> {
         iconStyleAdapter = new IconStyleAdapter(this, iconStyleList, new IconStyleCallBack() {
             @Override
             public void select(IconStyle iconStyle) {
-
+                ServiceScreen.instance.setIconStyle(iconStyle);
             }
         });
         binding.rcvIcon.setAdapter(iconStyleAdapter);
@@ -67,7 +68,12 @@ public class IconStyleActivity extends BaseActivity<ActivityIconStyleBinding> {
 
     @Override
     public void bindView() {
-
+        binding.ivBack.setOnClickListener(v -> {
+            onBack();
+        });
+        binding.ivGone.setOnClickListener(v -> {
+            onBack();
+        });
     }
 
     @Override
