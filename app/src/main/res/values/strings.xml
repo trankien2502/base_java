@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Base Java TKT</string>
+    <string name="app_name" translatable="false">Assistive Touch - Home Button</string>
 
     <string name="english" translatable="false">English</string>
     <string name="french" translatable="false">French</string>
@@ -112,5 +112,7 @@
     <string name="brightness">Brightness</string>
     <string name="volume_up">Volume up</string>
     <string name="volume_down">Volume down</string>
+    <string name="selected">Selected</string>
+    <string name="please_select_a_function_first">Please select a function first!</string>
 
 </resources>

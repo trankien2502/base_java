@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace 'com.tkt.basejava.basejava1.basejava2'
+    namespace 'com.assistivetouch.easytouch.homebutton'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.tkt.basejava.basejava1.basejava2"
+        applicationId "com.assistivetouch.easytouch.homebutton"
         minSdk 21
         targetSdk 34
         versionCode 100

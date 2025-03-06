@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#f2f4f8"
-    tools:context=".ui.home.touch.icon.FloatingIconActivity">
+    tools:context="com.assistivetouch.easytouch.homebutton.ui.home.touch.icon.FloatingIconActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clHeader"

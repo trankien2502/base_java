@@ -6,7 +6,7 @@
     android:layout_height="wrap_content"
     android:visibility="visible">
 
-    <com.tkt.basejava.basejava1.basejava2.util.widget.UiLinearLayout
+    <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
         android:id="@+id/backgroundMenu"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -30,7 +30,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <com.tkt.basejava.basejava1.basejava2.util.widget.UiLinearLayout
+                <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
                     android:id="@+id/llAction1"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
@@ -67,14 +67,14 @@
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/_12sdp" />
 
-                </com.tkt.basejava.basejava1.basejava2.util.widget.UiLinearLayout>
+                </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:layout_height="wrap_content">
-                <com.tkt.basejava.basejava1.basejava2.util.widget.UiLinearLayout
+                <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
                     android:id="@+id/llAction2"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
@@ -111,7 +111,7 @@
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/_12sdp" />
 
-                </com.tkt.basejava.basejava1.basejava2.util.widget.UiLinearLayout>
+                </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
@@ -128,7 +128,7 @@
                 android:layout_width="match_parent"
 
                 android:layout_height="wrap_content">
-                <com.tkt.basejava.basejava1.basejava2.util.widget.UiLinearLayout
+                <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
                     android:id="@+id/llAction3"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
@@ -165,9 +165,9 @@
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/_12sdp" />
 
-                </com.tkt.basejava.basejava1.basejava2.util.widget.UiLinearLayout>
+                </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
-            <com.tkt.basejava.basejava1.basejava2.util.widget.UiLinearLayout
+            <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
                 android:id="@+id/llAction4"
                 app:stColorLight="#767676"
                 app:stColorDark="#767676"
@@ -186,12 +186,12 @@
                     android:layout_width="@dimen/_40sdp"
                     android:layout_height="@dimen/_40sdp"/>
 
-            </com.tkt.basejava.basejava1.basejava2.util.widget.UiLinearLayout>
+            </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
 
                 android:layout_height="wrap_content">
-                <com.tkt.basejava.basejava1.basejava2.util.widget.UiLinearLayout
+                <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
                     android:id="@+id/llAction5"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
@@ -228,7 +228,7 @@
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/_12sdp" />
 
-                </com.tkt.basejava.basejava1.basejava2.util.widget.UiLinearLayout>
+                </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
@@ -245,7 +245,7 @@
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
-                <com.tkt.basejava.basejava1.basejava2.util.widget.UiLinearLayout
+                <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
                     android:id="@+id/llAction6"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
@@ -282,14 +282,14 @@
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/_12sdp" />
 
-                </com.tkt.basejava.basejava1.basejava2.util.widget.UiLinearLayout>
+                </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:layout_height="wrap_content">
-                <com.tkt.basejava.basejava1.basejava2.util.widget.UiLinearLayout
+                <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
                     android:id="@+id/llAction7"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
@@ -326,11 +326,11 @@
                         android:textColor="#FFFFFF"
                         android:textSize="@dimen/_12sdp" />
 
-                </com.tkt.basejava.basejava1.basejava2.util.widget.UiLinearLayout>
+                </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </LinearLayout>
 
-    </com.tkt.basejava.basejava1.basejava2.util.widget.UiLinearLayout>
+    </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

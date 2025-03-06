@@ -2,7 +2,7 @@
 <accessibility-service
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/accessibility_service_description"
-    android:packageNames="com.tkt.basejava.basejava1.basejava2"
+    android:packageNames="com.assistivetouch.easytouch.homebutton"
     android:accessibilityEventTypes="typeAllMask"
     android:accessibilityFeedbackType="feedbackGeneric|feedbackSpoken"
     android:notificationTimeout="100"
