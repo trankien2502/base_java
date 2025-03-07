@@ -46,7 +46,6 @@ public class ItemFunctionIconAdapter extends RecyclerView.Adapter<ItemFunctionIc
         holder.binding.ivIcon.setImageResource(functionIcon.getIcon());
         holder.binding.tvFunction.setText(functionIcon.getText());
         holder.binding.layoutItem.setOnClickListener(v -> {
-            if (isSelectEnable) setCheckIcon(functionIcon);
             itemFunctionCallBack.select(functionIcon);
         });
     }

@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        android:padding="@dimen/_16sdp"
+        android:padding="16dp"
         android:weightSum="3"
         app:bgColorLight="#E2101010"
         app:layout_constraintDimensionRatio="1:1"

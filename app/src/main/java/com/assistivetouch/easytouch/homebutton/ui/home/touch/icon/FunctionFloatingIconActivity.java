@@ -31,6 +31,7 @@ public class FunctionFloatingIconActivity extends BaseActivity<ActivityFunctionF
         adapter = new ItemFunctionIconAdapter(this, functionIconList, true, new ItemFunctionCallBack() {
             @Override
             public void select(ItemFunctionIcon icon) {
+                adapter.setCheckIcon(icon);
                 functionIcon = icon;
             }
         });

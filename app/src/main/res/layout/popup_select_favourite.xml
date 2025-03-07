@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:padding="@dimen/_16sdp"
+    android:padding="16dp"
     android:layout_height="wrap_content"
     android:visibility="visible">
 
@@ -11,7 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="horizontal"
-        android:padding="@dimen/_16sdp"
+        android:padding="16dp"
         android:weightSum="3"
         app:bgColorLight="#E2101010"
         app:layout_constraintDimensionRatio="1:1"
@@ -21,315 +21,420 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="0dp"
-            android:gravity="center"
-            android:orientation="vertical"
             android:layout_height="match_parent"
             android:layout_weight="1">
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
-                    android:id="@+id/llAction1"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="1:1"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    app:cornerRadius="8dp"
-                    app:distanceSpace="6dp"
-                    app:stColorDark="#767676"
-                    app:stColorLight="#767676"
-                    app:strokeDistance="true"
-                    app:strokeWidth="2dp">
-
-                    <ImageView
-                        android:id="@+id/imgAction1"
-                        android:layout_width="@dimen/_34sdp"
-                        android:layout_height="@dimen/_34sdp"
-                        android:src="@drawable/ic_action_favourite" />
-
-                    <TextView
-                        android:id="@+id/txtAction1"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:fontFamily="@font/instrument_sans"
-                        android:gravity="center"
-                        android:includeFontPadding="false"
-                        android:maxLines="2"
-                        android:text="@string/favourite"
-                        android:textColor="#FFFFFF"
-                        android:textSize="@dimen/_12sdp" />
-
-                </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:layout_height="wrap_content">
-                <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
-                    android:id="@+id/llAction2"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="1:1"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    app:cornerRadius="8dp"
-                    app:distanceSpace="6dp"
-                    app:stColorDark="#767676"
-                    app:stColorLight="#767676"
-                    app:strokeDistance="true"
-                    app:strokeWidth="2dp">
-
-                    <ImageView
-                        android:id="@+id/imgAction2"
-                        android:layout_width="@dimen/_34sdp"
-                        android:layout_height="@dimen/_34sdp"
-                        android:src="@drawable/ic_action_recent" />
-
-                    <TextView
-                        android:id="@+id/txtAction2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:fontFamily="@font/instrument_sans"
-                        android:gravity="center"
-                        android:includeFontPadding="false"
-                        android:maxLines="2"
-                        android:text="@string/recent"
-                        android:textColor="#FFFFFF"
-                        android:textSize="@dimen/_12sdp" />
-
-                </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:gravity="center"
-            android:layout_width="0dp"
-            android:layout_marginHorizontal="@dimen/_12sdp"
-            android:orientation="vertical"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-
-                android:layout_height="wrap_content">
-                <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
-                    android:id="@+id/llAction3"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="1:1"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    app:cornerRadius="8dp"
-                    app:distanceSpace="6dp"
-                    app:stColorDark="#767676"
-                    app:stColorLight="#767676"
-                    app:strokeDistance="true"
-                    app:strokeWidth="2dp">
-
-                    <ImageView
-                        android:id="@+id/imgAction3"
-                        android:layout_width="@dimen/_34sdp"
-                        android:layout_height="@dimen/_34sdp"
-                        android:src="@drawable/ic_action_notification" />
-
-                    <TextView
-                        android:id="@+id/txtAction3"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:fontFamily="@font/instrument_sans"
-                        android:gravity="center"
-                        android:includeFontPadding="false"
-                        android:maxLines="2"
-                        android:text="@string/notification"
-                        android:textColor="#FFFFFF"
-                        android:textSize="@dimen/_12sdp" />
-
-                </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-            <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
-                android:id="@+id/llAction4"
-                app:stColorLight="#767676"
-                app:stColorDark="#767676"
                 android:gravity="center"
-                android:visibility="invisible"
-                android:layout_marginVertical="@dimen/_16sdp"
-                app:cornerRadius="8dp"
-                app:distanceSpace="6dp"
-                android:padding="@dimen/_12sdp"
                 android:orientation="vertical"
+                android:layout_height="match_parent"
+                android:weightSum="3">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="0dp">
+                    <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
+                        android:id="@+id/llAction1"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        app:cornerRadius="8dp"
+                        app:distanceSpace="6dp"
+                        app:stColorDark="#767676"
+                        app:stColorLight="#767676"
+                        app:strokeDistance="true"
+                        app:strokeWidth="2dp">
+
+                        <ImageView
+                            android:id="@+id/imgAction1"
+                            android:layout_width="@dimen/_34sdp"
+                            android:layout_height="@dimen/_34sdp"
+                            android:src="@drawable/ic_action_favourite" />
+
+                        <TextView
+                            android:id="@+id/txtAction1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:fontFamily="@font/instrument_sans"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:maxLines="2"
+                            android:text="@string/favourite"
+                            android:textColor="#FFFFFF"
+                            android:textSize="@dimen/_12sdp" />
+
+                    </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+
+                    android:layout_weight="1"
+                    android:layout_height="0dp">
+                    <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
+                        android:id="@+id/llAction2"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        app:cornerRadius="8dp"
+                        app:distanceSpace="6dp"
+                        app:stColorDark="#767676"
+                        app:stColorLight="#767676"
+                        app:strokeDistance="true"
+                        app:strokeWidth="2dp">
+
+                        <ImageView
+                            android:id="@+id/imgAction2"
+                            android:layout_width="@dimen/_34sdp"
+                            android:layout_height="@dimen/_34sdp"
+                            android:src="@drawable/ic_action_recent" />
+
+                        <TextView
+                            android:id="@+id/txtAction2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:fontFamily="@font/instrument_sans"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:maxLines="2"
+                            android:text="@string/recent"
+                            android:textColor="#FFFFFF"
+                            android:textSize="@dimen/_12sdp" />
+
+                    </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="0dp">
+                    <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
+                        android:id="@+id/llAction3"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        app:cornerRadius="8dp"
+                        app:distanceSpace="6dp"
+                        app:stColorDark="#767676"
+                        app:stColorLight="#767676"
+                        app:strokeDistance="true"
+                        app:strokeWidth="2dp">
+
+                        <ImageView
+                            android:id="@+id/imgAction3"
+                            android:layout_width="@dimen/_34sdp"
+                            android:layout_height="@dimen/_34sdp"
+                            android:src="@drawable/ic_action_recent" />
+
+                        <TextView
+                            android:id="@+id/txtAction3"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:fontFamily="@font/instrument_sans"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:maxLines="2"
+                            android:text="@string/recent"
+                            android:textColor="#FFFFFF"
+                            android:textSize="@dimen/_12sdp" />
+
+                    </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:layout_weight="1">
+            <LinearLayout
+                android:gravity="center"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:orientation="vertical"
+                android:layout_height="match_parent"
+                android:weightSum="3">
 
-                <ImageView
-                    android:src="@drawable/arrow_left"
-                    android:layout_width="@dimen/_40sdp"
-                    android:layout_height="@dimen/_40sdp"/>
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="0dp">
+                    <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
+                        android:id="@+id/llAction4"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
+                        android:gravity="center"
+                        android:orientation="vertical"
+                        app:cornerRadius="8dp"
+                        app:distanceSpace="6dp"
+                        app:stColorDark="#767676"
+                        app:stColorLight="#767676"
+                        app:strokeDistance="true"
+                        app:strokeWidth="2dp">
 
-            </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
+                        <ImageView
+                            android:id="@+id/imgAction4"
+                            android:layout_width="@dimen/_34sdp"
+                            android:layout_height="@dimen/_34sdp"
+                            android:src="@drawable/ic_action_notification" />
 
-                android:layout_height="wrap_content">
+                        <TextView
+                            android:id="@+id/txtAction4"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:fontFamily="@font/instrument_sans"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:maxLines="2"
+                            android:text="@string/notification"
+                            android:textColor="#FFFFFF"
+                            android:textSize="@dimen/_12sdp" />
+
+                    </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
                 <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
                     android:id="@+id/llAction5"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="1:1"
+                    app:stColorLight="#767676"
+                    app:stColorDark="#767676"
                     android:gravity="center"
-                    android:orientation="vertical"
+                    android:visibility="visible"
                     app:cornerRadius="8dp"
                     app:distanceSpace="6dp"
-                    app:stColorDark="#767676"
-                    app:stColorLight="#767676"
-                    app:strokeDistance="true"
-                    app:strokeWidth="2dp">
-
-                    <ImageView
-                        android:id="@+id/imgAction5"
-                        android:layout_width="@dimen/_34sdp"
-                        android:layout_height="@dimen/_34sdp"
-                        android:src="@drawable/ic_action_home" />
-
-                    <TextView
-                        android:id="@+id/txtAction5"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:fontFamily="@font/instrument_sans"
-                        android:gravity="center"
-                        android:includeFontPadding="false"
-                        android:maxLines="2"
-                        android:text="@string/home"
-                        android:textColor="#FFFFFF"
-                        android:textSize="@dimen/_12sdp" />
-
-                </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </LinearLayout>
-
-
-        <LinearLayout
-      
-            android:layout_width="0dp"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:layout_height="match_parent"
-            android:layout_weight="1">
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
-                    android:id="@+id/llAction6"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="1:1"
-                    android:gravity="center"
+                    android:padding="@dimen/_12sdp"
                     android:orientation="vertical"
-                    app:cornerRadius="8dp"
-                    app:distanceSpace="6dp"
-                    app:stColorDark="#767676"
-                    app:stColorLight="#767676"
-                    app:strokeDistance="true"
-                    app:strokeWidth="2dp">
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="0dp">
 
                     <ImageView
-                        android:id="@+id/imgAction6"
-                        android:layout_width="@dimen/_34sdp"
-                        android:layout_height="@dimen/_34sdp"
-                        android:src="@drawable/ic_action_device" />
-
-                    <TextView
-                        android:id="@+id/txtAction6"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:fontFamily="@font/instrument_sans"
-                        android:gravity="center"
-                        android:includeFontPadding="false"
-                        android:maxLines="2"
-                        android:text="@string/device"
-                        android:textColor="#FFFFFF"
-                        android:textSize="@dimen/_12sdp" />
+                        android:src="@drawable/arrow_left"
+                        android:layout_width="@dimen/_40sdp"
+                        android:layout_height="@dimen/_40sdp"/>
 
                 </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:layout_height="wrap_content">
-                <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
-                    android:id="@+id/llAction7"
-                    android:layout_width="0dp"
-                    android:layout_height="0dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintDimensionRatio="1:1"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    app:cornerRadius="8dp"
-                    app:distanceSpace="6dp"
-                    app:stColorDark="#767676"
-                    app:stColorLight="#767676"
-                    app:strokeDistance="true"
-                    app:strokeWidth="2dp">
-
-                    <ImageView
-                        android:id="@+id/imgAction7"
-                        android:layout_width="@dimen/_34sdp"
-                        android:layout_height="@dimen/_34sdp"
-                        android:src="@drawable/ic_action_setting" />
-
-                    <TextView
-                        android:id="@+id/txtAction7"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="@dimen/_5sdp"
-                        android:fontFamily="@font/instrument_sans"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_weight="1"
+                    android:layout_height="0dp">
+                    <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
+                        android:id="@+id/llAction6"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintDimensionRatio="1:1"
                         android:gravity="center"
-                        android:includeFontPadding="false"
-                        android:maxLines="2"
-                        android:text="@string/settings"
-                        android:textColor="#FFFFFF"
-                        android:textSize="@dimen/_12sdp" />
+                        android:orientation="vertical"
+                        app:cornerRadius="8dp"
+                        app:distanceSpace="6dp"
+                        app:stColorDark="#767676"
+                        app:stColorLight="#767676"
+                        app:strokeDistance="true"
+                        app:strokeWidth="2dp">
 
-                </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                        <ImageView
+                            android:id="@+id/imgAction6"
+                            android:layout_width="@dimen/_34sdp"
+                            android:layout_height="@dimen/_34sdp"
+                            android:src="@drawable/ic_action_home" />
 
-        </LinearLayout>
+                        <TextView
+                            android:id="@+id/txtAction6"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/_5sdp"
+                            android:fontFamily="@font/instrument_sans"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:maxLines="2"
+                            android:text="@string/home"
+                            android:textColor="#FFFFFF"
+                            android:textSize="@dimen/_12sdp" />
+
+                    </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+       <androidx.constraintlayout.widget.ConstraintLayout
+           android:layout_width="0dp"
+           android:layout_height="match_parent"
+           android:layout_weight="1">
+           <LinearLayout
+
+               android:layout_width="match_parent"
+               android:gravity="center"
+               android:orientation="vertical"
+               android:weightSum="3"
+               android:layout_height="match_parent">
+
+               <androidx.constraintlayout.widget.ConstraintLayout
+                   android:layout_width="match_parent"
+                   android:layout_weight="1"
+                   android:layout_height="0dp">
+                   <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
+                       android:id="@+id/llAction7"
+                       android:layout_width="0dp"
+                       android:layout_height="0dp"
+                       app:layout_constraintStart_toStartOf="parent"
+                       app:layout_constraintEnd_toEndOf="parent"
+                       app:layout_constraintTop_toTopOf="parent"
+                       app:layout_constraintBottom_toBottomOf="parent"
+                       app:layout_constraintDimensionRatio="1:1"
+                       android:gravity="center"
+                       android:orientation="vertical"
+                       app:cornerRadius="8dp"
+                       app:distanceSpace="6dp"
+                       app:stColorDark="#767676"
+                       app:stColorLight="#767676"
+                       app:strokeDistance="true"
+                       app:strokeWidth="2dp">
+
+                       <ImageView
+                           android:id="@+id/imgAction7"
+                           android:layout_width="@dimen/_34sdp"
+                           android:layout_height="@dimen/_34sdp"
+                           android:src="@drawable/ic_action_device" />
+
+                       <TextView
+                           android:id="@+id/txtAction7"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:layout_marginTop="@dimen/_5sdp"
+                           android:fontFamily="@font/instrument_sans"
+                           android:gravity="center"
+                           android:includeFontPadding="false"
+                           android:maxLines="2"
+                           android:text="@string/device"
+                           android:textColor="#FFFFFF"
+                           android:textSize="@dimen/_12sdp" />
+
+                   </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
+               </androidx.constraintlayout.widget.ConstraintLayout>
+
+               <androidx.constraintlayout.widget.ConstraintLayout
+                   android:layout_width="match_parent"
+                   android:layout_weight="1"
+                   android:layout_height="0dp">
+                   <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
+                       android:id="@+id/llAction8"
+                       android:layout_width="0dp"
+                       android:layout_height="0dp"
+                       app:layout_constraintStart_toStartOf="parent"
+                       app:layout_constraintEnd_toEndOf="parent"
+                       app:layout_constraintTop_toTopOf="parent"
+                       app:layout_constraintBottom_toBottomOf="parent"
+                       app:layout_constraintDimensionRatio="1:1"
+                       android:gravity="center"
+                       android:orientation="vertical"
+                       app:cornerRadius="8dp"
+                       app:distanceSpace="6dp"
+                       app:stColorDark="#767676"
+                       app:stColorLight="#767676"
+                       app:strokeDistance="true"
+                       app:strokeWidth="2dp">
+
+                       <ImageView
+                           android:id="@+id/imgAction8"
+                           android:layout_width="@dimen/_34sdp"
+                           android:layout_height="@dimen/_34sdp"
+                           android:src="@drawable/ic_action_setting" />
+
+                       <TextView
+                           android:id="@+id/txtAction8"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:layout_marginTop="@dimen/_5sdp"
+                           android:fontFamily="@font/instrument_sans"
+                           android:gravity="center"
+                           android:includeFontPadding="false"
+                           android:maxLines="2"
+                           android:text="@string/settings"
+                           android:textColor="#FFFFFF"
+                           android:textSize="@dimen/_12sdp" />
+
+                   </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
+               </androidx.constraintlayout.widget.ConstraintLayout>
+               <androidx.constraintlayout.widget.ConstraintLayout
+                   android:layout_width="match_parent"
+                   android:layout_weight="1"
+                   android:layout_height="0dp">
+                   <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
+                       android:id="@+id/llAction9"
+                       android:layout_width="0dp"
+                       android:layout_height="0dp"
+                       app:layout_constraintStart_toStartOf="parent"
+                       app:layout_constraintEnd_toEndOf="parent"
+                       app:layout_constraintTop_toTopOf="parent"
+                       app:layout_constraintBottom_toBottomOf="parent"
+                       app:layout_constraintDimensionRatio="1:1"
+                       android:gravity="center"
+                       android:orientation="vertical"
+                       app:cornerRadius="8dp"
+                       app:distanceSpace="6dp"
+                       app:stColorDark="#767676"
+                       app:stColorLight="#767676"
+                       app:strokeDistance="true"
+                       app:strokeWidth="2dp">
+
+                       <ImageView
+                           android:id="@+id/imgAction9"
+                           android:layout_width="@dimen/_34sdp"
+                           android:layout_height="@dimen/_34sdp"
+                           android:src="@drawable/ic_action_setting" />
+
+                       <TextView
+                           android:id="@+id/txtAction9"
+                           android:layout_width="match_parent"
+                           android:layout_height="wrap_content"
+                           android:layout_marginTop="@dimen/_5sdp"
+                           android:fontFamily="@font/instrument_sans"
+                           android:gravity="center"
+                           android:includeFontPadding="false"
+                           android:maxLines="2"
+                           android:text="@string/settings"
+                           android:textColor="#FFFFFF"
+                           android:textSize="@dimen/_12sdp" />
+
+                   </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
+               </androidx.constraintlayout.widget.ConstraintLayout>
+
+           </LinearLayout>
+       </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
 
     </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
 

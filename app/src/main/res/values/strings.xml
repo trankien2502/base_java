@@ -114,5 +114,22 @@
     <string name="volume_down">Volume down</string>
     <string name="selected">Selected</string>
     <string name="please_select_a_function_first">Please select a function first!</string>
+    <string name="error">Error</string>
+    <string name="auto_brightness">Auto Brightness</string>
+    <string name="alarm">Alarm</string>
+    <string name="voice_call">Voice Call</string>
+    <string name="media">Media</string>
+    <string name="ring">Ring</string>
+    <string name="screen_timeout">Screen timeout</string>
+    <string name="_15_seconds">15 seconds</string>
+    <string name="_30_seconds">30 seconds</string>
+    <string name="_1_minute">1 minute</string>
+    <string name="_5_minutes">5 minutes</string>
+    <string name="_10_minutes">10 minutes</string>
+    <string name="_15_minutes">15 minutes</string>
+    <string name="_30_minutes">30 minutes</string>
+    <string name="error_sd">Failed to get External Storage</string>
+    <string name="error_record">Failed to create Recordings directory</string>
+    <string name="unlock_rotation">Unlock rotation</string>
 
 </resources>

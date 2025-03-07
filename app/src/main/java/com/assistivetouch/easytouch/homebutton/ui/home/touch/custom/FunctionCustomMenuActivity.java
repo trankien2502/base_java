@@ -1,7 +1,12 @@
 package com.assistivetouch.easytouch.homebutton.ui.home.touch.custom;
 
+import android.Manifest;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.View;
 import android.widget.Toast;
+
+import androidx.core.app.ActivityCompat;
 
 import com.assistivetouch.easytouch.homebutton.R;
 import com.assistivetouch.easytouch.homebutton.base.BaseActivity;
@@ -9,6 +14,9 @@ import com.assistivetouch.easytouch.homebutton.databinding.ActivityFunctionCusto
 import com.assistivetouch.easytouch.homebutton.item.ItemFunctionCallBack;
 import com.assistivetouch.easytouch.homebutton.item.ItemFunctionIcon;
 import com.assistivetouch.easytouch.homebutton.item.ItemFunctionIconAdapter;
+import com.assistivetouch.easytouch.homebutton.ui.permission.PermissionActivity;
+import com.assistivetouch.easytouch.homebutton.util.CheckUtils;
+import com.assistivetouch.easytouch.homebutton.util.PermissionManager;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 
 import java.util.ArrayList;
@@ -16,6 +24,7 @@ import java.util.List;
 
 public class FunctionCustomMenuActivity extends BaseActivity<ActivityFunctionCustomMenuBinding> {
 
+    private static final int REQUEST_CODE_CAMERA_PERMISSION = 20;
     List<ItemFunctionIcon> functionIconList = new ArrayList<>();
     List<ItemFunctionIcon> functionSelectedList = new ArrayList<>();
 
@@ -23,6 +32,7 @@ public class FunctionCustomMenuActivity extends BaseActivity<ActivityFunctionCus
     ItemFunctionIcon currentSelectItem = null;
     int menuFunction;
     int menuPosition;
+    boolean isAvailable = true;
 
     @Override
     public ActivityFunctionCustomMenuBinding getBinding() {
@@ -42,14 +52,27 @@ public class FunctionCustomMenuActivity extends BaseActivity<ActivityFunctionCus
         }
         initData();
         Toast.makeText(this, "menu & position: " + menuFunction + menuPosition, Toast.LENGTH_SHORT).show();
-        adapter = new ItemFunctionIconAdapter(this, functionIconList, true,new ItemFunctionCallBack() {
+        adapter = new ItemFunctionIconAdapter(this, functionIconList, true, new ItemFunctionCallBack() {
             @Override
             public void select(ItemFunctionIcon icon) {
-                adapter.setCheckIcon(icon);
-                currentSelectItem = icon;
+                if ((icon.getActionNumber() == ItemFunctionIcon.ACTION_TIME_OUT || icon.getActionNumber() == ItemFunctionIcon.ACTION_BRIGHTNESS || icon.getActionNumber() == ItemFunctionIcon.ACTION_LOCK_ROTATION)
+                        && !CheckUtils.checkSystemWriteSetting(getBaseContext())) {
+                    isAvailable = false;
+                    Intent intent = new Intent("android.settings.action.MANAGE_WRITE_SETTINGS");
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.setData(Uri.parse("package:" + getPackageName()));
+                    startActivity(intent);
+                } else if (icon.getActionNumber() == ItemFunctionIcon.ACTION_FLASHLIGHT && !PermissionManager.checkCameraPermission(getBaseContext())) {
+                    isAvailable = false;
+                    ActivityCompat.requestPermissions(FunctionCustomMenuActivity.this, new String[]{Manifest.permission.CAMERA}, REQUEST_CODE_CAMERA_PERMISSION);
+                } else isAvailable = true;
+                if (isAvailable) {
+                    adapter.setCheckIcon(icon);
+                    currentSelectItem = icon;
+                }
             }
         });
-        adapterSelect = new ItemFunctionIconAdapter(this, functionSelectedList,false, new ItemFunctionCallBack() {
+        adapterSelect = new ItemFunctionIconAdapter(this, functionSelectedList, false, new ItemFunctionCallBack() {
             @Override
             public void select(ItemFunctionIcon icon) {
 

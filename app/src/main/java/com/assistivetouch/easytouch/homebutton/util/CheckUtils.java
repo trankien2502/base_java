@@ -77,46 +77,6 @@ public class CheckUtils {
         return ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getNetworkOperatorName();
     }
 
-//    public static ItemStrengthMobile[] getStrengthMobile(Context context) {
-//        int i = 0;
-//        ItemStrengthMobile[] itemStrengthMobileArr = {new ItemStrengthMobile(), new ItemStrengthMobile()};
-//        if (ActivityCompat.checkSelfPermission(context, "android.permission.ACCESS_FINE_LOCATION") == 0) {
-//            try {
-//                for (CellInfo cellInfo : ((TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE)).getAllCellInfo()) {
-//                    if (cellInfo.isRegistered()) {
-//                        if (cellInfo instanceof CellInfoGsm) {
-//                            itemStrengthMobileArr[i].setLevel(((CellInfoGsm) cellInfo).getCellSignalStrength().getLevel());
-//                            itemStrengthMobileArr[i].setMobile(1);
-//                        } else if (cellInfo instanceof CellInfoCdma) {
-//                            itemStrengthMobileArr[i].setLevel(((CellInfoCdma) cellInfo).getCellSignalStrength().getLevel());
-//                            itemStrengthMobileArr[i].setMobile(2);
-//                        } else if (cellInfo instanceof CellInfoLte) {
-//                            itemStrengthMobileArr[i].setLevel(((CellInfoLte) cellInfo).getCellSignalStrength().getLevel());
-//                            itemStrengthMobileArr[i].setMobile(3);
-//                        } else if (cellInfo instanceof CellInfoWcdma) {
-//                            itemStrengthMobileArr[i].setLevel(((CellInfoWcdma) cellInfo).getCellSignalStrength().getLevel());
-//                            itemStrengthMobileArr[i].setMobile(4);
-//                        } else if (Build.VERSION.SDK_INT >= 29) {
-//                            if (cellInfo instanceof CellInfoTdscdma) {
-//                                itemStrengthMobileArr[i].setLevel(((CellInfoTdscdma) cellInfo).getCellSignalStrength().getLevel());
-//                                itemStrengthMobileArr[i].setMobile(5);
-//                            } else if (cellInfo instanceof CellInfoNr) {
-//                                itemStrengthMobileArr[i].setLevel(((CellInfoNr) cellInfo).getCellSignalStrength().getLevel());
-//                                itemStrengthMobileArr[i].setMobile(6);
-//                            }
-//                        }
-//                        i++;
-//                        if (i >= 2) {
-//                            break;
-//                        }
-//                    }
-//                }
-//            } catch (Exception unused) {
-//            }
-//        }
-//        return itemStrengthMobileArr;
-//    }
-
     public static boolean checkSystemWriteSettingEndAction(Context context) {
         boolean checkSystemWriteSetting = checkSystemWriteSetting(context);
         if (!checkSystemWriteSetting && Build.VERSION.SDK_INT >= 23) {

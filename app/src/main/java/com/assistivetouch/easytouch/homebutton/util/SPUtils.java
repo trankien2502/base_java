@@ -2,7 +2,13 @@ package com.assistivetouch.easytouch.homebutton.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
 
+import com.assistivetouch.easytouch.homebutton.ui.screenshot.ItemVideoConfig;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.assistivetouch.easytouch.homebutton.R;
@@ -121,6 +127,95 @@ public class SPUtils {
         context.getSharedPreferences(SHARED_PREFS_NAME, 0).edit().remove(KEY_LIST).apply();
     }
 
+    public static void vibration(Context context) {
+        Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        if (vibrator != null) {
+            if (Build.VERSION.SDK_INT >= 26) {
+                vibrator.vibrate(VibrationEffect.createOneShot(100L, -1));
+            } else {
+                vibrator.vibrate(100L);
+            }
+        }
+    }
+    public static int[] getSizes(Context context) {
+        return new int[]{context.getSharedPreferences(SHARED_PREFS_NAME, 0).getInt("width_s", 0), context.getSharedPreferences(SHARED_PREFS_NAME, 0).getInt("height_s", 0), context.getSharedPreferences(SHARED_PREFS_NAME, 0).getInt("noti_s", 0)};
+    }
+    public static void putSize(Context context, int[] iArr) {
+        if (iArr[0] != 0) {
+            context.getSharedPreferences(SHARED_PREFS_NAME, 0).edit().putInt("width_s", iArr[0]).apply();
+        }
+        if (iArr[1] != 0) {
+            context.getSharedPreferences(SHARED_PREFS_NAME, 0).edit().putInt("height_s", iArr[1]).apply();
+        }
+        if (iArr[2] != 0) {
+            context.getSharedPreferences(SHARED_PREFS_NAME, 0).edit().putInt("noti_s", iArr[2]).apply();
+        }
+    }
+    public static void putRecord(Context context, ItemVideoConfig itemVideoConfig) {
+        context.getSharedPreferences(SHARED_PREFS_NAME, 0).edit().putString("record", new Gson().toJson(itemVideoConfig)).apply();
+    }
+
+    public static ItemVideoConfig getRecord(Context context) {
+        String string = context.getSharedPreferences(SHARED_PREFS_NAME, 0).getString("record", "");
+        if (!string.isEmpty()) {
+            return (ItemVideoConfig) new Gson().fromJson(string, new TypeToken<ItemVideoConfig>() {
+            }.getType());
+        }
+        return new ItemVideoConfig(false, 1, true, 2500000, 30, 1, 16000, 160000);
+    }
+    public static Bitmap cropBitmapTransparency(Bitmap bitmap) {
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+        int i = 0;
+        int i2 = 0;
+        while (true) {
+            if (i2 >= bitmap.getWidth()) {
+                i2 = 0;
+                break;
+            } else if (Color.alpha(bitmap.getPixel(i2, bitmap.getHeight() / 2)) > 0) {
+                break;
+            } else {
+                i2++;
+            }
+        }
+        int i3 = 0;
+        while (true) {
+            if (i3 >= bitmap.getHeight()) {
+                break;
+            } else if (Color.alpha(bitmap.getPixel(bitmap.getWidth() / 2, i3)) > 0) {
+                i = i3;
+                break;
+            } else {
+                i3++;
+            }
+        }
+        int width2 = bitmap.getWidth() - 1;
+        while (true) {
+            if (width2 < 0) {
+                break;
+            } else if (Color.alpha(bitmap.getPixel(width2, bitmap.getHeight() / 2)) > 0) {
+                width = width2;
+                break;
+            } else {
+                width2--;
+            }
+        }
+        int height2 = bitmap.getHeight() - 1;
+        while (true) {
+            if (height2 < 0) {
+                break;
+            } else if (Color.alpha(bitmap.getPixel(bitmap.getWidth() / 2, height2)) > 0) {
+                height = height2;
+                break;
+            } else {
+                height2--;
+            }
+        }
+        if (width < i2 || height < i) {
+            return null;
+        }
+        return Bitmap.createBitmap(bitmap, i2, i, width - i2, height - i);
+    }
     public static ArrayList<ItemFunctionIcon> getListDefaultMenu1() {
         ArrayList<ItemFunctionIcon> listDefault = new ArrayList<>();
         listDefault.add(new ItemFunctionIcon(0, ItemFunctionIcon.ACTION_FAVOURITE, R.drawable.ic_function_favourite, R.drawable.ic_action_favourite, R.string.favourite));
