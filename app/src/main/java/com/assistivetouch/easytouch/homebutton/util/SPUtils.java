@@ -4,15 +4,19 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
 
+import androidx.core.content.ContextCompat;
+
+import com.assistivetouch.easytouch.homebutton.item.app.ItemAppInfo;
 import com.assistivetouch.easytouch.homebutton.ui.screenshot.ItemVideoConfig;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.assistivetouch.easytouch.homebutton.R;
-import com.assistivetouch.easytouch.homebutton.item.ItemFunctionIcon;
+import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIcon;
 
 import java.util.ArrayList;
 import java.lang.reflect.Type;
@@ -26,6 +30,7 @@ public class SPUtils {
     public static String RATE_STAR = "RATE_STAR";
 
     public static String INTENT_SELECT_FUNCTION = "INTENT_SELECT_FUNCTION";
+    public static String INTENT_ALL_APP = "INTENT_ALL_APP";
     public static String FLOATING_ICON_SINGLE_TAP = "FLOATING_ICON_SINGLE_TAP";
     public static String FLOATING_ICON_DOUBLE_TAP = "FLOATING_ICON_DOUBLE_TAP";
     public static String FLOATING_ICON_LONG_PRESS = "FLOATING_ICON_LONG_PRESS";
@@ -35,6 +40,8 @@ public class SPUtils {
     public static String MENU_FUNCTION = "MENU_FUNCTION";
     public static String MENU_POSITION = "MENU_POSITION";
     public static String MENU_FUNCTION_2 = "MENU_FUNCTION_2";
+    public static String FAVOURITE_APP = "FAVOURITE_APP";
+    public static String FAVOURITE_POSITION = "FAVOURITE_POSITION";
 
 
     public static SharedPreferences getPref(Context context) {
@@ -126,6 +133,24 @@ public class SPUtils {
     public static void removeList(Context context, String KEY_LIST) {
         context.getSharedPreferences(SHARED_PREFS_NAME, 0).edit().remove(KEY_LIST).apply();
     }
+    public static void setListFavourite(Context context, String KEY_LIST, ArrayList<ItemAppInfo> list) {
+        String json = gson.toJson(list); // Chuyển ArrayList thành JSON
+        context.getSharedPreferences(SHARED_PREFS_NAME, 0).edit().putString(KEY_LIST, json).apply();
+    }
+
+    // Lấy ArrayList từ SharedPreferences
+    public static ArrayList<ItemAppInfo> getListFavourite(Context context, String KEY_LIST, ArrayList<ItemAppInfo> defaultList) {
+        String json = context.getSharedPreferences(SHARED_PREFS_NAME, 0).getString(KEY_LIST, null);
+        if (json == null) return defaultList; // Trả về danh sách rỗng nếu không có dữ liệu
+        Type type = new TypeToken<ArrayList<ItemAppInfo>>() {
+        }.getType();
+        return gson.fromJson(json, type);
+    }
+
+    // Xóa ArrayList khỏi SharedPreferences
+    public static void removeListFavourite(Context context, String KEY_LIST) {
+        context.getSharedPreferences(SHARED_PREFS_NAME, 0).edit().remove(KEY_LIST).apply();
+    }
 
     public static void vibration(Context context) {
         Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -215,6 +240,18 @@ public class SPUtils {
             return null;
         }
         return Bitmap.createBitmap(bitmap, i2, i, width - i2, height - i);
+    }
+    public static ArrayList<ItemAppInfo> getListDefaultFavourite(Context context) {
+        ArrayList<ItemAppInfo> listDefault = new ArrayList<>();
+        listDefault.add(new ItemAppInfo(0, null, null));
+        listDefault.add(new ItemAppInfo(1, null, null));
+        listDefault.add(new ItemAppInfo(2, null, null));
+        listDefault.add(new ItemAppInfo(3, null, null));
+        listDefault.add(new ItemAppInfo(4, null, null));
+        listDefault.add(new ItemAppInfo(5, null, null));
+        listDefault.add(new ItemAppInfo(6, null, null));
+        listDefault.add(new ItemAppInfo(7, null, null));
+        return listDefault;
     }
     public static ArrayList<ItemFunctionIcon> getListDefaultMenu1() {
         ArrayList<ItemFunctionIcon> listDefault = new ArrayList<>();

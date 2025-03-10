@@ -1,4 +1,4 @@
-package com.assistivetouch.easytouch.homebutton.item;
+package com.assistivetouch.easytouch.homebutton.item.control;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

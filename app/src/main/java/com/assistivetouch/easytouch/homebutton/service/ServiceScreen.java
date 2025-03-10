@@ -2,6 +2,7 @@ package com.assistivetouch.easytouch.homebutton.service;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
+import android.Manifest;
 import android.accessibilityservice.AccessibilityService;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
@@ -12,15 +13,29 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
+import android.hardware.display.DisplayManager;
+import android.hardware.display.VirtualDisplay;
 import android.media.AudioManager;
+import android.media.Image;
+import android.media.ImageReader;
+import android.media.MediaRecorder;
+import android.media.projection.MediaProjection;
+import android.media.projection.MediaProjectionManager;
+import android.net.Uri;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.DisplayMetrics;
@@ -35,7 +50,9 @@ import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
 import com.assistivetouch.easytouch.homebutton.R;
@@ -46,22 +63,40 @@ import com.assistivetouch.easytouch.homebutton.databinding.PopupSelectActionBind
 import com.assistivetouch.easytouch.homebutton.databinding.PopupSelectFavouriteBinding;
 import com.assistivetouch.easytouch.homebutton.databinding.PopupTimeOutBinding;
 import com.assistivetouch.easytouch.homebutton.databinding.PopupVolumeOptionBinding;
-import com.assistivetouch.easytouch.homebutton.item.ItemFunctionIcon;
+import com.assistivetouch.easytouch.homebutton.item.app.ItemAppInfo;
+import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIcon;
+import com.assistivetouch.easytouch.homebutton.ui.home.AllAppActivity;
+import com.assistivetouch.easytouch.homebutton.ui.home.ScreenRecorderActivity;
+import com.assistivetouch.easytouch.homebutton.ui.home.ScreenshotActivity;
+import com.assistivetouch.easytouch.homebutton.ui.screenshot.RecorderManager;
+import com.assistivetouch.easytouch.homebutton.ui.screenshot.ScreenshotManager;
+import com.assistivetouch.easytouch.homebutton.ui.screenshot.ScreenshotResult;
+import com.assistivetouch.easytouch.homebutton.ui.setting.SettingActivity;
 import com.assistivetouch.easytouch.homebutton.ui.splash.SplashActivity;
 import com.assistivetouch.easytouch.homebutton.util.CheckUtils;
 import com.assistivetouch.easytouch.homebutton.util.FlashlightProvider;
+import com.assistivetouch.easytouch.homebutton.util.ImageUtils;
+import com.assistivetouch.easytouch.homebutton.util.PermissionManager;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 import com.assistivetouch.easytouch.homebutton.util.SystemUtil;
 
+import java.io.File;
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 public class ServiceScreen extends Service {
 
+    private static final int REQUEST_CODE_STORAGE_PERMISSION = 101;
     @SuppressLint("StaticFieldLeak")
     public static ServiceScreen instance;
     private WindowManager windowManager;
+    String filePath;
     ArrayList<ItemFunctionIcon> listMenu1 = new ArrayList<>();
     ArrayList<ItemFunctionIcon> listMenu2 = new ArrayList<>();
+    ArrayList<ItemAppInfo> listFavourite = new ArrayList<>();
     ArrayList<ItemFunctionIcon> listFunctionCustomMenu = new ArrayList<>();
     ArrayList<ItemFunctionIcon> listFunctionFloatingIcon = new ArrayList<>();
     FlashlightProvider flashlightProvider;
@@ -80,6 +115,9 @@ public class ServiceScreen extends Service {
     private WindowManager.LayoutParams params;
     private int screenWidth;
     private int screenHeight;
+
+    private int screenDensity;
+
     private Handler handler;
     private boolean isMoving = false;
     private boolean isPress = false;
@@ -88,8 +126,18 @@ public class ServiceScreen extends Service {
     private boolean isLongPress = false;
     int countDouble = 0;
     private boolean isShowMenu1 = true;
+    public RecorderManager recorderManager;
+    ScreenshotManager screenshotManager;
+    private static final int REQUEST_CODE = 1000;
+    private MediaProjectionManager mediaProjectionManager;
+    public MediaProjection mediaProjection;
+    private VirtualDisplay virtualDisplay;
+    private MediaRecorder mediaRecorder;
 
+    private boolean isRecord = false;
+    private boolean isLockRotation = false;
     private boolean isFlashlightOn = false;
+    private Uri mUri = null;
 
 
     @Override
@@ -154,6 +202,12 @@ public class ServiceScreen extends Service {
                 isFlashlightOn = z;
             }
         });
+        recorderManager = new RecorderManager(this, new ScreenshotResult() {
+            @Override
+            public void onImageResult(Uri uri, boolean z) {
+
+            }
+        });
         listFunctionCustomMenu = SPUtils.getListCustomMenu();
         listFunctionFloatingIcon = SPUtils.getListFloatingIcon();
         handler = new Handler(Looper.getMainLooper());
@@ -165,12 +219,16 @@ public class ServiceScreen extends Service {
             Rect bounds = windowMetrics.getBounds();
             screenWidth = bounds.width();
             screenHeight = bounds.height();
+            screenDensity = getResources().getDisplayMetrics().densityDpi;
+
         } else {
             DisplayMetrics displayMetrics = new DisplayMetrics();
             windowManager.getDefaultDisplay().getMetrics(displayMetrics);
             screenWidth = displayMetrics.widthPixels;
             screenHeight = displayMetrics.heightPixels;
+            screenDensity = displayMetrics.densityDpi;
         }
+        SPUtils.putSize(this, new int[]{screenWidth, screenHeight, 0});
         // Khởi tạo WindowManager
         // Tạo LayoutParams cho View nổi
         params = new WindowManager.LayoutParams(
@@ -289,6 +347,7 @@ public class ServiceScreen extends Service {
         super.onDestroy();
         if (floatingView != null) windowManager.removeView(floatingView);
         instance = null;
+        stopRecording();
     }
 
     @SuppressLint({"RestrictedApi", "ObjectAnimatorBinding"})
@@ -393,6 +452,34 @@ public class ServiceScreen extends Service {
             menuBinding.llAction7.setStrokeWidth(0);
             menuBinding.backgroundMenu.setBgColorLight(SPUtils.getInt(this, SPUtils.MENU_BACKGROUND_COLOR, R.color.color_default));
             listMenu1 = SPUtils.getList(this, SPUtils.MENU_FUNCTION_1, SPUtils.getListDefaultMenu1());
+            for (ItemFunctionIcon icon : listMenu1) {
+                if (icon.getActionNumber() == ItemFunctionIcon.ACTION_SCREEN_RECORDER) {
+                    if (isRecord) {
+                        icon.setIconShow(R.drawable.ic_action_recorder_on);
+                        icon.setText(R.string.finish);
+                    } else {
+                        icon.setIconShow(R.drawable.ic_action_video_recorder);
+                        icon.setText(R.string.screen_recorder);
+                    }
+                }
+                if (icon.getActionNumber() == ItemFunctionIcon.ACTION_FLASHLIGHT) {
+                    if (!isFlashlightOn) {
+                        icon.setIconShow(R.drawable.ic_action_flashlight);
+                    } else {
+                        icon.setIconShow(R.drawable.ic_action_flashlight_on);
+                    }
+                }
+                if (icon.getActionNumber() == ItemFunctionIcon.ACTION_LOCK_ROTATION) {
+                    if (isLockRotation) {
+                        icon.setIconShow(R.drawable.ic_action_unlock_rotation);
+                        icon.setText(R.string.unlock_rotation);
+                    } else {
+                        icon.setIconShow(R.drawable.ic_action_lock_rotation);
+                        icon.setText(R.string.lock_rotation);
+                    }
+
+                }
+            }
             if (listMenu1 != null && !listMenu1.isEmpty()) {
                 Log.e("menu_check", "menu2 start restore");
                 menuBinding.imgAction1.setImageResource(listMenu1.get(0).getIconShow());
@@ -494,6 +581,35 @@ public class ServiceScreen extends Service {
             menu2Binding.llAction7.setStrokeWidth(0);
             menu2Binding.backgroundMenu.setBgColorLight(SPUtils.getInt(this, SPUtils.MENU_BACKGROUND_COLOR, R.color.color_default));
             listMenu2 = SPUtils.getList(this, SPUtils.MENU_FUNCTION_2, SPUtils.getListDefaultMenu2());
+            for (ItemFunctionIcon icon : listMenu2) {
+                if (icon.getActionNumber() == ItemFunctionIcon.ACTION_SCREEN_RECORDER) {
+                    if (isRecord) {
+                        icon.setIconShow(R.drawable.ic_action_recorder_on);
+                        icon.setText(R.string.finish);
+                    } else {
+                        icon.setIconShow(R.drawable.ic_action_video_recorder);
+                        icon.setText(R.string.screen_recorder);
+                    }
+
+                }
+                if (icon.getActionNumber() == ItemFunctionIcon.ACTION_FLASHLIGHT) {
+                    if (!isFlashlightOn) {
+                        icon.setIconShow(R.drawable.ic_action_flashlight);
+                    } else {
+                        icon.setIconShow(R.drawable.ic_action_flashlight_on);
+                    }
+                }
+                if (icon.getActionNumber() == ItemFunctionIcon.ACTION_LOCK_ROTATION) {
+                    if (isLockRotation) {
+                        icon.setIconShow(R.drawable.ic_action_unlock_rotation);
+                        icon.setText(R.string.unlock_rotation);
+                    } else {
+                        icon.setIconShow(R.drawable.ic_action_lock_rotation);
+                        icon.setText(R.string.lock_rotation);
+                    }
+
+                }
+            }
             if (listMenu2 != null && !listMenu2.isEmpty()) {
                 Log.e("menu_check", "menu2 start restore");
                 menu2Binding.imgAction1.setImageResource(listMenu2.get(0).getIconShow());
@@ -582,9 +698,19 @@ public class ServiceScreen extends Service {
                 Log.d("action_check", "action: record video");
                 hidePopup();
                 hidePopup2();
+                if (isRecord) {
+                    stopRecording();
+                } else {
+                    Intent intentVideo = new Intent(this, ScreenRecorderActivity.class);
+                    intentVideo.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intentVideo);
+                }
                 break;
             case ItemFunctionIcon.ACTION_BLUETOOTH:
                 Log.d("action_check", "action: bluetooth");
+                Intent intentBluetooth = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
+                intentBluetooth.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intentBluetooth);
                 hidePopup();
                 hidePopup2();
                 break;
@@ -609,27 +735,16 @@ public class ServiceScreen extends Service {
                 if (this.flashlightProvider.isOn()) {
                     this.flashlightProvider.turnFlashlightOff();
                     view.setImageResource(R.drawable.ic_action_flashlight);
-                    icon.setIconShow(R.drawable.ic_action_flashlight);
                 } else {
                     this.flashlightProvider.turnFlashlightOn();
                     view.setImageResource(R.drawable.ic_action_flashlight_on);
-                    icon.setIconShow(R.drawable.ic_action_flashlight_on);
                 }
-                for (ItemFunctionIcon icon1 : listMenu1) {
-                    if (icon1.getActionNumber() == ItemFunctionIcon.ACTION_FLASHLIGHT)
-                        icon1.setIconShow(icon.getIconShow());
-                }
-                for (ItemFunctionIcon icon1 : listMenu2) {
-                    if (icon1.getActionNumber() == ItemFunctionIcon.ACTION_FLASHLIGHT)
-                        icon1.setIconShow(icon.getIconShow());
-                }
-                SPUtils.setList(this, SPUtils.MENU_FUNCTION_1, listMenu1);
-                SPUtils.setList(this, SPUtils.MENU_FUNCTION_2, listMenu2);
                 break;
             case ItemFunctionIcon.ACTION_VOLUME_OPTION:
                 Log.d("action_check", "action: volume");
                 hidePopup();
                 hidePopup2();
+                showVolumeOption();
                 break;
             case ItemFunctionIcon.ACTION_TIME_OUT:
                 Log.d("action_check", "action: time out");
@@ -639,24 +754,9 @@ public class ServiceScreen extends Service {
                 break;
             case ItemFunctionIcon.ACTION_ALL_APP:
                 Log.d("action_check", "action: all app");
-                if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
-                    Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    Log.e("check_service", "off");
-                } else {
-                    if (ServiceControl.instance != null) {
-                        ServiceControl.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_ACCESSIBILITY_ALL_APPS);
-                        Log.e("check_service", "on");
-                    } else {
-                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        Log.e("check_service", "null");
-                    }
-                }
                 hidePopup();
                 hidePopup2();
+                showAllApp();
                 break;
             case ItemFunctionIcon.ACTION_HOME:
                 Log.d("action_check", "action: home");
@@ -703,22 +803,29 @@ public class ServiceScreen extends Service {
                 Log.d("action_check", "action: screenshot");
                 hidePopup();
                 hidePopup2();
-                if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
-                    Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    Log.e("check_service", "off");
-                } else {
-                    if (ServiceControl.instance != null) {
-                        ServiceControl.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT);
-                        Log.e("check_service", "on");
-                    } else {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
                         Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
                         intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
-                        Log.e("check_service", "null");
+                        Log.e("check_service", "off");
+                    } else {
+                        if (ServiceControl.instance != null) {
+                            ServiceControl.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT);
+                            Log.e("check_service", "on");
+                        } else {
+                            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            Log.e("check_service", "null");
+                        }
                     }
+                } else {
+                    Intent intentVideo = new Intent(this, ScreenshotActivity.class);
+                    intentVideo.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intentVideo);
                 }
+
 
                 break;
             case ItemFunctionIcon.ACTION_NOTIFICATION:
@@ -746,6 +853,7 @@ public class ServiceScreen extends Service {
                 Log.d("action_check", "action: favourite");
                 hidePopup();
                 hidePopup2();
+                showFavourite();
                 break;
             case ItemFunctionIcon.ACTION_RECENT:
                 if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
@@ -790,23 +898,12 @@ public class ServiceScreen extends Service {
                 hidePopup2();
                 break;
             case ItemFunctionIcon.ACTION_SETTINGS:
-                Log.d("action_check", "action: all app");
-                if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
-                    Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    Log.e("check_service", "off");
-                } else {
-                    if (ServiceControl.instance != null) {
-                        ServiceControl.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_QUICK_SETTINGS);
-                        Log.e("check_service", "on");
-                    } else {
-                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        Log.e("check_service", "null");
-                    }
-                }
+                Intent intentSetting = new Intent();
+                intentSetting.setFlags(FLAG_ACTIVITY_NEW_TASK);
+                intentSetting.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intentSetting.setData(uri);
+                startActivity(intentSetting);
                 hidePopup();
                 hidePopup2();
                 Log.d("action_check", "action: setting");
@@ -894,33 +991,20 @@ public class ServiceScreen extends Service {
                     ContentResolver contentResolver = getContentResolver();
                     int rotation = Settings.System.getInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION);
                     if (rotation == 1) {
+                        isLockRotation = true;
                         Settings.System.putInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0); //khoa xoay man hinh
                         view.setImageResource(R.drawable.ic_action_unlock_rotation);
                         textView.setText(R.string.unlock_rotation);
                         icon.setIconShow(R.drawable.ic_action_unlock_rotation);
                         icon.setText(R.string.unlock_rotation);
                     } else {
+                        isLockRotation = false;
                         Settings.System.putInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, 1);
                         view.setImageResource(R.drawable.ic_action_lock_rotation);
                         textView.setText(R.string.lock_rotation);
                         icon.setIconShow(R.drawable.ic_action_lock_rotation);
                         icon.setText(R.string.lock_rotation);
                     }
-                    for (ItemFunctionIcon icon1 : listMenu1) {
-                        if (icon1.getActionNumber() == ItemFunctionIcon.ACTION_LOCK_ROTATION){
-                            icon1.setIconShow(icon.getIconShow());
-                            icon1.setText(icon.getText());
-                        }
-
-                    }
-                    for (ItemFunctionIcon icon1 : listMenu2) {
-                        if (icon1.getActionNumber() == ItemFunctionIcon.ACTION_LOCK_ROTATION){
-                            icon1.setIconShow(icon.getIconShow());
-                            icon1.setText(icon.getText());
-                        }
-                    }
-                    SPUtils.setList(this, SPUtils.MENU_FUNCTION_1, listMenu1);
-                    SPUtils.setList(this, SPUtils.MENU_FUNCTION_2, listMenu2);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -943,6 +1027,7 @@ public class ServiceScreen extends Service {
                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                     PixelFormat.TRANSLUCENT
             );
+            brightnessBinding.backgroundMenu.setBgColorLight(SPUtils.getInt(this, SPUtils.MENU_BACKGROUND_COLOR, R.color.color_default));
             popupParams.gravity = Gravity.CENTER;
             int bright = 0, mode = 0;
             try {
@@ -1029,6 +1114,314 @@ public class ServiceScreen extends Service {
     }
 
     @SuppressLint("ClickableViewAccessibility")
+    public void showFavourite() {
+        if (favouriteBinding == null) {
+            favouriteBinding = PopupSelectFavouriteBinding.inflate(LayoutInflater.from(this));
+        }
+        if (favouriteBinding.getRoot().getParent() == null) {  // Check if it's already added
+            WindowManager.LayoutParams popupParams = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                            WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT
+            );
+            popupParams.gravity = Gravity.CENTER;
+            favouriteBinding.backgroundMenu.setBgColorLight(SPUtils.getInt(this, SPUtils.MENU_BACKGROUND_COLOR, R.color.color_default));
+            listFavourite = SPUtils.getListFavourite(this, SPUtils.FAVOURITE_APP, SPUtils.getListDefaultFavourite(this));
+            if (listFavourite != null && !listFavourite.isEmpty()) {
+                Log.e("menu_check", "menu2 start restore");
+                if (listFavourite.get(0).getPackageName() != null) {
+                    favouriteBinding.llAction1.setStrokeWidth(0);
+                    setImageApp(favouriteBinding.imgAction1, listFavourite.get(0));
+                }
+                if (listFavourite.get(1).getPackageName() != null) {
+                    favouriteBinding.llAction2.setStrokeWidth(0);
+                    setImageApp(favouriteBinding.imgAction2, listFavourite.get(1));
+                }
+                if (listFavourite.get(2).getPackageName() != null) {
+                    favouriteBinding.llAction3.setStrokeWidth(0);
+                    setImageApp(favouriteBinding.imgAction3, listFavourite.get(2));
+                }
+                if (listFavourite.get(3).getPackageName() != null) {
+                    favouriteBinding.llAction4.setStrokeWidth(0);
+                    setImageApp(favouriteBinding.imgAction4, listFavourite.get(3));
+                }
+                if (listFavourite.get(4).getPackageName() != null) {
+                    favouriteBinding.llAction6.setStrokeWidth(0);
+                    setImageApp(favouriteBinding.imgAction6, listFavourite.get(4));
+                }
+                if (listFavourite.get(5).getPackageName() != null) {
+                    favouriteBinding.llAction7.setStrokeWidth(0);
+                    setImageApp(favouriteBinding.imgAction7, listFavourite.get(5));
+                }
+                if (listFavourite.get(6).getPackageName() != null) {
+                    favouriteBinding.llAction8.setStrokeWidth(0);
+                    setImageApp(favouriteBinding.imgAction8, listFavourite.get(6));
+                }
+                if (listFavourite.get(7).getPackageName() != null) {
+                    favouriteBinding.llAction9.setStrokeWidth(0);
+                    setImageApp(favouriteBinding.imgAction9, listFavourite.get(7));
+                }
+                favouriteBinding.llAction1.setOnClickListener(v -> {
+                    checkApp(listFavourite.get(0), 0);
+                });
+                favouriteBinding.llAction2.setOnClickListener(v -> {
+                    checkApp(listFavourite.get(1), 1);
+                });
+                favouriteBinding.llAction3.setOnClickListener(v -> {
+                    checkApp(listFavourite.get(2), 2);
+                });
+                favouriteBinding.llAction4.setOnClickListener(v -> {
+                    checkApp(listFavourite.get(3), 3);
+                });
+                favouriteBinding.llAction5.setOnClickListener(v -> {
+                    hideDialog(true);
+                });
+                favouriteBinding.llAction6.setOnClickListener(v -> {
+                    checkApp(listFavourite.get(4), 4);
+                });
+                favouriteBinding.llAction7.setOnClickListener(v -> {
+                    checkApp(listFavourite.get(5), 5);
+                });
+                favouriteBinding.llAction8.setOnClickListener(v -> {
+                    checkApp(listFavourite.get(6), 6);
+                });
+                favouriteBinding.llAction9.setOnClickListener(v -> {
+                    checkApp(listFavourite.get(7), 7);
+                });
+            }
+
+            overlayViewDialog = new View(this);
+            WindowManager.LayoutParams overlayParams = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                            WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT
+            );
+            overlayParams.gravity = Gravity.CENTER;
+            overlayViewDialog.setLayoutParams(overlayParams);
+            overlayViewDialog.setOnTouchListener((v, event) -> {
+                hideDialog(false);
+                return true;
+            });
+
+            try {
+                windowManager.addView(overlayViewDialog, overlayParams);
+                windowManager.addView(favouriteBinding.getRoot(), popupParams);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            hideDialog(false);
+        }
+    }
+
+    private void setImageApp(ImageView imageView, ItemAppInfo appInfo) {
+        try {
+            Drawable drawable = getPackageManager().getApplicationIcon(appInfo.getPackageName());
+            imageView.setImageDrawable(drawable);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void checkApp(ItemAppInfo appInfo, int favouritePosition) {
+        if (appInfo != null) {
+            if (appInfo.getPackageName() == null) {
+                Intent intentAllApp = new Intent(this, AllAppActivity.class);
+                intentAllApp.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                intentAllApp.putExtra(SPUtils.INTENT_ALL_APP, false);
+                intentAllApp.putExtra(SPUtils.FAVOURITE_POSITION, favouritePosition);
+                startActivity(intentAllApp);
+            } else {
+                Intent launchIntent = getPackageManager().getLaunchIntentForPackage(appInfo.getPackageName());
+                if (launchIntent != null) {
+                    startActivity(launchIntent);
+                }
+            }
+            hideDialog(false);
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void showVolumeOption() {
+        if (volumeOptionBinding == null) {
+            volumeOptionBinding = PopupVolumeOptionBinding.inflate(LayoutInflater.from(this));
+        }
+        if (volumeOptionBinding.getRoot().getParent() == null) {  // Check if it's already added
+            WindowManager.LayoutParams popupParams = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                            WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT
+            );
+            popupParams.gravity = Gravity.CENTER;
+            volumeOptionBinding.backgroundMenu.setBgColorLight(SPUtils.getInt(this, SPUtils.MENU_BACKGROUND_COLOR, R.color.color_default));
+            AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            int maxAlarmVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_ALARM);
+            int maxMediaVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+            int maxCallVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);
+            int maxRingVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+            int maxNotificationVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION);
+            volumeOptionBinding.sbAlarm.setMax(maxAlarmVolume);
+            volumeOptionBinding.sbMedia.setMax(maxMediaVolume);
+            volumeOptionBinding.sbNotification.setMax(maxNotificationVolume);
+            volumeOptionBinding.sbRing.setMax(maxRingVolume);
+            volumeOptionBinding.sbVoiceCall.setMax(maxCallVolume);
+            int alarmVolume = audioManager.getStreamVolume(AudioManager.STREAM_ALARM);
+            int mediaVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+            int callVolume = audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
+            int ringVolume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
+            int notificationVolume = audioManager.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
+            volumeOptionBinding.sbAlarm.setProgress(alarmVolume);
+            volumeOptionBinding.sbMedia.setProgress(mediaVolume);
+            volumeOptionBinding.sbNotification.setProgress(notificationVolume);
+            volumeOptionBinding.sbRing.setProgress(ringVolume);
+            volumeOptionBinding.sbVoiceCall.setProgress(callVolume);
+            volumeOptionBinding.ivBack.setOnClickListener(v -> {
+                hideDialog(true);
+            });
+
+            volumeOptionBinding.sbAlarm.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if (!fromUser) return;
+                    audioManager.setStreamVolume(AudioManager.STREAM_ALARM, progress, 0);
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+
+
+            });
+            volumeOptionBinding.sbVoiceCall.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if (!fromUser) return;
+                    audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, progress, 0);
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+
+
+            });
+            volumeOptionBinding.sbRing.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if (!fromUser) return;
+                    audioManager.setStreamVolume(AudioManager.STREAM_RING, progress, 0);
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+
+
+            });
+            volumeOptionBinding.sbNotification.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if (!fromUser) return;
+                    audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, progress, 0);
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+
+
+            });
+            volumeOptionBinding.sbMedia.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if (!fromUser) return;
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
+                }
+
+
+            });
+            overlayViewDialog = new View(this);
+            WindowManager.LayoutParams overlayParams = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                            WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT
+            );
+            overlayParams.gravity = Gravity.CENTER;
+            overlayViewDialog.setLayoutParams(overlayParams);
+
+            overlayViewDialog.setOnTouchListener((v, event) -> {
+                hideDialog(false);
+                return true;
+            });
+
+            try {
+                windowManager.addView(overlayViewDialog, overlayParams);
+                windowManager.addView(volumeOptionBinding.getRoot(), popupParams);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            hideDialog(false);
+        }
+    }
+
+    private void showAllApp() {
+        Intent intentAllApp = new Intent(this, AllAppActivity.class);
+        intentAllApp.addFlags(FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intentAllApp);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
     private void showDialogTimeOut() {
         if (timeOutBinding == null) {
             timeOutBinding = PopupTimeOutBinding.inflate(LayoutInflater.from(this));
@@ -1044,6 +1437,7 @@ public class ServiceScreen extends Service {
                     PixelFormat.TRANSLUCENT
             );
             popupParams.gravity = Gravity.CENTER;
+            timeOutBinding.backgroundMenu.setBgColorLight(SPUtils.getInt(this, SPUtils.MENU_BACKGROUND_COLOR, R.color.color_default));
             try {
                 ContentResolver contentResolver = getContentResolver();
                 int timeoutMillis = Settings.System.getInt(contentResolver, Settings.System.SCREEN_OFF_TIMEOUT);
@@ -1231,4 +1625,128 @@ public class ServiceScreen extends Service {
             e.printStackTrace();
         }
     }
+
+    private void makePath() {
+        String str = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator + "RecordScreen";
+        if (!"mounted".equals(Environment.getExternalStorageState())) {
+            Toast.makeText(this, (int) R.string.error_sd, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        File file = new File(str);
+        if (file.exists() ? true : file.mkdir()) {
+            filePath = str + File.separator + "video_" + System.currentTimeMillis() + ".mp4";
+            return;
+        }
+        Toast.makeText(this, (int) R.string.error_record, Toast.LENGTH_SHORT).show();
+    }
+
+    public void setupMediaRecorder() {
+        mediaRecorder = new MediaRecorder();
+        if (PermissionManager.checkMicrophonePermission(this)) {
+            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        }
+        mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        mediaRecorder.setVideoSize(screenWidth, screenHeight);
+        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+        if (PermissionManager.checkMicrophonePermission(this)) {
+            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        }
+        mediaRecorder.setVideoFrameRate(60);     // 60 FPS
+        mediaRecorder.setVideoEncodingBitRate(8 * 1000 * 1000);
+        if (Build.VERSION.SDK_INT < 29) {
+            makePath();
+        } else {
+            String str = "video_" + System.currentTimeMillis();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("relative_path", Environment.DIRECTORY_MOVIES + File.separator + "RecordScreen");
+            contentValues.put("title", str);
+            contentValues.put("_display_name", str);
+            contentValues.put("mime_type", "video/mp4");
+            contentValues.put(MediaStore.Video.Media.DATE_ADDED, System.currentTimeMillis() / 1000);
+            contentValues.put(MediaStore.Video.Media.DATE_TAKEN, System.currentTimeMillis());
+            this.mUri = getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues);
+        }
+        if (this.mUri == null) {
+            this.mediaRecorder.setOutputFile(this.filePath);
+        } else {
+            try {
+                FileDescriptor fileDescriptor = getContentResolver().openFileDescriptor(this.mUri, "rw").getFileDescriptor();
+                if (fileDescriptor != null) {
+                    this.mediaRecorder.setOutputFile(fileDescriptor);
+                } else {
+                    makePath();
+                    this.mediaRecorder.setOutputFile(this.filePath);
+                }
+            } catch (Exception unused2) {
+                makePath();
+                this.mediaRecorder.setOutputFile(this.filePath);
+            }
+        }
+
+
+        try {
+            mediaRecorder.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("check_record", "error: ", e);
+        }
+    }
+
+    public void startRecording() {
+        isRecord = true;
+        virtualDisplay = mediaProjection.createVirtualDisplay("ScreenRecorder",
+                screenWidth, screenHeight, screenDensity,
+                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+                mediaRecorder.getSurface(), null, null);
+
+        mediaRecorder.start();
+    }
+
+    public void stopRecording() {
+        isRecord = false;
+        if (mediaRecorder != null) {
+            Toast.makeText(this, "done", Toast.LENGTH_SHORT).show();
+            mediaRecorder.stop();
+            mediaRecorder.reset();
+        }
+        if (virtualDisplay != null) {
+            virtualDisplay.release();
+        }
+        if (mediaProjection != null) {
+            mediaProjection.stop();
+        }
+    }
+
+    public void takeScreenshot(MediaProjection mediaProjection) {
+        ImageReader imageReader = ImageReader.newInstance(screenWidth, screenHeight, PixelFormat.RGBA_8888, 1);
+        VirtualDisplay virtualDisplay = mediaProjection.createVirtualDisplay(
+                "ScreenCapture", screenWidth, screenHeight, screenDensity,
+                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, imageReader.getSurface(), null, null);
+
+        imageReader.setOnImageAvailableListener(reader -> {
+            Image image = reader.acquireLatestImage();
+            if (image != null) {
+                // Lưu ảnh
+                saveImage(image);
+                image.close();
+                mediaProjection.stop();
+            }
+        }, null);
+    }
+
+    private void saveImage(Image image) {
+        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+        Bitmap bitmap = Bitmap.createBitmap(image.getWidth(), image.getHeight(), Bitmap.Config.ARGB_8888);
+        bitmap.copyPixelsFromBuffer(buffer);
+
+        // Lưu vào file
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ImageUtils.saveImageToMediaStore(this, bitmap);
+        } else {
+            ImageUtils.saveBitmap(this, bitmap);
+        }
+    }
+
+
 }

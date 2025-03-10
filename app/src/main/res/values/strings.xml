@@ -131,5 +131,8 @@
     <string name="error_sd">Failed to get External Storage</string>
     <string name="error_record">Failed to create Recordings directory</string>
     <string name="unlock_rotation">Unlock rotation</string>
+    <string name="finish">Finish</string>
+    <string name="download_success">Capture screenshot successfully!</string>
+    <string name="download_failed">Capture screenshot failed!</string>
 
 </resources>

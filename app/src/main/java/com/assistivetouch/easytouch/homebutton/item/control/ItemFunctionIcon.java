@@ -1,4 +1,4 @@
-package com.assistivetouch.easytouch.homebutton.item;
+package com.assistivetouch.easytouch.homebutton.item.control;
 
 public class ItemFunctionIcon {
     public static final int ACTION_SCREEN_RECORDER = 1;

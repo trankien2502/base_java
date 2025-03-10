@@ -7,7 +7,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.assistivetouch.easytouch.homebutton.base.BaseActivity;
 import com.assistivetouch.easytouch.homebutton.databinding.ActivityFloatingIconBinding;
-import com.assistivetouch.easytouch.homebutton.item.ItemFunctionIcon;
+import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIcon;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 
 import java.util.ArrayList;

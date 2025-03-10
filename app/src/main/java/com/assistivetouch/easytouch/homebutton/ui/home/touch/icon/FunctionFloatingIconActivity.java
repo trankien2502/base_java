@@ -2,9 +2,9 @@ package com.assistivetouch.easytouch.homebutton.ui.home.touch.icon;
 
 import com.assistivetouch.easytouch.homebutton.base.BaseActivity;
 import com.assistivetouch.easytouch.homebutton.databinding.ActivityFunctionFloatingIconBinding;
-import com.assistivetouch.easytouch.homebutton.item.ItemFunctionCallBack;
-import com.assistivetouch.easytouch.homebutton.item.ItemFunctionIcon;
-import com.assistivetouch.easytouch.homebutton.item.ItemFunctionIconAdapter;
+import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionCallBack;
+import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIcon;
+import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIconAdapter;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 
 import java.util.ArrayList;

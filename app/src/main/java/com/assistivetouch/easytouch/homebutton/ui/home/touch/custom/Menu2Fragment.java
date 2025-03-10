@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import com.assistivetouch.easytouch.homebutton.R;
 import com.assistivetouch.easytouch.homebutton.base.BaseFragment;
 import com.assistivetouch.easytouch.homebutton.databinding.PopupSelectAction2Binding;
-import com.assistivetouch.easytouch.homebutton.item.ItemFunctionIcon;
+import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIcon;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 
 import java.util.ArrayList;
