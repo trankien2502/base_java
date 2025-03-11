@@ -42,6 +42,8 @@ public class SPUtils {
     public static String MENU_FUNCTION_2 = "MENU_FUNCTION_2";
     public static String FAVOURITE_APP = "FAVOURITE_APP";
     public static String FAVOURITE_POSITION = "FAVOURITE_POSITION";
+    public static String VOLUME_ON = "VOLUME_ON";
+    public static String TOUCH_ON = "TOUCH_ON";
 
 
     public static SharedPreferences getPref(Context context) {

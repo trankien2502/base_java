@@ -134,5 +134,21 @@
     <string name="finish">Finish</string>
     <string name="download_success">Capture screenshot successfully!</string>
     <string name="download_failed">Capture screenshot failed!</string>
+    <string name="volume_options">Volume options</string>
+    <string name="ringtone">Ringtone</string>
+    <string name="call">Call</string>
+    <string name="hide_button">Hide button</string>
+    <string name="button_color">Button color</string>
+    <string name="button_background_color">Button background color</string>
+    <string name="button_transparency">Button Transparency</string>
+    <string name="button_size">Button Size</string>
+    <string name="phone_edge_distance">Phone edge distance</string>
+    <string name="fix_button_position">Fix button position</string>
+    <string name="choose_action">Choose Action</string>
+    <string name="mute_media_volume">Mute media volume</string>
+    <string name="open_notification">Open notification</string>
+    <string name="screen_off">Screen off</string>
+    <string name="enable_assistive_volume_success">Enable Assistive volume successfully!</string>
+    <string name="disable_assistive_volume_success">Disable Assistive volume successfully!</string>
 
 </resources>

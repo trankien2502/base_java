@@ -5,6 +5,7 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 import android.Manifest;
 import android.accessibilityservice.AccessibilityService;
 import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.ActivityManager;
 import android.app.Notification;
@@ -57,12 +58,14 @@ import androidx.core.app.NotificationCompat;
 
 import com.assistivetouch.easytouch.homebutton.R;
 import com.assistivetouch.easytouch.homebutton.databinding.LayoutFloatsingButtonBinding;
+import com.assistivetouch.easytouch.homebutton.databinding.LayoutVolumeButtonBinding;
 import com.assistivetouch.easytouch.homebutton.databinding.PopupBrightnessBinding;
 import com.assistivetouch.easytouch.homebutton.databinding.PopupSelectAction2Binding;
 import com.assistivetouch.easytouch.homebutton.databinding.PopupSelectActionBinding;
 import com.assistivetouch.easytouch.homebutton.databinding.PopupSelectFavouriteBinding;
 import com.assistivetouch.easytouch.homebutton.databinding.PopupTimeOutBinding;
 import com.assistivetouch.easytouch.homebutton.databinding.PopupVolumeOptionBinding;
+import com.assistivetouch.easytouch.homebutton.databinding.PopupVoulumeConfig3Binding;
 import com.assistivetouch.easytouch.homebutton.item.app.ItemAppInfo;
 import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIcon;
 import com.assistivetouch.easytouch.homebutton.ui.home.AllAppActivity;
@@ -87,6 +90,9 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+import kotlin.Unit;
+import kotlin.jvm.functions.Function1;
+
 public class ServiceScreen extends Service {
 
     private static final int REQUEST_CODE_STORAGE_PERMISSION = 101;
@@ -104,7 +110,8 @@ public class ServiceScreen extends Service {
     private View overlayView;
     private View overlayView2, overlayViewDialog;
     private View overlayViewPermission;
-    private View floatingView;
+    public View floatingView;
+    public View volumeView;
     private PopupSelectActionBinding menuBinding;
     private PopupSelectAction2Binding menu2Binding;
     private PopupTimeOutBinding timeOutBinding;
@@ -112,7 +119,10 @@ public class ServiceScreen extends Service {
     private PopupVolumeOptionBinding volumeOptionBinding;
     private PopupSelectFavouriteBinding favouriteBinding;
     private LayoutFloatsingButtonBinding floatingBinding;
+    private LayoutVolumeButtonBinding volumeBinding;
+    private PopupVoulumeConfig3Binding menuVolume3Binding;
     private WindowManager.LayoutParams params;
+    private WindowManager.LayoutParams paramsVolume;
     private int screenWidth;
     private int screenHeight;
 
@@ -191,6 +201,7 @@ public class ServiceScreen extends Service {
         return false;
     }
 
+
     @SuppressLint("ClickableViewAccessibility")
     @Override
     public void onCreate() {
@@ -231,6 +242,11 @@ public class ServiceScreen extends Service {
         SPUtils.putSize(this, new int[]{screenWidth, screenHeight, 0});
         // Khởi tạo WindowManager
         // Tạo LayoutParams cho View nổi
+        if (SPUtils.getBoolean(this, SPUtils.VOLUME_ON, false)) addVolumeIcon();
+        if (SPUtils.getBoolean(this, SPUtils.TOUCH_ON, false)) addFloatingIcon();
+    }
+
+    public void addFloatingIcon() {
         params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.WRAP_CONTENT,
@@ -247,7 +263,6 @@ public class ServiceScreen extends Service {
         // Tạo View nổi từ layout
         floatingBinding = LayoutFloatsingButtonBinding.inflate(LayoutInflater.from(this));
         floatingView = floatingBinding.getRoot();
-        menuBinding = PopupSelectActionBinding.inflate(LayoutInflater.from(this));
         // Xử lý sự kiện chạm kéo
         floatingView.setOnTouchListener(new View.OnTouchListener() {
             private int initialX, initialY;
@@ -322,6 +337,114 @@ public class ServiceScreen extends Service {
         setIconStyle(SPUtils.getInt(this, SPUtils.ICON_STYLE, R.drawable.icon_1));
     }
 
+    public void updateFloatingViewSize(View view, WindowManager windowManager, WindowManager.LayoutParams params, int newWidthDp, int newHeightDp) {
+        // Chuyển đổi từ dp sang px
+        int newWidthPx = dpToPx(60) + dpToPx(newWidthDp);
+        int newHeightPx = dpToPx(60) + dpToPx(newHeightDp);
+
+        // Cập nhật kích thước
+        params.width = newWidthPx;
+        params.height = newHeightPx;
+
+        // Cập nhật lại View nổi
+        windowManager.updateViewLayout(view, params);
+    }
+
+    public int dpToPx(float dp) {
+        return (int) (dp * getResources().getDisplayMetrics().density);
+    }
+
+    public void removeFloatingView() {
+        if (floatingView != null) {
+            windowManager.removeView(floatingView);
+            floatingView = null;
+            SPUtils.setBoolean(this, SPUtils.TOUCH_ON, false);
+        }
+    }
+
+    public void addVolumeIcon() {
+        volumeBinding = LayoutVolumeButtonBinding.inflate(LayoutInflater.from(this));
+        volumeView = volumeBinding.getRoot();
+        paramsVolume = new WindowManager.LayoutParams(
+                dpToPx(60f),
+                dpToPx(60f),
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                        WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE|WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                PixelFormat.TRANSLUCENT
+        );
+
+        paramsVolume.gravity = Gravity.START| Gravity.TOP ;
+        paramsVolume.x = -dpToPx(30f);  // Dịch sang trái một nửa
+        paramsVolume.y = 200;  // Điều chỉnh vị trí theo chiều dọc
+        volumeView.setOnTouchListener(new View.OnTouchListener() {
+            private int initialX, initialY;
+            private float initialTouchX, initialTouchY;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        initialX = paramsVolume.x;
+                        initialY = paramsVolume.y;
+                        initialTouchX = event.getRawX();
+                        initialTouchY = event.getRawY();
+                        touchStartTime = System.currentTimeMillis();
+                        Log.e("check_service", "touchStartTime: " + touchStartTime);
+                        isMoving = false;
+                        isLongPress = false;
+                        isPress = true;
+                        v.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (isPress) {
+                                    if (!isMoving && (System.currentTimeMillis() - touchStartTime) > 500) {
+                                        isLongPress = true;
+                                        onVolumeIconLongPress();
+                                        handler.removeCallbacks(this);
+                                    } else {
+                                        handler.postDelayed(this, 100);
+                                    }
+                                } else {
+                                    handler.removeCallbacks(this);
+                                }
+                            }
+                        });
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        if (Math.abs((event.getRawX() - initialTouchX)) > 25f || Math.abs((event.getRawY() - initialTouchY)) > 25f) {
+                            isMoving = true;
+                            Log.e("check_service", "move");
+                        }
+                        paramsVolume.x = initialX + (int) (event.getRawX() - initialTouchX);
+                        paramsVolume.y = initialY + (int) (event.getRawY() - initialTouchY);
+                        windowManager.updateViewLayout(volumeView, paramsVolume);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+                        isPress = false;
+                        countDouble++;
+                        if (!isMoving && !isLongPress) {
+                            onVolumeIconClick();
+                        }
+                        updatePositionAfterMoveVolume(volumeView, windowManager, paramsVolume);
+                        return true;
+                }
+                return false;
+            }
+        });
+        // Thêm View nổi vào màn hình
+        windowManager.addView(volumeView, paramsVolume);
+    }
+
+    public void removeVolumeView() {
+        if (volumeView != null) {
+            windowManager.removeView(volumeView);
+            volumeView = null;
+            SPUtils.setBoolean(this, SPUtils.VOLUME_ON, false);
+        }
+    }
+
     private void onFloatingIconClick() {
         ItemFunctionIcon icon = SPUtils.getObject(this, SPUtils.FLOATING_ICON_SINGLE_TAP, listFunctionFloatingIcon.get(3));
         onActionDone(icon, null, null, false);
@@ -342,88 +465,86 @@ public class ServiceScreen extends Service {
         setIconStyle(R.drawable.icon_8);
     }
 
+    private void onVolumeIconClick() {
+        showPopupVolume(1);
+        Log.e("check_service", "click");
+    }
+
+    private void onVolumeIconLongPress() {
+        Log.e("check_service", "longpress");
+        ItemFunctionIcon icon = SPUtils.getObject(this, SPUtils.FLOATING_ICON_LONG_PRESS, listFunctionFloatingIcon.get(0));
+        onActionDone(icon, null, null, false);
+        setIconStyle(R.drawable.icon_8);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (floatingView != null) windowManager.removeView(floatingView);
+        removeFloatingView();
+        removeVolumeView();
         instance = null;
         stopRecording();
     }
 
-    @SuppressLint({"RestrictedApi", "ObjectAnimatorBinding"})
-    private void smoothMoveView(
-            View view,
-            WindowManager windowManager,
-            WindowManager.LayoutParams params,
-            int targetX,
-            int targetY
-    ) {
-        ObjectAnimator animatorX = ObjectAnimator.ofInt(params, "x", params.x, targetX);
-        animatorX.setDuration(300);
-        animatorX.setInterpolator(new DecelerateInterpolator());
-        animatorX.addUpdateListener(animation -> {
-            params.x = (int) animation.getAnimatedValue();
-            windowManager.updateViewLayout(view, params);
-        });
+    @SuppressLint("ClickableViewAccessibility")
+    private void showPopupVolume(int i) {
+        if (menuVolume3Binding == null) {
+            menuVolume3Binding = PopupVoulumeConfig3Binding.inflate(LayoutInflater.from(this));
+        }
+        if (menuVolume3Binding.getRoot().getParent() == null) {  // Check if it's already added
+            WindowManager.LayoutParams popupParams = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.WRAP_CONTENT,
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                            WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT
+            );
+            popupParams.gravity = Gravity.CENTER;
+            menuVolume3Binding.sbBrightness.setOnProgressChangeListener(new Function1<Integer, Unit>() {
+                @Override
+                public Unit invoke(Integer integer) {
+                    updateFloatingViewSize(volumeView, windowManager, paramsVolume, integer, integer);
+                    Log.e("check_sb","progress: "+integer);
+                    return null;
+                }
+            });
+            menuVolume3Binding.sbDark.setOnProgressChangeListener(new Function1<Integer, Unit>() {
+                @Override
+                public Unit invoke(Integer integer) {
+                    if (volumeView!=null) volumeView.setAlpha((float) integer /255);
+                    Log.e("check_sb","progress: "+integer);
+                    return null;
+                }
+            });
+            overlayView = new View(this);
+            WindowManager.LayoutParams overlayParams = new WindowManager.LayoutParams(
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    WindowManager.LayoutParams.MATCH_PARENT,
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                            WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                    PixelFormat.TRANSLUCENT
+            );
+            overlayParams.gravity = Gravity.CENTER;
+            overlayView.setLayoutParams(overlayParams);
 
-        ObjectAnimator animatorY = ObjectAnimator.ofInt(params, "y", params.y, targetY);
-        animatorY.setDuration(300);
-        animatorY.setInterpolator(new DecelerateInterpolator());
-        animatorY.addUpdateListener(animation -> {
-            params.y = (int) animation.getAnimatedValue();
-            windowManager.updateViewLayout(view, params);
-        });
+            overlayView.setOnTouchListener((v, event) -> {
+                hidePopup();
+                return true;
+            });
 
-        animatorX.start();
-        animatorY.start();
-    }
-
-    public void updatePositionAfterMove(
-            View view,
-            WindowManager windowManager,
-            WindowManager.LayoutParams params
-    ) {
-        int centerX = params.x + (view.getWidth() / 2);
-        int centerY = params.y + (view.getHeight() / 2);
-
-        int targetX;
-        int targetY;
-
-        if (centerX > screenWidth / 2 && centerY > screenHeight / 2) { // Bottom-right quadrant
-            if (screenHeight - centerY <= screenWidth - centerX) {
-                targetX = params.x;
-                targetY = screenHeight - 4;
-            } else {
-                targetX = screenWidth - 4;
-                targetY = params.y;
-            }
-        } else if (centerX > screenWidth / 2 && centerY <= screenHeight / 2) {
-            if (screenWidth - centerX <= centerY) {
-                targetX = screenWidth - 4;
-                targetY = params.y;
-            } else {
-                targetX = params.x;
-                targetY = 4;
-            }
-        } else if (centerX <= screenWidth / 2 && centerY > screenHeight / 2) {
-            if (screenHeight - centerY <= centerX) {
-                targetX = params.x;
-                targetY = screenHeight - 4;
-            } else {
-                targetX = 4;
-                targetY = params.y;
+            try {
+                windowManager.addView(overlayView, overlayParams);
+                windowManager.addView(menuVolume3Binding.getRoot(), popupParams);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         } else {
-            if (centerX <= centerY) {
-                targetX = 4;
-                targetY = params.y;
-            } else {
-                targetX = params.x;
-                targetY = 0;
-            }
+            hidePopup();
         }
-
-        smoothMoveView(view, windowManager, params, targetX, targetY);
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -546,6 +667,9 @@ public class ServiceScreen extends Service {
         try {
             if (menuBinding != null && menuBinding.getRoot().getParent() != null) {
                 windowManager.removeView(menuBinding.getRoot());
+            }
+            if (menuVolume3Binding != null && menuVolume3Binding.getRoot().getParent() != null) {
+                windowManager.removeView(menuVolume3Binding.getRoot());
             }
             if (overlayView != null && overlayView.getParent() != null) {
                 windowManager.removeView(overlayView);
@@ -1748,5 +1872,154 @@ public class ServiceScreen extends Service {
         }
     }
 
+    @SuppressLint({"RestrictedApi", "ObjectAnimatorBinding"})
+    private void smoothMoveView(
+            View view,
+            WindowManager windowManager,
+            WindowManager.LayoutParams params,
+            int targetX,
+            int targetY
+    ) {
+        ValueAnimator animatorX = ValueAnimator.ofInt(params.x, targetX);
+        animatorX.setDuration(300);
+        animatorX.setInterpolator(new DecelerateInterpolator());
+        animatorX.addUpdateListener(animation -> {
+            params.x = (int) animation.getAnimatedValue();
+            windowManager.updateViewLayout(view, params);
+        });
+
+        ValueAnimator animatorY = ValueAnimator.ofInt(params.y, targetY);
+        animatorY.setDuration(300);
+        animatorY.setInterpolator(new DecelerateInterpolator());
+        animatorY.addUpdateListener(animation -> {
+            params.y = (int) animation.getAnimatedValue();
+            windowManager.updateViewLayout(view, params);
+        });
+
+        animatorX.start();
+        animatorY.start();
+    }
+
+    public void updatePositionAfterMove(
+            View view,
+            WindowManager windowManager,
+            WindowManager.LayoutParams params
+    ) {
+        int centerX = params.x + (view.getWidth() / 2);
+        int centerY = params.y + (view.getHeight() / 2);
+
+        int targetX;
+        int targetY;
+
+        if (centerX > screenWidth / 2 && centerY > screenHeight / 2) { // Bottom-right quadrant
+            if (screenHeight - centerY <= screenWidth - centerX) {
+                targetX = params.x;
+                targetY = screenHeight - 4;
+            } else {
+                targetX = screenWidth - 4;
+                targetY = params.y;
+            }
+        } else if (centerX > screenWidth / 2 && centerY <= screenHeight / 2) {
+            if (screenWidth - centerX <= centerY) {
+                targetX = screenWidth - 4;
+                targetY = params.y;
+            } else {
+                targetX = params.x;
+                targetY = 4;
+            }
+        } else if (centerX <= screenWidth / 2 && centerY > screenHeight / 2) {
+            if (screenHeight - centerY <= centerX) {
+                targetX = params.x;
+                targetY = screenHeight - 4;
+            } else {
+                targetX = 4;
+                targetY = params.y;
+            }
+        } else {
+            if (centerX <= centerY) {
+                targetX = 4;
+                targetY = params.y;
+            } else {
+                targetX = params.x;
+                targetY = 0;
+            }
+        }
+
+        smoothMoveView(view, windowManager, params, targetX, targetY);
+    }
+
+    @SuppressLint({"RestrictedApi", "ObjectAnimatorBinding"})
+    private void smoothMoveViewVolume(
+            View view,
+            WindowManager windowManager,
+            WindowManager.LayoutParams paramsVolume,
+            int targetX,
+            int targetY
+    ) {
+        ValueAnimator animatorX = ValueAnimator.ofInt(paramsVolume.x, targetX);
+        animatorX.setDuration(300);
+        animatorX.setInterpolator(new DecelerateInterpolator());
+        animatorX.addUpdateListener(animation -> {
+            paramsVolume.x = (int) animation.getAnimatedValue();
+            windowManager.updateViewLayout(view, paramsVolume);
+        });
+
+        ValueAnimator animatorY = ValueAnimator.ofInt(paramsVolume.y, targetY);
+        animatorY.setDuration(300);
+        animatorY.setInterpolator(new DecelerateInterpolator());
+        animatorY.addUpdateListener(animation -> {
+            paramsVolume.y = (int) animation.getAnimatedValue();
+            windowManager.updateViewLayout(view, paramsVolume);
+        });
+
+        animatorX.start();
+        animatorY.start();
+    }
+
+    public void updatePositionAfterMoveVolume(
+            View view,
+            WindowManager windowManager,
+            WindowManager.LayoutParams paramsVolume
+    ) {
+        int centerX = paramsVolume.x + (view.getWidth() / 2);
+        int centerY = paramsVolume.y + (view.getHeight() / 2);
+
+        int targetX;
+        int targetY;
+        if (centerX > screenWidth / 2 && centerY > screenHeight / 2) { // Bottom-right quadrant
+            if (screenHeight - centerY <= screenWidth - centerX) {
+                targetX = paramsVolume.x;
+                targetY = screenHeight - 4;
+            } else {
+                targetX = screenWidth - 4;
+                targetY = paramsVolume.y;
+            }
+        } else if (centerX > screenWidth / 2 && centerY <= screenHeight / 2) { //top-right
+            if (screenWidth - centerX <= centerY) {
+                targetX = screenWidth - 4;
+                targetY = paramsVolume.y;
+            } else {
+                targetX = paramsVolume.x;
+                targetY = 4;
+            }
+        } else if (centerX <= screenWidth / 2 && centerY > screenHeight / 2) { //bottom-lèt
+            if (screenHeight - centerY <= centerX) {
+                targetX = paramsVolume.x;
+                targetY = screenHeight - 4;
+            } else {
+                targetX = 4;
+                targetY = paramsVolume.y;
+            }
+        } else { //top-le
+            if (centerX <= centerY) {
+                targetX = 4;
+                targetY = paramsVolume.y;
+            } else {
+                targetX = paramsVolume.x;
+                targetY = 0;
+            }
+        }
+        smoothMoveViewVolume(view, windowManager, paramsVolume, targetX, targetY);
+    }
 
 }

@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
+        android:id="@+id/backgroundMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="300dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:bgColorLight="#bf000000"
+        app:cornerRadius="28dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_max="398dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="3dp">
+
+            <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                android:id="@+id/sbMedia"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:vsb_bar_background="#EFF1F3"
+                app:vsb_bar_corner_radius="48dp"
+                app:vsb_bar_progress_gradient_end="#3392FF"
+                app:vsb_bar_progress_gradient_start="#3392FF"
+                app:vsb_bar_width="48dp"
+                app:vsb_click_to_set_progress="true"
+                app:vsb_progress="50"
+                app:vsb_show_thumb="true"
+                app:vsb_thumb_container_corner_radius="5dp"
+                app:vsb_use_thumb_to_set_progress="true" />
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginBottom="18dp"
+                android:src="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="3dp">
+
+            <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                android:id="@+id/sbRing"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:vsb_bar_background="#EFF1F3"
+                app:vsb_bar_corner_radius="48dp"
+                app:vsb_bar_progress_gradient_end="#3392FF"
+                app:vsb_bar_progress_gradient_start="#3392FF"
+                app:vsb_bar_width="48dp"
+                app:vsb_click_to_set_progress="true"
+                app:vsb_progress="50"
+                app:vsb_show_thumb="true"
+                app:vsb_thumb_container_corner_radius="5dp"
+                app:vsb_use_thumb_to_set_progress="true" />
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginBottom="18dp"
+                android:src="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="3dp">
+
+            <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                android:id="@+id/sbNotification"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:vsb_bar_background="#EFF1F3"
+                app:vsb_bar_corner_radius="48dp"
+                app:vsb_bar_progress_gradient_end="#3392FF"
+                app:vsb_bar_progress_gradient_start="#3392FF"
+                app:vsb_bar_width="48dp"
+                app:vsb_click_to_set_progress="true"
+                app:vsb_progress="50"
+                app:vsb_show_thumb="true"
+                app:vsb_thumb_container_corner_radius="5dp"
+                app:vsb_use_thumb_to_set_progress="true" />
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginBottom="18dp"
+                android:src="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="3dp">
+
+            <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                android:id="@+id/sbCall"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:vsb_bar_background="#EFF1F3"
+                app:vsb_bar_corner_radius="48dp"
+                app:vsb_bar_progress_gradient_end="#3392FF"
+                app:vsb_bar_progress_gradient_start="#3392FF"
+                app:vsb_bar_width="48dp"
+                app:vsb_click_to_set_progress="true"
+                app:vsb_progress="50"
+                app:vsb_show_thumb="true"
+                app:vsb_thumb_container_corner_radius="5dp"
+                app:vsb_use_thumb_to_set_progress="true" />
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginBottom="18dp"
+                android:src="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="3dp">
+
+            <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                android:id="@+id/sbBrightness"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:vsb_bar_background="#EFF1F3"
+                app:vsb_bar_corner_radius="48dp"
+                app:vsb_bar_progress_gradient_end="#3392FF"
+                app:vsb_bar_progress_gradient_start="#3392FF"
+                app:vsb_bar_width="48dp"
+                app:vsb_click_to_set_progress="true"
+                app:vsb_progress="50"
+
+                app:vsb_show_thumb="true"
+                app:vsb_thumb_container_corner_radius="5dp"
+                app:vsb_use_thumb_to_set_progress="true" />
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginBottom="18dp"
+                android:src="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="3dp">
+
+            <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                android:id="@+id/sbDark"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:vsb_bar_background="#EFF1F3"
+                app:vsb_bar_corner_radius="48dp"
+                app:vsb_bar_progress_gradient_end="#3392FF"
+                app:vsb_bar_progress_gradient_start="#3392FF"
+                app:vsb_bar_width="48dp"
+                app:vsb_max_value="255"
+                app:vsb_click_to_set_progress="true"
+                app:vsb_progress="50"
+                app:vsb_show_thumb="true"
+                app:vsb_thumb_container_corner_radius="5dp"
+                app:vsb_use_thumb_to_set_progress="true" />
+
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginBottom="18dp"
+                android:src="@color/black"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
