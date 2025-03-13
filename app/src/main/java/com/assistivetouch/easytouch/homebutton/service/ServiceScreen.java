@@ -18,6 +18,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ServiceInfo;
 import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
@@ -56,6 +57,7 @@ import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 
+import com.assistivetouch.easytouch.homebutton.MyApplication;
 import com.assistivetouch.easytouch.homebutton.R;
 import com.assistivetouch.easytouch.homebutton.databinding.LayoutFloatsingButtonBinding;
 import com.assistivetouch.easytouch.homebutton.databinding.LayoutVolumeButtonBinding;
@@ -148,6 +150,7 @@ public class ServiceScreen extends Service {
     private boolean isLockRotation = false;
     private boolean isFlashlightOn = false;
     private Uri mUri = null;
+    private int edgeDistance = 0;
 
 
     @Override
@@ -155,12 +158,22 @@ public class ServiceScreen extends Service {
         return null;
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        if (intent != null && intent.hasExtra("IS_ADD_TOUCH_ICON")) {
+            boolean value = intent.getBooleanExtra("IS_ADD_TOUCH_ICON", false);
+            if (value) addFloatingIcon();
+            else addVolumeIcon();
+        }
+        return START_STICKY;
+    }
+
     private Notification createNotification() {
         SystemUtil.setLocale(this);
         Intent intent = new Intent(this, SplashActivity.class);
         intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "your_channel_id")
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MyApplication.CHANNEL_ID)
                 .setContentTitle(getString(R.string.asisitive_touch_s_service_is_running))
                 .setContentText(getString(R.string.tap_to_open))
                 .setSmallIcon(R.drawable.img_logo)
@@ -170,19 +183,6 @@ public class ServiceScreen extends Service {
         return builder.build();
     }
 
-    private void createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel serviceChannel = new NotificationChannel(
-                    "your_channel_id",
-                    "Foreground Service Assistive Touch",
-                    NotificationManager.IMPORTANCE_LOW
-            );
-            NotificationManager manager = getSystemService(NotificationManager.class);
-            if (manager != null) {
-                manager.createNotificationChannel(serviceChannel);
-            }
-        }
-    }
 
     public void setIconStyle(int iconStyle) {
         if (floatingView != null) windowManager.removeView(floatingView);
@@ -222,8 +222,12 @@ public class ServiceScreen extends Service {
         listFunctionCustomMenu = SPUtils.getListCustomMenu();
         listFunctionFloatingIcon = SPUtils.getListFloatingIcon();
         handler = new Handler(Looper.getMainLooper());
-        createNotificationChannel();
         startForeground(1, createNotification());
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+//            startForeground(1, createNotification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
+//        } else {
+//            startForeground(1, createNotification());
+//        }
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             WindowMetrics windowMetrics = windowManager.getCurrentWindowMetrics();
@@ -242,8 +246,8 @@ public class ServiceScreen extends Service {
         SPUtils.putSize(this, new int[]{screenWidth, screenHeight, 0});
         // Khởi tạo WindowManager
         // Tạo LayoutParams cho View nổi
-        if (SPUtils.getBoolean(this, SPUtils.VOLUME_ON, false)) addVolumeIcon();
-        if (SPUtils.getBoolean(this, SPUtils.TOUCH_ON, false)) addFloatingIcon();
+//        if (SPUtils.getBoolean(this, SPUtils.VOLUME_ON, false)) addVolumeIcon();
+//        if (SPUtils.getBoolean(this, SPUtils.TOUCH_ON, false)) addFloatingIcon();
     }
 
     public void addFloatingIcon() {
@@ -337,17 +341,18 @@ public class ServiceScreen extends Service {
         setIconStyle(SPUtils.getInt(this, SPUtils.ICON_STYLE, R.drawable.icon_1));
     }
 
-    public void updateFloatingViewSize(View view, WindowManager windowManager, WindowManager.LayoutParams params, int newWidthDp, int newHeightDp) {
+    public void updateFloatingViewSize(int newSizeDp) {
         // Chuyển đổi từ dp sang px
-        int newWidthPx = dpToPx(60) + dpToPx(newWidthDp);
-        int newHeightPx = dpToPx(60) + dpToPx(newHeightDp);
+        int newWidthPx = dpToPx(60) + dpToPx(newSizeDp);
+        int newHeightPx = dpToPx(60) + dpToPx(newSizeDp);
 
         // Cập nhật kích thước
-        params.width = newWidthPx;
-        params.height = newHeightPx;
+        paramsVolume.width = newWidthPx;
+        paramsVolume.height = newHeightPx;
 
         // Cập nhật lại View nổi
-        windowManager.updateViewLayout(view, params);
+        windowManager.updateViewLayout(volumeView, paramsVolume);
+        updatePositionAfterMoveVolume(volumeView, windowManager, paramsVolume);
     }
 
     public int dpToPx(float dp) {
@@ -358,7 +363,6 @@ public class ServiceScreen extends Service {
         if (floatingView != null) {
             windowManager.removeView(floatingView);
             floatingView = null;
-            SPUtils.setBoolean(this, SPUtils.TOUCH_ON, false);
         }
     }
 
@@ -371,13 +375,13 @@ public class ServiceScreen extends Service {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
                         WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
                         WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE|WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                 PixelFormat.TRANSLUCENT
         );
 
-        paramsVolume.gravity = Gravity.START| Gravity.TOP ;
-        paramsVolume.x = -dpToPx(30f);  // Dịch sang trái một nửa
-        paramsVolume.y = 200;  // Điều chỉnh vị trí theo chiều dọc
+        paramsVolume.gravity = Gravity.START | Gravity.TOP;
+        paramsVolume.x = screenWidth - dpToPx(60f);
+        paramsVolume.y = 100;  // Điều chỉnh vị trí theo chiều dọc
         volumeView.setOnTouchListener(new View.OnTouchListener() {
             private int initialX, initialY;
             private float initialTouchX, initialTouchY;
@@ -441,7 +445,6 @@ public class ServiceScreen extends Service {
         if (volumeView != null) {
             windowManager.removeView(volumeView);
             volumeView = null;
-            SPUtils.setBoolean(this, SPUtils.VOLUME_ON, false);
         }
     }
 
@@ -455,14 +458,12 @@ public class ServiceScreen extends Service {
         Log.e("check_service", "2click");
         ItemFunctionIcon icon = SPUtils.getObject(this, SPUtils.FLOATING_ICON_DOUBLE_TAP, listFunctionFloatingIcon.get(0));
         onActionDone(icon, null, null, false);
-        setIconStyle(R.drawable.icon_12);
     }
 
     private void onFloatingIconLongPress() {
         Log.e("check_service", "longpress");
         ItemFunctionIcon icon = SPUtils.getObject(this, SPUtils.FLOATING_ICON_LONG_PRESS, listFunctionFloatingIcon.get(0));
         onActionDone(icon, null, null, false);
-        setIconStyle(R.drawable.icon_8);
     }
 
     private void onVolumeIconClick() {
@@ -483,7 +484,6 @@ public class ServiceScreen extends Service {
         removeFloatingView();
         removeVolumeView();
         instance = null;
-        stopRecording();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -505,16 +505,16 @@ public class ServiceScreen extends Service {
             menuVolume3Binding.sbBrightness.setOnProgressChangeListener(new Function1<Integer, Unit>() {
                 @Override
                 public Unit invoke(Integer integer) {
-                    updateFloatingViewSize(volumeView, windowManager, paramsVolume, integer, integer);
-                    Log.e("check_sb","progress: "+integer);
+                    updateFloatingViewSize(integer);
+                    Log.e("check_sb", "progress: " + integer);
                     return null;
                 }
             });
             menuVolume3Binding.sbDark.setOnProgressChangeListener(new Function1<Integer, Unit>() {
                 @Override
                 public Unit invoke(Integer integer) {
-                    if (volumeView!=null) volumeView.setAlpha((float) integer /255);
-                    Log.e("check_sb","progress: "+integer);
+                    if (volumeView != null) volumeView.setAlpha((float) integer / 255);
+                    Log.e("check_sb", "progress: " + integer);
                     return null;
                 }
             });
@@ -575,10 +575,18 @@ public class ServiceScreen extends Service {
             listMenu1 = SPUtils.getList(this, SPUtils.MENU_FUNCTION_1, SPUtils.getListDefaultMenu1());
             for (ItemFunctionIcon icon : listMenu1) {
                 if (icon.getActionNumber() == ItemFunctionIcon.ACTION_SCREEN_RECORDER) {
-                    if (isRecord) {
-                        icon.setIconShow(R.drawable.ic_action_recorder_on);
-                        icon.setText(R.string.finish);
+                    if (ScreenRecordService.instance != null) {
+                        if (ScreenRecordService.instance.isRecord) {
+                            Log.e("check_record", "instance isrecord");
+                            icon.setIconShow(R.drawable.ic_action_recorder_on);
+                            icon.setText(R.string.finish);
+                        } else {
+                            Log.e("check_record", "instance !isrecord");
+                            icon.setIconShow(R.drawable.ic_action_video_recorder);
+                            icon.setText(R.string.screen_recorder);
+                        }
                     } else {
+                        Log.e("check_record", "instance !isrecord");
                         icon.setIconShow(R.drawable.ic_action_video_recorder);
                         icon.setText(R.string.screen_recorder);
                     }
@@ -707,10 +715,18 @@ public class ServiceScreen extends Service {
             listMenu2 = SPUtils.getList(this, SPUtils.MENU_FUNCTION_2, SPUtils.getListDefaultMenu2());
             for (ItemFunctionIcon icon : listMenu2) {
                 if (icon.getActionNumber() == ItemFunctionIcon.ACTION_SCREEN_RECORDER) {
-                    if (isRecord) {
-                        icon.setIconShow(R.drawable.ic_action_recorder_on);
-                        icon.setText(R.string.finish);
+                    if (ScreenRecordService.instance != null) {
+                        if (ScreenRecordService.instance.isRecord) {
+                            Log.e("check_record", "instance isrecord");
+                            icon.setIconShow(R.drawable.ic_action_recorder_on);
+                            icon.setText(R.string.finish);
+                        } else {
+                            Log.e("check_record", "instance !isrecord");
+                            icon.setIconShow(R.drawable.ic_action_video_recorder);
+                            icon.setText(R.string.screen_recorder);
+                        }
                     } else {
+                        Log.e("check_record", "instance !isrecord");
                         icon.setIconShow(R.drawable.ic_action_video_recorder);
                         icon.setText(R.string.screen_recorder);
                     }
@@ -822,13 +838,24 @@ public class ServiceScreen extends Service {
                 Log.d("action_check", "action: record video");
                 hidePopup();
                 hidePopup2();
-                if (isRecord) {
-                    stopRecording();
+                if (ScreenRecordService.instance != null) {
+                    if (ScreenRecordService.instance.isRecord) {
+                        Log.e("check_record", "instance isrecord");
+                        Intent serviceIntent = new Intent(this, ScreenRecordService.class);
+                        stopService(serviceIntent); // Bắt đầu Service
+                    } else {
+                        Log.e("check_record", "instance !isrecord");
+                        Intent intentVideo = new Intent(this, ScreenRecorderActivity.class);
+                        intentVideo.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intentVideo);
+                    }
                 } else {
+                    Log.e("check_record", "instance !isrecord");
                     Intent intentVideo = new Intent(this, ScreenRecorderActivity.class);
                     intentVideo.addFlags(FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intentVideo);
                 }
+
                 break;
             case ItemFunctionIcon.ACTION_BLUETOOTH:
                 Log.d("action_check", "action: bluetooth");
@@ -858,10 +885,11 @@ public class ServiceScreen extends Service {
                 Log.d("action_check", "action: flashlight");
                 if (this.flashlightProvider.isOn()) {
                     this.flashlightProvider.turnFlashlightOff();
-                    view.setImageResource(R.drawable.ic_action_flashlight);
+                    if (isChangeView) view.setImageResource(R.drawable.ic_action_flashlight);
                 } else {
                     this.flashlightProvider.turnFlashlightOn();
-                    view.setImageResource(R.drawable.ic_action_flashlight_on);
+                    if (isChangeView) view.setImageResource(R.drawable.ic_action_flashlight_on);
+
                 }
                 break;
             case ItemFunctionIcon.ACTION_VOLUME_OPTION:
@@ -1133,6 +1161,100 @@ public class ServiceScreen extends Service {
                     e.printStackTrace();
                 }
                 break;
+        }
+    }
+
+    private void makePath() {
+        String str = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator + "RecordScreen";
+        if (!"mounted".equals(Environment.getExternalStorageState())) {
+            Toast.makeText(this, (int) R.string.error_sd, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        File file = new File(str);
+        if (file.exists() ? true : file.mkdir()) {
+            filePath = str + File.separator + "video_" + System.currentTimeMillis() + ".mp4";
+            return;
+        }
+        Toast.makeText(this, (int) R.string.error_record, Toast.LENGTH_SHORT).show();
+    }
+
+    public void setupMediaRecorder() {
+        mediaRecorder = new MediaRecorder();
+        if (PermissionManager.checkMicrophonePermission(this)) {
+            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+        }
+        mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
+        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
+        mediaRecorder.setVideoSize(screenWidth, screenHeight);
+        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+        if (PermissionManager.checkMicrophonePermission(this)) {
+            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        }
+        mediaRecorder.setVideoFrameRate(60);     // 60 FPS
+        mediaRecorder.setVideoEncodingBitRate(8 * 1000 * 1000);
+        if (Build.VERSION.SDK_INT < 29) {
+            makePath();
+        } else {
+            String str = "video_" + System.currentTimeMillis();
+            ContentValues contentValues = new ContentValues();
+            contentValues.put("relative_path", Environment.DIRECTORY_MOVIES + File.separator + "RecordScreen");
+            contentValues.put("title", str);
+            contentValues.put("_display_name", str);
+            contentValues.put("mime_type", "video/mp4");
+            contentValues.put(MediaStore.Video.Media.DATE_ADDED, System.currentTimeMillis() / 1000);
+            contentValues.put(MediaStore.Video.Media.DATE_TAKEN, System.currentTimeMillis());
+            this.mUri = getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues);
+        }
+        if (this.mUri == null) {
+            this.mediaRecorder.setOutputFile(this.filePath);
+        } else {
+            try {
+                FileDescriptor fileDescriptor = getContentResolver().openFileDescriptor(this.mUri, "rw").getFileDescriptor();
+                if (fileDescriptor != null) {
+                    this.mediaRecorder.setOutputFile(fileDescriptor);
+                } else {
+                    makePath();
+                    this.mediaRecorder.setOutputFile(this.filePath);
+                }
+            } catch (Exception unused2) {
+                makePath();
+                this.mediaRecorder.setOutputFile(this.filePath);
+            }
+        }
+
+
+        try {
+            mediaRecorder.prepare();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.e("check_record", "error: ", e);
+        }
+    }
+
+    public void startRecording() {
+        isRecord = true;
+        Log.e("check_record", "record!");
+        virtualDisplay = mediaProjection.createVirtualDisplay("ScreenRecorder",
+                screenWidth, screenHeight, screenDensity,
+                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
+                mediaRecorder.getSurface(), null, null);
+
+        mediaRecorder.start();
+    }
+
+    public void stopRecording() {
+        isRecord = false;
+        Log.e("check_record", "stop!");
+        if (mediaRecorder != null) {
+            Toast.makeText(this, "done", Toast.LENGTH_SHORT).show();
+            mediaRecorder.stop();
+            mediaRecorder.reset();
+        }
+        if (virtualDisplay != null) {
+            virtualDisplay.release();
+        }
+        if (mediaProjection != null) {
+            mediaProjection.stop();
         }
     }
 
@@ -1750,97 +1872,6 @@ public class ServiceScreen extends Service {
         }
     }
 
-    private void makePath() {
-        String str = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator + "RecordScreen";
-        if (!"mounted".equals(Environment.getExternalStorageState())) {
-            Toast.makeText(this, (int) R.string.error_sd, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        File file = new File(str);
-        if (file.exists() ? true : file.mkdir()) {
-            filePath = str + File.separator + "video_" + System.currentTimeMillis() + ".mp4";
-            return;
-        }
-        Toast.makeText(this, (int) R.string.error_record, Toast.LENGTH_SHORT).show();
-    }
-
-    public void setupMediaRecorder() {
-        mediaRecorder = new MediaRecorder();
-        if (PermissionManager.checkMicrophonePermission(this)) {
-            mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-        }
-        mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
-        mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mediaRecorder.setVideoSize(screenWidth, screenHeight);
-        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-        if (PermissionManager.checkMicrophonePermission(this)) {
-            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        }
-        mediaRecorder.setVideoFrameRate(60);     // 60 FPS
-        mediaRecorder.setVideoEncodingBitRate(8 * 1000 * 1000);
-        if (Build.VERSION.SDK_INT < 29) {
-            makePath();
-        } else {
-            String str = "video_" + System.currentTimeMillis();
-            ContentValues contentValues = new ContentValues();
-            contentValues.put("relative_path", Environment.DIRECTORY_MOVIES + File.separator + "RecordScreen");
-            contentValues.put("title", str);
-            contentValues.put("_display_name", str);
-            contentValues.put("mime_type", "video/mp4");
-            contentValues.put(MediaStore.Video.Media.DATE_ADDED, System.currentTimeMillis() / 1000);
-            contentValues.put(MediaStore.Video.Media.DATE_TAKEN, System.currentTimeMillis());
-            this.mUri = getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues);
-        }
-        if (this.mUri == null) {
-            this.mediaRecorder.setOutputFile(this.filePath);
-        } else {
-            try {
-                FileDescriptor fileDescriptor = getContentResolver().openFileDescriptor(this.mUri, "rw").getFileDescriptor();
-                if (fileDescriptor != null) {
-                    this.mediaRecorder.setOutputFile(fileDescriptor);
-                } else {
-                    makePath();
-                    this.mediaRecorder.setOutputFile(this.filePath);
-                }
-            } catch (Exception unused2) {
-                makePath();
-                this.mediaRecorder.setOutputFile(this.filePath);
-            }
-        }
-
-
-        try {
-            mediaRecorder.prepare();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.e("check_record", "error: ", e);
-        }
-    }
-
-    public void startRecording() {
-        isRecord = true;
-        virtualDisplay = mediaProjection.createVirtualDisplay("ScreenRecorder",
-                screenWidth, screenHeight, screenDensity,
-                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR,
-                mediaRecorder.getSurface(), null, null);
-
-        mediaRecorder.start();
-    }
-
-    public void stopRecording() {
-        isRecord = false;
-        if (mediaRecorder != null) {
-            Toast.makeText(this, "done", Toast.LENGTH_SHORT).show();
-            mediaRecorder.stop();
-            mediaRecorder.reset();
-        }
-        if (virtualDisplay != null) {
-            virtualDisplay.release();
-        }
-        if (mediaProjection != null) {
-            mediaProjection.stop();
-        }
-    }
 
     public void takeScreenshot(MediaProjection mediaProjection) {
         ImageReader imageReader = ImageReader.newInstance(screenWidth, screenHeight, PixelFormat.RGBA_8888, 1);
@@ -1981,41 +2012,40 @@ public class ServiceScreen extends Service {
             WindowManager windowManager,
             WindowManager.LayoutParams paramsVolume
     ) {
-        int centerX = paramsVolume.x + (view.getWidth() / 2);
-        int centerY = paramsVolume.y + (view.getHeight() / 2);
-
+        int centerX = paramsVolume.x + view.getWidth();
+        int centerY = paramsVolume.y + view.getHeight();
         int targetX;
         int targetY;
         if (centerX > screenWidth / 2 && centerY > screenHeight / 2) { // Bottom-right quadrant
             if (screenHeight - centerY <= screenWidth - centerX) {
-                targetX = paramsVolume.x;
-                targetY = screenHeight - 4;
+                targetX = Math.min(paramsVolume.x, screenWidth);
+                targetY = screenHeight - view.getHeight() - view.getHeight() / 2;
             } else {
-                targetX = screenWidth - 4;
-                targetY = paramsVolume.y;
+                targetX = screenWidth - view.getWidth();
+                targetY = Math.min(paramsVolume.y, screenHeight);
             }
         } else if (centerX > screenWidth / 2 && centerY <= screenHeight / 2) { //top-right
             if (screenWidth - centerX <= centerY) {
-                targetX = screenWidth - 4;
-                targetY = paramsVolume.y;
+                targetX = screenWidth - view.getWidth();
+                targetY = Math.max(paramsVolume.y, 0);
             } else {
-                targetX = paramsVolume.x;
-                targetY = 4;
+                targetX = Math.min(paramsVolume.x, screenWidth);
+                targetY = 0;
             }
         } else if (centerX <= screenWidth / 2 && centerY > screenHeight / 2) { //bottom-lèt
             if (screenHeight - centerY <= centerX) {
-                targetX = paramsVolume.x;
-                targetY = screenHeight - 4;
+                targetX = Math.max(paramsVolume.x, 0);
+                targetY = screenHeight - view.getHeight() - view.getHeight() / 2;
             } else {
-                targetX = 4;
-                targetY = paramsVolume.y;
+                targetX = 0;
+                targetY = Math.min(paramsVolume.y, screenHeight);
             }
         } else { //top-le
             if (centerX <= centerY) {
-                targetX = 4;
-                targetY = paramsVolume.y;
+                targetX = 0;
+                targetY = Math.max(paramsVolume.y, 0);
             } else {
-                targetX = paramsVolume.x;
+                targetX = Math.max(paramsVolume.x, 0);
                 targetY = 0;
             }
         }

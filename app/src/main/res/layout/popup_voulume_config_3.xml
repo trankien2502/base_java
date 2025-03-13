@@ -43,10 +43,12 @@
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginBottom="18dp"
-                android:src="@color/black"
+                android:padding="4dp"
+                android:src="@drawable/ic_media"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:tint="@color/white" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -74,10 +76,12 @@
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginBottom="18dp"
-                android:src="@color/black"
+                android:padding="4dp"
+                android:src="@drawable/ic_ring"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:tint="@color/white" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -104,10 +108,12 @@
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginBottom="18dp"
-                android:src="@color/black"
+                android:padding="4dp"
+                android:src="@drawable/ic_notification"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:tint="@color/white" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -134,10 +140,12 @@
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginBottom="18dp"
-                android:src="@color/black"
+                android:padding="4dp"
+                android:src="@drawable/ic_call"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:tint="@color/white" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -165,10 +173,12 @@
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginBottom="18dp"
-                android:src="@color/black"
+                android:padding="4dp"
+                android:src="@drawable/ic_function_bright_ness"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:tint="@color/white" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -185,8 +195,8 @@
                 app:vsb_bar_progress_gradient_end="#3392FF"
                 app:vsb_bar_progress_gradient_start="#3392FF"
                 app:vsb_bar_width="48dp"
-                app:vsb_max_value="255"
                 app:vsb_click_to_set_progress="true"
+                app:vsb_max_value="255"
                 app:vsb_progress="50"
                 app:vsb_show_thumb="true"
                 app:vsb_thumb_container_corner_radius="5dp"
@@ -196,10 +206,12 @@
                 android:layout_width="28dp"
                 android:layout_height="28dp"
                 android:layout_marginBottom="18dp"
-                android:src="@color/black"
+                android:padding="4dp"
+                android:src="@drawable/ic_dark"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:tint="@color/white" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f2f4f8"
+    tools:context=".ui.home.volume.IconStyleVolumeActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clHeader"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="20dp"
+            android:background="?android:attr/actionBarItemBackground"
+            android:padding="4dp"
+            android:src="@drawable/back_round"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_12sdp"
+            android:ellipsize="end"
+            android:fontFamily="@font/instrument_sans"
+            android:gravity="center"
+            android:maxLines="1"
+            android:text="@string/icon_style"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/ivGone"
+            app:layout_constraintStart_toEndOf="@id/ivBack"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/ivGone"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="20dp"
+            android:padding="4dp"
+            android:src="@drawable/done_round"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/clHeader">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp">
+
+            <ImageView
+                android:id="@+id/ivStyle1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_icon_style_volume"
+                android:src="@drawable/volumeconfig_01"
+                app:layout_constraintDimensionRatio="368:252"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/ivStyle2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_icon_style_volume_n"
+                android:src="@drawable/volumeconfig_02"
+                app:layout_constraintDimensionRatio="368:252"
+                app:layout_constraintTop_toBottomOf="@id/ivStyle1" />
+
+            <ImageView
+                android:id="@+id/ivStyle3"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_icon_style_volume_n"
+                android:src="@drawable/volumeconfig_03"
+                app:layout_constraintDimensionRatio="368:252"
+                app:layout_constraintTop_toBottomOf="@id/ivStyle2" />
+
+            <ImageView
+                android:id="@+id/ivStyle4"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_icon_style_volume_n"
+                android:src="@drawable/volumeconfig_04"
+                app:layout_constraintDimensionRatio="368:252"
+                app:layout_constraintTop_toBottomOf="@id/ivStyle3" />
+
+            <ImageView
+                android:id="@+id/ivStyle5"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_icon_style_volume_n"
+                android:src="@drawable/volumeconfig_05"
+                app:layout_constraintDimensionRatio="368:252"
+                app:layout_constraintTop_toBottomOf="@id/ivStyle4" />
+
+            <ImageView
+                android:id="@+id/ivStyle6"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_icon_style_volume_n"
+                android:src="@drawable/volumeconfig_06"
+                app:layout_constraintDimensionRatio="368:252"
+                app:layout_constraintTop_toBottomOf="@id/ivStyle5" />
+
+            <ImageView
+                android:id="@+id/ivStyle7"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_icon_style_volume_n"
+                android:src="@drawable/volumeconfig_07"
+                app:layout_constraintDimensionRatio="368:252"
+                app:layout_constraintTop_toBottomOf="@id/ivStyle6" />
+
+            <ImageView
+                android:id="@+id/ivStyle8"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_icon_style_volume_n"
+                android:src="@drawable/volumeconfig_08"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintDimensionRatio="368:252"
+                app:layout_constraintTop_toBottomOf="@id/ivStyle7" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

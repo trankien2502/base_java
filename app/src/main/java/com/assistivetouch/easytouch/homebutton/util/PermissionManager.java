@@ -10,7 +10,7 @@ import androidx.core.content.ContextCompat;
 
 public class PermissionManager {
 
-    public boolean checkReadPermission(Context context) {
+    public static boolean checkReadPermission(Context context) {
         if (ContextCompat.checkSelfPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {

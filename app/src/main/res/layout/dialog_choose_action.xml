@@ -22,7 +22,7 @@
             android:textColor="@color/black"
             android:textStyle="bold"/>
         <LinearLayout
-            android:id="@+id/llMedia"
+            android:id="@+id/llHideButton"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginTop="24dp"
@@ -31,9 +31,10 @@
             android:paddingHorizontal="16dp">
 
             <ImageView
+                android:id="@+id/ivHideButton"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_function_airplane" />
+                android:src="@drawable/radio_volume_s" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -59,8 +60,9 @@
 
             <ImageView
                 android:layout_width="24dp"
+                android:id="@+id/ivScreenOff"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_function_airplane" />
+                android:src="@drawable/radio_volume_sn" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -87,7 +89,8 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_function_airplane" />
+                android:id="@+id/ivOpenNotification"
+                android:src="@drawable/radio_volume_sn" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -114,7 +117,8 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@drawable/ic_function_airplane" />
+                android:id="@+id/ivMuteMedia"
+                android:src="@drawable/radio_volume_sn" />
 
             <TextView
                 android:layout_width="match_parent"

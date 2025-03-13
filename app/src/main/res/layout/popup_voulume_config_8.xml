@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
+        android:id="@+id/backgroundMenu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        app:bgColorLight="#bf000000"
+        app:cornerRadius="28dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_max="398dp">
+
+        <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
+            android:layout_width="48dp"
+            android:layout_height="300dp"
+            android:layout_marginHorizontal="3dp"
+            android:gravity="center"
+            app:strokeWidth="2dp"
+            app:stColorDark="#00EA3E"
+            app:stColorLight="#00EA3E"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:visibility="visible"
+            app:bgColorLight="#000000"
+            app:cornerRadius="12dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toTopOf="@id/ivMedia"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                        android:id="@+id/sbMedia"
+                        android:layout_width="20dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="8dp"
+                        app:vsb_bar_background="#F0F0F0"
+                        app:vsb_bar_corner_radius="16dp"
+                        app:vsb_bar_progress_gradient_end="#00EA3E"
+                        app:vsb_bar_progress_gradient_start="#00EA3E"
+                        app:vsb_bar_width="8dp"
+                        app:vsb_max_value="100"
+                        app:vsb_progress="50"
+                        app:vsb_show_thumb="true"
+                        app:vsb_thumb_container_corner_radius="100dp"
+                        app:vsb_thumb_container_tint="#00000000"
+                        app:vsb_thumb_placeholder_src="@drawable/thumb_style_8"
+                        app:vsb_use_thumb_to_set_progress="true" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/ivMedia"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="24dp"
+                    android:padding="2dp"
+                    android:src="@drawable/ic_media"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:tint="#ffffff" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
+
+        <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
+            android:layout_width="48dp"
+            android:layout_height="300dp"
+            android:layout_marginHorizontal="3dp"
+            android:gravity="center"
+            app:strokeWidth="2dp"
+            app:stColorDark="#00EA3E"
+            app:stColorLight="#00EA3E"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:visibility="visible"
+            app:bgColorLight="#000000"
+            app:cornerRadius="12dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toTopOf="@id/ivRing"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                        android:id="@+id/sbRing"
+                        android:layout_width="20dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="8dp"
+                        app:vsb_bar_background="#F0F0F0"
+                        app:vsb_bar_corner_radius="16dp"
+                        app:vsb_bar_progress_gradient_end="#00EA3E"
+                        app:vsb_bar_progress_gradient_start="#00EA3E"
+                        app:vsb_bar_width="8dp"
+                        app:vsb_max_value="100"
+                        app:vsb_progress="50"
+                        app:vsb_show_thumb="true"
+                        app:vsb_thumb_container_corner_radius="100dp"
+                        app:vsb_thumb_container_tint="#00000000"
+                        app:vsb_thumb_placeholder_src="@drawable/thumb_style_8"
+                        app:vsb_use_thumb_to_set_progress="true" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/ivRing"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="24dp"
+                    android:padding="2dp"
+                    android:src="@drawable/ic_ring"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:tint="#ffffff"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
+
+        <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
+            android:layout_width="48dp"
+            android:layout_height="300dp"
+            android:layout_marginHorizontal="3dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="8dp"
+            app:strokeWidth="2dp"
+            app:stColorDark="#00EA3E"
+            app:stColorLight="#00EA3E"
+            app:bgColorLight="#000000"
+            app:cornerRadius="12dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toTopOf="@id/ivNotification"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                        android:id="@+id/sbNotification"
+                        android:layout_width="20dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="8dp"
+                        app:vsb_bar_background="#F0F0F0"
+                        app:vsb_bar_corner_radius="16dp"
+                        app:vsb_bar_progress_gradient_end="#00EA3E"
+                        app:vsb_bar_progress_gradient_start="#00EA3E"
+                        app:vsb_bar_width="8dp"
+                        app:vsb_max_value="100"
+                        app:vsb_progress="50"
+                        app:vsb_show_thumb="true"
+                        app:vsb_thumb_container_corner_radius="100dp"
+                        app:vsb_thumb_container_tint="#00000000"
+                        app:vsb_thumb_placeholder_src="@drawable/thumb_style_8"
+                        app:vsb_use_thumb_to_set_progress="true" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/ivNotification"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="24dp"
+                    android:padding="2dp"
+                    android:src="@drawable/ic_notification"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:tint="#ffffff"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
+
+        <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
+            android:layout_width="48dp"
+            android:layout_height="300dp"
+            android:layout_marginHorizontal="3dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="8dp"
+            android:visibility="visible"
+            app:strokeWidth="2dp"
+            app:stColorDark="#00EA3E"
+            app:stColorLight="#00EA3E"
+            app:bgColorLight="#000000"
+            app:cornerRadius="12dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toTopOf="@id/ivCall"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                        android:id="@+id/sbCall"
+                        android:layout_width="20dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="8dp"
+                        app:vsb_bar_background="#F0F0F0"
+                        app:vsb_bar_corner_radius="16dp"
+                        app:vsb_bar_progress_gradient_end="#00EA3E"
+                        app:vsb_bar_progress_gradient_start="#00EA3E"
+                        app:vsb_bar_width="8dp"
+                        app:vsb_max_value="100"
+                        app:vsb_progress="50"
+                        app:vsb_show_thumb="true"
+                        app:vsb_thumb_container_corner_radius="100dp"
+                        app:vsb_thumb_container_tint="#00000000"
+                        app:vsb_thumb_placeholder_src="@drawable/thumb_style_8"
+                        app:vsb_use_thumb_to_set_progress="true" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/ivCall"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="24dp"
+                    android:padding="2dp"
+                    android:src="@drawable/ic_call"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:tint="#ffffff"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
+
+        <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
+            android:layout_width="48dp"
+            android:layout_height="300dp"
+            android:layout_marginHorizontal="3dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="8dp"
+            app:strokeWidth="2dp"
+            app:stColorDark="#00EA3E"
+            app:stColorLight="#00EA3E"
+            app:bgColorLight="#000000"
+            app:cornerRadius="12dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toTopOf="@id/ivBrightness"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                        android:id="@+id/sbBrightness"
+                        android:layout_width="20dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="8dp"
+                        app:vsb_bar_background="#F0F0F0"
+                        app:vsb_bar_corner_radius="16dp"
+                        app:vsb_bar_progress_gradient_end="#00EA3E"
+                        app:vsb_bar_progress_gradient_start="#00EA3E"
+                        app:vsb_bar_width="8dp"
+                        app:vsb_max_value="100"
+                        app:vsb_progress="50"
+                        app:vsb_show_thumb="true"
+                        app:vsb_thumb_container_corner_radius="100dp"
+                        app:vsb_thumb_container_tint="#00000000"
+                        app:vsb_thumb_placeholder_src="@drawable/thumb_style_8"
+                        app:vsb_use_thumb_to_set_progress="true" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/ivBrightness"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="24dp"
+                    android:padding="2dp"
+                    android:src="@drawable/ic_function_bright_ness"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:tint="#ffffff"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
+
+        <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
+            android:layout_width="48dp"
+            android:layout_height="300dp"
+            android:layout_marginHorizontal="3dp"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="8dp"
+            app:strokeWidth="2dp"
+            app:stColorDark="#00EA3E"
+            app:stColorLight="#00EA3E"
+            android:visibility="visible"
+            app:bgColorLight="#000000"
+            app:cornerRadius="12dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toTopOf="@id/ivDark"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <com.lukelorusso.verticalseekbar.VerticalSeekBar
+                        android:id="@+id/sbDark"
+                        android:layout_width="20dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="8dp"
+                        app:vsb_bar_background="#F0F0F0"
+                        app:vsb_bar_corner_radius="16dp"
+                        app:vsb_bar_progress_gradient_end="#00EA3E"
+                        app:vsb_bar_progress_gradient_start="#00EA3E"
+                        app:vsb_bar_width="8dp"
+                        app:vsb_max_value="100"
+                        app:vsb_progress="50"
+                        app:vsb_show_thumb="true"
+                        app:vsb_thumb_container_corner_radius="100dp"
+                        app:vsb_thumb_container_tint="#00000000"
+                        app:vsb_thumb_placeholder_src="@drawable/thumb_style_8"
+                        app:vsb_use_thumb_to_set_progress="true" />
+                </LinearLayout>
+
+                <ImageView
+                    android:id="@+id/ivDark"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginBottom="24dp"
+                    android:padding="2dp"
+                    android:src="@drawable/ic_dark"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:tint="#ffffff"/>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
+
+
+    </com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

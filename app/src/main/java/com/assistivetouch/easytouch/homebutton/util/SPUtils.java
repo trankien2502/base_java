@@ -1,16 +1,21 @@
 package com.assistivetouch.easytouch.homebutton.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Build;
 import android.os.VibrationEffect;
 import android.os.Vibrator;
+import android.provider.Settings;
+import android.util.Log;
 
 import androidx.core.content.ContextCompat;
 
+import com.assistivetouch.easytouch.homebutton.dialog.GoToSettingDialog;
 import com.assistivetouch.easytouch.homebutton.item.app.ItemAppInfo;
 import com.assistivetouch.easytouch.homebutton.ui.screenshot.ItemVideoConfig;
 import com.google.gson.Gson;
@@ -42,8 +47,14 @@ public class SPUtils {
     public static String MENU_FUNCTION_2 = "MENU_FUNCTION_2";
     public static String FAVOURITE_APP = "FAVOURITE_APP";
     public static String FAVOURITE_POSITION = "FAVOURITE_POSITION";
-    public static String VOLUME_ON = "VOLUME_ON";
-    public static String TOUCH_ON = "TOUCH_ON";
+    public static String VOLUME_STYLE_NUMBER = "VOLUME_STYLE_NUMBER";
+    public static String SHOW_MEDIA = "SHOW_MEDIA";
+    public static String SHOW_RINGTONE = "SHOW_RINGTONE";
+    public static String SHOW_NOTIFICATION = "SHOW_NOTIFICATION";
+    public static String SHOW_CALL = "SHOW_CALL";
+    public static String SHOW_BRIGHTNESS = "SHOW_BRIGHTNESS";
+    public static String SHOW_DARKNESS = "SHOW_DARKNESS";
+    public static String LONG_PRESS_VOLUME_ACTION = "LONG_PRESS_VOLUME_ACTION";
 
 
     public static SharedPreferences getPref(Context context) {
@@ -322,5 +333,64 @@ public class SPUtils {
         functionIconList.add(new ItemFunctionIcon(ItemFunctionIcon.ACTION_POWER, R.drawable.ic_function_power, R.drawable.ic_action_power, R.string.power));
         functionIconList.add(new ItemFunctionIcon(ItemFunctionIcon.ACTION_ALL_APP, R.drawable.ic_function_all_app, R.drawable.ic_action_all_app, R.string.all_app));
         return functionIconList;
+    }
+    private void showDialogGotoSetting(Context context,int type) {
+        GoToSettingDialog dialog = new GoToSettingDialog(context, true);
+        SystemUtil.setLocale(context);
+
+        if (type == 1) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_noti);
+        } else if (type == 2) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_overlay);
+        } else if (type == 3) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_write_setting);
+        } else if (type == 4) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_accessibility);
+        } else if (type == 5) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_camera);
+        } else if (type == 6) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_storage);
+        }
+
+        dialog.binding.tvStay.setOnClickListener(view -> {
+            dialog.dismiss();
+        });
+        dialog.binding.tvContent.setOnClickListener(view -> {
+            dialog.dismiss();
+        });
+        dialog.binding.tvAgree.setOnClickListener(view -> {
+//            AppOpenManager.getInstance().disableAppResumeWithActivity(HomeActivity.class);
+            dialog.dismiss();
+            if (type == 1 || type == 5 || type == 6) {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+                intent.setData(uri);
+//                resultLauncher.launch(intent);
+            } else if (type == 2) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    try {
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                        Uri uri = Uri.fromParts("package", context.getPackageName(), null);
+                        intent.setData(uri);
+//                        resultLauncher.launch(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e("PermissionError", "Error opening settings: " + e.getMessage());
+                    }
+
+                }
+            } else if (type == 3) {
+                Intent intent = new Intent("android.settings.action.MANAGE_WRITE_SETTINGS");
+                intent.setData(Uri.parse("package:" + context.getPackageName()));
+//                startActivity(intent);
+            } else if (type==4){
+                Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+//                startActivity(intent);
+                Log.e("check_service", "off");
+            }
+        });
+        dialog.show();
     }
 }

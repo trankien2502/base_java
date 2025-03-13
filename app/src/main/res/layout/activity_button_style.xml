@@ -73,7 +73,7 @@
             android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/llLongPress"
+                android:id="@+id/clIconStyle"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="16dp"
@@ -86,8 +86,9 @@
                     android:id="@+id/iv1"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
+                    android:padding="6dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_function_airplane"
+                    android:src="@drawable/iconstyle"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -121,7 +122,7 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/llButtonColor"
+                android:id="@+id/clButtonColor"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="16dp"
@@ -135,7 +136,8 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_function_airplane"
+                    android:padding="6dp"
+                    android:src="@drawable/button_color"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -167,20 +169,21 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <com.assistivetouch.easytouch.homebutton.util.widget.RoundImageView
+                    <androidx.cardview.widget.CardView
                         android:id="@+id/ivButtonColor"
                         android:layout_width="match_parent"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="@color/black"
                         android:layout_height="match_parent"
                         android:background="@drawable/bg_color_round"
-                        android:src="#000000"
-                        app:cornerRadius="100dp"
+                        app:cardCornerRadius="100dp"
                         app:layout_constraintStart_toStartOf="parent" />
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/llButtonBackgroundColor"
+                android:id="@+id/clButtonBackgroundColor"
                 android:layout_width="match_parent"
                 android:layout_height="56dp"
                 android:layout_marginTop="16dp"
@@ -193,8 +196,9 @@
                     android:id="@+id/iv3"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
+                    android:padding="6dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_function_airplane"
+                    android:src="@drawable/button_background_color"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -226,20 +230,21 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent">
 
-                    <com.assistivetouch.easytouch.homebutton.util.widget.RoundImageView
+                    <androidx.cardview.widget.CardView
                         android:id="@+id/ivButtonBackgroundColor"
                         android:layout_width="match_parent"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="@color/black"
                         android:layout_height="match_parent"
                         android:background="@drawable/bg_color_round"
-                        android:src="#000000"
-                        app:cornerRadius="100dp"
+                        app:cardCornerRadius="100dp"
                         app:layout_constraintStart_toStartOf="parent" />
                 </LinearLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/llButtonTransparency"
+                android:id="@+id/clButtonTransparency"
                 android:layout_width="match_parent"
                 android:layout_height="96dp"
                 android:layout_marginTop="16dp"
@@ -254,7 +259,8 @@
                     android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="16dp"
-                    android:src="@drawable/ic_function_airplane"
+                    android:padding="6dp"
+                    android:src="@drawable/button_transparency"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -278,7 +284,7 @@
 
                 <TextView
                     android:id="@+id/tvPercentTransparency"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:fontFamily="@font/instrument_sans"
@@ -326,7 +332,8 @@
                     android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="16dp"
-                    android:src="@drawable/ic_function_airplane"
+                    android:padding="6dp"
+                    android:src="@drawable/button_size"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -350,7 +357,7 @@
 
                 <TextView
                     android:id="@+id/tvPercentSize"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:fontFamily="@font/instrument_sans"
@@ -370,9 +377,9 @@
                     android:layout_height="20dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginBottom="12dp"
-                    android:max="255"
+                    android:max="60"
                     android:paddingVertical="6dp"
-                    android:progress="5"
+                    android:progress="0"
                     android:progressDrawable="@drawable/bg_seekbar_invisible"
                     android:splitTrack="false"
                     android:thumb="@drawable/thumb_main"
@@ -398,7 +405,7 @@
                     android:layout_height="40dp"
                     android:layout_gravity="center"
                     android:layout_marginTop="16dp"
-                    android:src="@drawable/ic_function_airplane"
+                    android:src="@drawable/edge_distance"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -422,7 +429,7 @@
 
                 <TextView
                     android:id="@+id/tvEdgeDistance"
-                    android:layout_width="0dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:fontFamily="@font/instrument_sans"
@@ -442,9 +449,9 @@
                     android:layout_height="20dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginBottom="12dp"
-                    android:max="255"
+                    android:max="100"
                     android:paddingVertical="6dp"
-                    android:progress="5"
+                    android:progress="0"
                     android:progressDrawable="@drawable/bg_seekbar_invisible"
                     android:splitTrack="false"
                     android:thumb="@drawable/thumb_main"
@@ -470,7 +477,7 @@
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_function_airplane"
+                    android:src="@drawable/button_position"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

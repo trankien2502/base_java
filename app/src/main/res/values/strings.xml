@@ -44,9 +44,9 @@
 
     <string name="reset">Reset</string>
     <string name="content_intro_3">Choose what to appear when you open your zip lock screen</string>
-    <string name="intro_1">Zip lock your screen</string>
-    <string name="intro_2">Customize your zip and row</string>
-    <string name="intro_3">Get your wallpaper</string>
+    <string name="intro_1">Assistive Touch</string>
+    <string name="intro_2">Customize Icon Styles</string>
+    <string name="intro_3">Assistive Volume</string>
     <string name="content_intro_1">Access your screen with style</string>
     <string name="content_intro_2">Choose your zip and row from our collection</string>
     <string name="get_started">Get started</string>
@@ -57,7 +57,10 @@
     <string name="title_dialog_per">Grant these permissions to use <b>\"M123455\"</b></string>
     <string name="content_dialog_per_noti">Note: You can also grant permission in <b>Settings -> Apps -> M123455 -> Notifications </b></string>
     <string name="content_dialog_per_camera">Note: You can also grant permission in <b>Settings -> Apps -> M123455 -> Camera </b></string>
+    <string name="content_dialog_per_storage">Note: You can also grant permission in <b>Settings -> Apps -> M123455 -> Storage </b></string>
     <string name="content_dialog_per_overlay">Note: You can also grant permission in <b>Settings -> Display over other Apps -> M123455</b></string>
+    <string name="content_dialog_per_write_setting">Note: You can also grant permission in <b>Settings -> Change System Setting -> M123455</b></string>
+    <string name="content_dialog_per_accessibility">Note: You can also grant permission in <b>Settings -> Support -> Accessibility -> M123455</b></string>
     <string name="go_to_setting">Go to Settings</string>
     <string name="choose_language">Choose Language</string>
     <string name="notification">Notification</string>
@@ -81,7 +84,7 @@
     <string name="set_action_successfully">Set action successfully!</string>
     <string name="accessibility_service_description">Dịch vụ này giúp điều khiển màn hình bằng nút nổi.</string>
     <string name="tap_to_open">Tap to open</string>
-    <string name="asisitive_touch_s_service_is_running">Assistivr Touch\'s service is running</string>
+    <string name="asisitive_touch_s_service_is_running">Assistive Touch\'s service is running</string>
     <string name="enable_assistive_touch_success">Enable Assistive touch successfully</string>
     <string name="disable_assistive_touch_success">Disable Assistive touch successfully!</string>
     <string name="power">Power</string>
@@ -96,8 +99,6 @@
     <string name="tap_a_feature_to_change">Tap a feature to change</string>
     <string name="color">Color</string>
     <string name="restore">Restore</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="ok">OK</string>
     <string name="choose_color">Choose Color</string>
     <string name="back">Back</string>
@@ -150,5 +151,10 @@
     <string name="screen_off">Screen off</string>
     <string name="enable_assistive_volume_success">Enable Assistive volume successfully!</string>
     <string name="disable_assistive_volume_success">Disable Assistive volume successfully!</string>
+    <string name="change_system_settings">Change System Settings</string>
+    <string name="accessibility_permission">Accessibility Permission</string>
+    <string name="darkness">Darkness</string>
+    <string name="recording_screen">Recording screen...</string>
+
 
 </resources>

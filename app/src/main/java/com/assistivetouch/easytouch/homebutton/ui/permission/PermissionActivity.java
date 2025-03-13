@@ -19,7 +19,9 @@ import com.assistivetouch.easytouch.homebutton.R;
 import com.assistivetouch.easytouch.homebutton.base.BaseActivity;
 import com.assistivetouch.easytouch.homebutton.databinding.ActivityPermissionBinding;
 import com.assistivetouch.easytouch.homebutton.dialog.GoToSettingDialog;
+import com.assistivetouch.easytouch.homebutton.service.ServiceControl;
 import com.assistivetouch.easytouch.homebutton.ui.home.HomeActivity;
+import com.assistivetouch.easytouch.homebutton.util.CheckUtils;
 import com.assistivetouch.easytouch.homebutton.util.EventTracking;
 import com.assistivetouch.easytouch.homebutton.util.PermissionManager;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
@@ -76,6 +78,20 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
                         Log.e("PermissionError", "Error opening settings: " + e.getMessage());
                     }
                 }
+            }
+        });
+        binding.swAccessibility.setOnClickListener(v -> {
+            if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
+                Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                startActivity(intent);
+                Log.e("check_service", "off");
+            }
+        });
+        binding.swWriteSetting.setOnClickListener(v -> {
+            if (!CheckUtils.checkSystemWriteSetting(this)) {
+                Intent intent = new Intent("android.settings.action.MANAGE_WRITE_SETTINGS");
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
             }
         });
     }
@@ -191,6 +207,7 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
         }
     }
 
+
     @SuppressLint("ClickableViewAccessibility")
     private void checkSwNotification() {
         if (PermissionManager.checkNotificationPermission(this)) {
@@ -201,12 +218,34 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
             binding.swPerNotification.setOnTouchListener((view, motionEvent) -> false);
         }
     }
+    @SuppressLint("ClickableViewAccessibility")
+    private void checkSwWriteSetting() {
+        if (CheckUtils.checkSystemWriteSetting(this)) {
+            binding.swWriteSetting.setChecked(true);
+            binding.swWriteSetting.setOnTouchListener((view, motionEvent) -> true);
+        } else {
+            binding.swWriteSetting.setChecked(false);
+            binding.swWriteSetting.setOnTouchListener((view, motionEvent) -> false);
+        }
+    }
+    @SuppressLint("ClickableViewAccessibility")
+    private void checkSwAccessibility() {
+        if (CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
+            binding.swAccessibility.setChecked(true);
+            binding.swAccessibility.setOnTouchListener((view, motionEvent) -> true);
+        } else {
+            binding.swAccessibility.setChecked(false);
+            binding.swAccessibility.setOnTouchListener((view, motionEvent) -> false);
+        }
+    }
 
     @Override
     protected void onResume() {
         super.onResume();
         checkSwNotification();
         checkSwOverlay();
+        checkSwAccessibility();
+        checkSwWriteSetting();
     }
 
     @Override

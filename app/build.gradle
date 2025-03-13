@@ -19,7 +19,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true // ADD THIS LINE
         def formattedDate = new Date().format('MMM.dd.yyyy')
-        archivesBaseName = "ASY1xx_BaseJava_v${versionName}(${versionCode})_${formattedDate}"
+        archivesBaseName = "ASY124_AssistiveTouch_v${versionName}(${versionCode})_${formattedDate}"
     }
 
     bundle {

@@ -3,6 +3,7 @@ package com.assistivetouch.easytouch.homebutton.ui.home;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
@@ -11,6 +12,8 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.assistivetouch.easytouch.homebutton.base.BaseActivity;
 import com.assistivetouch.easytouch.homebutton.dialog.GoToSettingDialog;
@@ -23,6 +26,8 @@ import com.assistivetouch.easytouch.homebutton.service.ServiceControl;
 import com.assistivetouch.easytouch.homebutton.service.ServiceScreen;
 import com.assistivetouch.easytouch.homebutton.ui.home.touch.custom.CustomMenuActivity;
 import com.assistivetouch.easytouch.homebutton.ui.home.touch.icon.FloatingIconActivity;
+import com.assistivetouch.easytouch.homebutton.ui.home.volume.ButtonStyleActivity;
+import com.assistivetouch.easytouch.homebutton.ui.home.volume.VolumeConfigActivity;
 import com.assistivetouch.easytouch.homebutton.ui.setting.SettingActivity;
 import com.assistivetouch.easytouch.homebutton.util.CheckUtils;
 import com.assistivetouch.easytouch.homebutton.util.EventTracking;
@@ -67,40 +72,37 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
             resultLauncher.launch(new Intent(this, SettingActivity.class));
         });
         binding.swTouch.setOnClickListener(view -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (!Settings.canDrawOverlays(this)) {
-                    showDialogGotoSetting(2);
-                    binding.swTouch.setChecked(false);
-                } else {
-                    if (binding.swTouch.isChecked()) {
-                        if (ServiceScreen.instance != null && isMyServiceRunning(ServiceScreen.class)) {
-                            ServiceScreen.instance.addFloatingIcon();
-                        } else {
-                            Intent serviceIntent = new Intent(this, ServiceScreen.class);
-                            SPUtils.setBoolean(this,SPUtils.TOUCH_ON,true);
-                            startService(serviceIntent);
-                        }
-                        Toast.makeText(this, R.string.enable_assistive_touch_success, Toast.LENGTH_SHORT).show();
-                    } else {
-                        if (ServiceScreen.instance != null) {
-                            if (ServiceScreen.instance.floatingView != null)
-                                ServiceScreen.instance.removeFloatingView();
-                            if (ServiceScreen.instance.floatingView == null && ServiceScreen.instance.volumeView == null) {
-                                Intent serviceIntent = new Intent(this, ServiceScreen.class);
-                                stopService(serviceIntent);
-                            }
-                        }
-                        Toast.makeText(this, R.string.disable_assistive_touch_success, Toast.LENGTH_SHORT).show();
+            enableTouch();
+        });
+        binding.clMenuTouch.setOnClickListener(view -> {
+            resultLauncher.launch(new Intent(this, CustomMenuActivity.class));
+        });
+        binding.clIconTouch.setOnClickListener(view -> {
+            resultLauncher.launch(new Intent(this, FloatingIconActivity.class));
+        });
+        binding.swVolume.setOnClickListener(view -> {
+            enableVolume();
+        });
+        binding.clVolumeConfig.setOnClickListener(view -> {
+            resultLauncher.launch(new Intent(this, VolumeConfigActivity.class));
+        });
+        binding.clButtonVolume.setOnClickListener(view -> {
+            resultLauncher.launch(new Intent(this, ButtonStyleActivity.class));
+        });
+    }
 
-                    }
-                }
+    private void enableTouch() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                showDialogGotoSetting(2);
+                binding.swTouch.setChecked(false);
             } else {
                 if (binding.swTouch.isChecked()) {
                     if (ServiceScreen.instance != null && isMyServiceRunning(ServiceScreen.class)) {
                         ServiceScreen.instance.addFloatingIcon();
                     } else {
                         Intent serviceIntent = new Intent(this, ServiceScreen.class);
-                        SPUtils.setBoolean(this,SPUtils.TOUCH_ON,true);
+                        serviceIntent.putExtra("IS_ADD_TOUCH_ICON", true);
                         startService(serviceIntent);
                     }
                     Toast.makeText(this, R.string.enable_assistive_touch_success, Toast.LENGTH_SHORT).show();
@@ -117,48 +119,43 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
 
                 }
             }
-        });
-        binding.clMenuTouch.setOnClickListener(view -> {
-            resultLauncher.launch(new Intent(this, CustomMenuActivity.class));
-        });
-        binding.clIconTouch.setOnClickListener(view -> {
-            resultLauncher.launch(new Intent(this, FloatingIconActivity.class));
-        });
-        binding.swVolume.setOnClickListener(view -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (!Settings.canDrawOverlays(this)) {
-                    showDialogGotoSetting(2);
-                    binding.swVolume.setChecked(false);
+        } else {
+            if (binding.swTouch.isChecked()) {
+                if (ServiceScreen.instance != null && isMyServiceRunning(ServiceScreen.class)) {
+                    ServiceScreen.instance.addFloatingIcon();
                 } else {
-                    if (binding.swVolume.isChecked()) {
-                        if (ServiceScreen.instance != null && isMyServiceRunning(ServiceScreen.class)) {
-                            ServiceScreen.instance.addVolumeIcon();
-                        } else {
-                            Intent serviceIntent = new Intent(this, ServiceScreen.class);
-                            SPUtils.setBoolean(this,SPUtils.VOLUME_ON,true);
-                            startService(serviceIntent);
-                        }
-                        Toast.makeText(this, R.string.enable_assistive_volume_success, Toast.LENGTH_SHORT).show();
-                    } else {
-                        if (ServiceScreen.instance != null) {
-                            if (ServiceScreen.instance.volumeView != null)
-                                ServiceScreen.instance.removeVolumeView();
-                            if (ServiceScreen.instance.floatingView == null && ServiceScreen.instance.volumeView == null) {
-                                Intent serviceIntent = new Intent(this, ServiceScreen.class);
-                                stopService(serviceIntent);
-                            }
-                        }
-                        Toast.makeText(this, R.string.disable_assistive_volume_success, Toast.LENGTH_SHORT).show();
-
+                    Intent serviceIntent = new Intent(this, ServiceScreen.class);
+                    serviceIntent.putExtra("IS_ADD_TOUCH_ICON", true);
+                    startService(serviceIntent);
+                }
+                Toast.makeText(this, R.string.enable_assistive_touch_success, Toast.LENGTH_SHORT).show();
+            } else {
+                if (ServiceScreen.instance != null) {
+                    if (ServiceScreen.instance.floatingView != null)
+                        ServiceScreen.instance.removeFloatingView();
+                    if (ServiceScreen.instance.floatingView == null && ServiceScreen.instance.volumeView == null) {
+                        Intent serviceIntent = new Intent(this, ServiceScreen.class);
+                        stopService(serviceIntent);
                     }
                 }
+                Toast.makeText(this, R.string.disable_assistive_touch_success, Toast.LENGTH_SHORT).show();
+
+            }
+        }
+    }
+
+    private void enableVolume() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                showDialogGotoSetting(2);
+                binding.swVolume.setChecked(false);
             } else {
                 if (binding.swVolume.isChecked()) {
                     if (ServiceScreen.instance != null && isMyServiceRunning(ServiceScreen.class)) {
                         ServiceScreen.instance.addVolumeIcon();
                     } else {
                         Intent serviceIntent = new Intent(this, ServiceScreen.class);
-                        SPUtils.setBoolean(this,SPUtils.VOLUME_ON,true);
+                        serviceIntent.putExtra("IS_ADD_TOUCH_ICON", false);
                         startService(serviceIntent);
                     }
                     Toast.makeText(this, R.string.enable_assistive_volume_success, Toast.LENGTH_SHORT).show();
@@ -175,14 +172,29 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
 
                 }
             }
-        });
-        binding.clVolumeConfig.setOnClickListener(view -> {
-            TestDialog dialog = new TestDialog(this, true);
-            dialog.show();
-        });
-        binding.clButtonVolume.setOnClickListener(view -> {
-            resultLauncher.launch(new Intent(this, SettingActivity.class));
-        });
+        } else {
+            if (binding.swVolume.isChecked()) {
+                if (ServiceScreen.instance != null && isMyServiceRunning(ServiceScreen.class)) {
+                    ServiceScreen.instance.addVolumeIcon();
+                } else {
+                    Intent serviceIntent = new Intent(this, ServiceScreen.class);
+                    serviceIntent.putExtra("IS_ADD_TOUCH_ICON", false);
+                    startService(serviceIntent);
+                }
+                Toast.makeText(this, R.string.enable_assistive_volume_success, Toast.LENGTH_SHORT).show();
+            } else {
+                if (ServiceScreen.instance != null) {
+                    if (ServiceScreen.instance.volumeView != null)
+                        ServiceScreen.instance.removeVolumeView();
+                    if (ServiceScreen.instance.floatingView == null && ServiceScreen.instance.volumeView == null) {
+                        Intent serviceIntent = new Intent(this, ServiceScreen.class);
+                        stopService(serviceIntent);
+                    }
+                }
+                Toast.makeText(this, R.string.disable_assistive_volume_success, Toast.LENGTH_SHORT).show();
+
+            }
+        }
     }
 
     public boolean isMyServiceRunning(Class<?> serviceClass) {
@@ -289,50 +301,6 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         EventTracking.logEvent(this, "rate_show");
     }
 
-    private void showDialogGotoSetting(int type) {
-        GoToSettingDialog dialog = new GoToSettingDialog(this, true);
-        SystemUtil.setLocale(this);
-
-        if (type == 1) {
-            dialog.binding.tvContent.setText(R.string.content_dialog_per_noti);
-        } else if (type == 2) {
-            dialog.binding.tvContent.setText(R.string.content_dialog_per_overlay);
-        }
-
-        dialog.binding.tvStay.setOnClickListener(view -> {
-            dialog.dismiss();
-        });
-        dialog.binding.tvContent.setOnClickListener(view -> {
-            dialog.dismiss();
-        });
-        dialog.binding.tvAgree.setOnClickListener(view -> {
-//            AppOpenManager.getInstance().disableAppResumeWithActivity(HomeActivity.class);
-            dialog.dismiss();
-            if (type == 1) {
-                Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                Uri uri = Uri.fromParts("package", getPackageName(), null);
-                intent.setData(uri);
-                resultLauncher.launch(intent);
-            } else if (type == 2) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    try {
-                        Intent intent = new Intent();
-                        intent.setAction(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                        intent.setData(uri);
-                        resultLauncher.launch(intent);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e("PermissionError", "Error opening settings: " + e.getMessage());
-                    }
-
-                }
-            }
-        });
-        dialog.show();
-    }
-
     private void exitApp() {
         ExitAppDialog exitAppDialog = new ExitAppDialog(this, true);
         exitAppDialog.init(new IClickDialogExit() {
@@ -360,5 +328,65 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     protected void onDestroy() {
         super.onDestroy();
 
+    }
+
+    private void showDialogGotoSetting(int type) {
+        GoToSettingDialog dialog = new GoToSettingDialog(this, true);
+        SystemUtil.setLocale(this);
+
+        if (type == 1) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_noti);
+        } else if (type == 2) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_overlay);
+        } else if (type == 3) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_write_setting);
+        } else if (type == 4) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_accessibility);
+        } else if (type == 5) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_camera);
+        } else if (type == 6) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_storage);
+        }
+
+        dialog.binding.tvStay.setOnClickListener(view -> {
+            dialog.dismiss();
+        });
+        dialog.binding.tvContent.setOnClickListener(view -> {
+            dialog.dismiss();
+        });
+        dialog.binding.tvAgree.setOnClickListener(view -> {
+//            AppOpenManager.getInstance().disableAppResumeWithActivity(HomeActivity.class);
+            dialog.dismiss();
+            if (type == 1 || type == 5 || type == 6) {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intent.setData(uri);
+                resultLauncher.launch(intent);
+            } else if (type == 2) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    try {
+                        Intent intent = new Intent();
+                        intent.setAction(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        resultLauncher.launch(intent);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e("PermissionError", "Error opening settings: " + e.getMessage());
+                    }
+
+                }
+            } else if (type == 3) {
+                Intent intent = new Intent("android.settings.action.MANAGE_WRITE_SETTINGS");
+                intent.setData(Uri.parse("package:" + getPackageName()));
+                startActivity(intent);
+            } else if (type == 4) {
+                Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                startActivity(intent);
+                Log.e("check_service", "off");
+            }
+        });
+        dialog.show();
     }
 }

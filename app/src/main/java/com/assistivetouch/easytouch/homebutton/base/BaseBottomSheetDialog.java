@@ -43,7 +43,7 @@ public abstract class BaseBottomSheetDialog<VB extends ViewBinding> extends Bott
                     BottomSheetBehavior<?> behavior = BottomSheetBehavior.from(bottomSheet);
                     behavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
                     behavior.setSkipCollapsed(false);
-                    behavior.setDraggable(false);
+                    behavior.setDraggable(true);
                 }
             }
         });

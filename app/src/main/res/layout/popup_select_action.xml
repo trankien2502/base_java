@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:padding="16dp"
+    android:background="#00000000"
     android:layout_height="wrap_content"
     android:visibility="visible">
 
@@ -43,8 +44,8 @@
                     android:orientation="vertical"
                     app:cornerRadius="8dp"
                     app:distanceSpace="6dp"
-                    app:stColorDark="#767676"
-                    app:stColorLight="#767676"
+                    app:stColorDark="#4dffffff"
+                    app:stColorLight="#4dffffff"
                     app:strokeDistance="true"
                     app:strokeWidth="2dp">
 
@@ -87,8 +88,8 @@
                     android:orientation="vertical"
                     app:cornerRadius="8dp"
                     app:distanceSpace="6dp"
-                    app:stColorDark="#767676"
-                    app:stColorLight="#767676"
+                    app:stColorDark="#4dffffff"
+                    app:stColorLight="#4dffffff"
                     app:strokeDistance="true"
                     app:strokeWidth="2dp">
 
@@ -140,8 +141,8 @@
                     android:orientation="vertical"
                     app:cornerRadius="8dp"
                     app:distanceSpace="6dp"
-                    app:stColorDark="#767676"
-                    app:stColorLight="#767676"
+                    app:stColorDark="#4dffffff"
+                    app:stColorLight="#4dffffff"
                     app:strokeDistance="true"
                     app:strokeWidth="2dp">
 
@@ -168,8 +169,8 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
             <com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout
                 android:id="@+id/llAction4"
-                app:stColorLight="#767676"
-                app:stColorDark="#767676"
+                app:stColorLight="#4dffffff"
+                app:stColorDark="#4dffffff"
                 android:gravity="center"
                 android:visibility="invisible"
                 android:layout_marginVertical="@dimen/_16sdp"
@@ -203,8 +204,8 @@
                     android:orientation="vertical"
                     app:cornerRadius="8dp"
                     app:distanceSpace="6dp"
-                    app:stColorDark="#767676"
-                    app:stColorLight="#767676"
+                    app:stColorDark="#4dffffff"
+                    app:stColorLight="#4dffffff"
                     app:strokeDistance="true"
                     app:strokeWidth="2dp">
 
@@ -257,8 +258,8 @@
                     android:orientation="vertical"
                     app:cornerRadius="8dp"
                     app:distanceSpace="6dp"
-                    app:stColorDark="#767676"
-                    app:stColorLight="#767676"
+                    app:stColorDark="#4dffffff"
+                    app:stColorLight="#4dffffff"
                     app:strokeDistance="true"
                     app:strokeWidth="2dp">
 
@@ -301,8 +302,8 @@
                     android:orientation="vertical"
                     app:cornerRadius="8dp"
                     app:distanceSpace="6dp"
-                    app:stColorDark="#767676"
-                    app:stColorLight="#767676"
+                    app:stColorDark="#4dffffff"
+                    app:stColorLight="#4dffffff"
                     app:strokeDistance="true"
                     app:strokeWidth="2dp">
 
