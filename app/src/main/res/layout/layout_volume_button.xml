@@ -1,12 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ll1"
     android:layout_width="60dp"
-    android:layout_height="60dp">
+    android:layout_height="60dp"
+    android:gravity="center">
 
     <ImageView
-        android:id="@+id/volume_button"
+        android:id="@+id/ivBorder"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/icon_20"
-        android:scaleType="centerInside" />
+        android:src="@drawable/img_boder_5" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/ivButtonBackgroundColor"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="1dp"
+        app:cardBackgroundColor="@color/black"
+        app:cardCornerRadius="120dp"
+        app:cardElevation="0dp"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/ivButon"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:padding="10dp"
+            android:src="@drawable/volume_icon" />
+    </androidx.cardview.widget.CardView>
 </FrameLayout>

@@ -54,6 +54,7 @@
                 android:layout_marginTop="16dp"
                 android:background="@drawable/bg_touch_home"
                 android:paddingHorizontal="8dp"
+
                 android:paddingTop="16dp"
                 android:paddingBottom="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -311,6 +312,7 @@
                     android:paddingHorizontal="16dp"
                     android:paddingTop="16dp"
                     android:paddingBottom="8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/cl2">
 
                     <androidx.constraintlayout.widget.ConstraintLayout

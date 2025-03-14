@@ -2,6 +2,9 @@ package com.assistivetouch.easytouch.homebutton.dialog.pick_color;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
@@ -9,6 +12,7 @@ import android.util.Log;
 import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 
 import com.skydoves.colorpickerview.ColorEnvelope;
 import com.skydoves.colorpickerview.listeners.ColorEnvelopeListener;
@@ -22,21 +26,32 @@ public class ColorPickerDialog extends BaseDialog<DialogColorPickerBinding> {
     Context context;
     ColorSelectCallBack colorSelectCallBack;
     Drawable drawableAlpha, drawableBright;
+    int presetColor;
 
-    public ColorPickerDialog(@NonNull Context context, boolean canAble) {
+    public ColorPickerDialog(@NonNull Context context, boolean canAble, int presetColor) {
         super(context, canAble);
         this.context = context;
+        this.presetColor = presetColor;
     }
 
     @Override
     protected DialogColorPickerBinding setBinding() {
         return DialogColorPickerBinding.inflate(getLayoutInflater());
     }
-
+    public static String colorIntToHex(int color) {
+        return String.format("#%06X", (0xFFFFFF & color));
+    }
     @SuppressLint("SetTextI18n")
     @Override
     protected void initView() {
+
         binding.pk.post(() -> {
+            try {
+                binding.pk.setHsvPaletteDrawable();
+                binding.pk.selectByHsvColor(presetColor);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
             binding.pk.attachAlphaSlider(binding.alphaSlideBar);
             binding.pk.attachBrightnessSlider(binding.brightnessSlideBar);
             binding.tvColor.setText("#" + binding.pk.getColorEnvelope().getHexCode());

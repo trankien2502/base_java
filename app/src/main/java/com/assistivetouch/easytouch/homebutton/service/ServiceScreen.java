@@ -1,6 +1,9 @@
 package com.assistivetouch.easytouch.homebutton.service;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static android.media.AudioManager.FLAG_SHOW_UI;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 import android.Manifest;
 import android.accessibilityservice.AccessibilityService;
@@ -20,6 +23,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ServiceInfo;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -67,10 +71,18 @@ import com.assistivetouch.easytouch.homebutton.databinding.PopupSelectActionBind
 import com.assistivetouch.easytouch.homebutton.databinding.PopupSelectFavouriteBinding;
 import com.assistivetouch.easytouch.homebutton.databinding.PopupTimeOutBinding;
 import com.assistivetouch.easytouch.homebutton.databinding.PopupVolumeOptionBinding;
+import com.assistivetouch.easytouch.homebutton.databinding.PopupVoulumeConfig1Binding;
+import com.assistivetouch.easytouch.homebutton.databinding.PopupVoulumeConfig2Binding;
 import com.assistivetouch.easytouch.homebutton.databinding.PopupVoulumeConfig3Binding;
+import com.assistivetouch.easytouch.homebutton.databinding.PopupVoulumeConfig4Binding;
+import com.assistivetouch.easytouch.homebutton.databinding.PopupVoulumeConfig5Binding;
+import com.assistivetouch.easytouch.homebutton.databinding.PopupVoulumeConfig6Binding;
+import com.assistivetouch.easytouch.homebutton.databinding.PopupVoulumeConfig7Binding;
+import com.assistivetouch.easytouch.homebutton.databinding.PopupVoulumeConfig8Binding;
 import com.assistivetouch.easytouch.homebutton.item.app.ItemAppInfo;
 import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIcon;
 import com.assistivetouch.easytouch.homebutton.ui.home.AllAppActivity;
+import com.assistivetouch.easytouch.homebutton.ui.home.HomeActivity;
 import com.assistivetouch.easytouch.homebutton.ui.home.ScreenRecorderActivity;
 import com.assistivetouch.easytouch.homebutton.ui.home.ScreenshotActivity;
 import com.assistivetouch.easytouch.homebutton.ui.screenshot.RecorderManager;
@@ -84,6 +96,8 @@ import com.assistivetouch.easytouch.homebutton.util.ImageUtils;
 import com.assistivetouch.easytouch.homebutton.util.PermissionManager;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 import com.assistivetouch.easytouch.homebutton.util.SystemUtil;
+import com.assistivetouch.easytouch.homebutton.util.widget.UiLinearLayout;
+import com.lukelorusso.verticalseekbar.VerticalSeekBar;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -109,7 +123,7 @@ public class ServiceScreen extends Service {
     ArrayList<ItemFunctionIcon> listFunctionFloatingIcon = new ArrayList<>();
     FlashlightProvider flashlightProvider;
 
-    private View overlayView;
+    private View overlayView, darknessView;
     private View overlayView2, overlayViewDialog;
     private View overlayViewPermission;
     public View floatingView;
@@ -122,7 +136,14 @@ public class ServiceScreen extends Service {
     private PopupSelectFavouriteBinding favouriteBinding;
     private LayoutFloatsingButtonBinding floatingBinding;
     private LayoutVolumeButtonBinding volumeBinding;
+    private PopupVoulumeConfig1Binding menuVolume1Binding;
+    private PopupVoulumeConfig2Binding menuVolume2Binding;
     private PopupVoulumeConfig3Binding menuVolume3Binding;
+    private PopupVoulumeConfig4Binding menuVolume4Binding;
+    private PopupVoulumeConfig5Binding menuVolume5Binding;
+    private PopupVoulumeConfig6Binding menuVolume6Binding;
+    private PopupVoulumeConfig7Binding menuVolume7Binding;
+    private PopupVoulumeConfig8Binding menuVolume8Binding;
     private WindowManager.LayoutParams params;
     private WindowManager.LayoutParams paramsVolume;
     private int screenWidth;
@@ -151,6 +172,7 @@ public class ServiceScreen extends Service {
     private boolean isFlashlightOn = false;
     private Uri mUri = null;
     private int edgeDistance = 0;
+    int w, h;
 
 
     @Override
@@ -179,7 +201,6 @@ public class ServiceScreen extends Service {
                 .setSmallIcon(R.drawable.img_logo)
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
-
         return builder.build();
     }
 
@@ -191,6 +212,7 @@ public class ServiceScreen extends Service {
         windowManager.addView(floatingView, params);
     }
 
+
     public boolean isMyServiceRunning(Class<?> serviceClass) {
         ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
@@ -201,6 +223,31 @@ public class ServiceScreen extends Service {
         return false;
     }
 
+    public void dadDarknessView() {
+        darknessView = new View(this);
+        darknessView.setBackgroundColor(Color.parseColor("#66000000"));
+
+        // Cấu hình LayoutParams cho Overlay
+        WindowManager.LayoutParams params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.MATCH_PARENT,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                        WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                        | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                        | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                PixelFormat.TRANSLUCENT
+        );
+        darknessView.setAlpha((float) SPUtils.getInt(this, SPUtils.DARK_PERCENT, 0) / 255);
+        windowManager.addView(darknessView, params);
+    }
+
+    public void setDarknessLevel(int alpha) {
+        if (darknessView != null) {
+            darknessView.setAlpha((float) alpha / 255);
+        }
+    }
 
     @SuppressLint("ClickableViewAccessibility")
     @Override
@@ -223,11 +270,6 @@ public class ServiceScreen extends Service {
         listFunctionFloatingIcon = SPUtils.getListFloatingIcon();
         handler = new Handler(Looper.getMainLooper());
         startForeground(1, createNotification());
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-//            startForeground(1, createNotification(), ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PROJECTION);
-//        } else {
-//            startForeground(1, createNotification());
-//        }
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             WindowMetrics windowMetrics = windowManager.getCurrentWindowMetrics();
@@ -244,10 +286,7 @@ public class ServiceScreen extends Service {
             screenDensity = displayMetrics.densityDpi;
         }
         SPUtils.putSize(this, new int[]{screenWidth, screenHeight, 0});
-        // Khởi tạo WindowManager
-        // Tạo LayoutParams cho View nổi
-//        if (SPUtils.getBoolean(this, SPUtils.VOLUME_ON, false)) addVolumeIcon();
-//        if (SPUtils.getBoolean(this, SPUtils.TOUCH_ON, false)) addFloatingIcon();
+
     }
 
     public void addFloatingIcon() {
@@ -369,19 +408,70 @@ public class ServiceScreen extends Service {
     public void addVolumeIcon() {
         volumeBinding = LayoutVolumeButtonBinding.inflate(LayoutInflater.from(this));
         volumeView = volumeBinding.getRoot();
-        paramsVolume = new WindowManager.LayoutParams(
-                dpToPx(60f),
-                dpToPx(60f),
-                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
-                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
-                        WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
-                PixelFormat.TRANSLUCENT
-        );
+        w = dpToPx(60f) + dpToPx(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_SIZE, 0));
+        h = dpToPx(60f) + dpToPx(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_SIZE, 0));
+        if (paramsVolume == null) {
+            paramsVolume = new WindowManager.LayoutParams(
+                    w,
+                    h,
+                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                            WindowManager.LayoutParams.TYPE_PHONE,
+                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    PixelFormat.TRANSLUCENT
+            );
 
-        paramsVolume.gravity = Gravity.START | Gravity.TOP;
-        paramsVolume.x = screenWidth - dpToPx(60f);
-        paramsVolume.y = 100;  // Điều chỉnh vị trí theo chiều dọc
+            paramsVolume.gravity = Gravity.START | Gravity.TOP;
+            paramsVolume.x = screenWidth - w + w * SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_DISTANCE, 0) / 100;
+            paramsVolume.y = 100;  // Điều chỉnh vị trí theo chiều dọc
+        }
+        switch (SPUtils.getInt(this, SPUtils.VOLUME_STYLE_NUMBER, 1)) {
+            case 1:
+                volumeBinding.ivBorder.setImageResource(R.drawable.img_boder_1);
+                volumeBinding.ivButon.setColorFilter(Color.parseColor("#3392FF"));
+                volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(Color.parseColor("#ffffff"));
+                break;
+            case 2:
+                volumeBinding.ivBorder.setImageResource(R.drawable.img_boder_2);
+                volumeBinding.ivButon.setColorFilter(Color.parseColor("#FF3336"));
+                volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(Color.parseColor("#000000"));
+                break;
+            case 3:
+                volumeBinding.ivBorder.setImageResource(R.drawable.img_boder_3);
+                volumeBinding.ivButon.setColorFilter(Color.parseColor("#3392FF"));
+                volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(Color.parseColor("#ffffff"));
+                break;
+            case 4:
+                volumeBinding.ivBorder.setImageResource(R.drawable.img_boder_1);
+                volumeBinding.ivButon.setColorFilter(Color.parseColor("#ffffff"));
+                volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(Color.parseColor("#3392FF"));
+                break;
+            case 5:
+                volumeBinding.ivBorder.setImageResource(R.drawable.img_boder_5);
+                volumeBinding.ivButon.setColorFilter(Color.parseColor("#ffffff"));
+                volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(Color.parseColor("#000000"));
+                break;
+            case 6:
+                volumeBinding.ivBorder.setImageResource(R.drawable.img_boder_6);
+                volumeBinding.ivButon.setColorFilter(Color.parseColor("#39BDFF"));
+                volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(Color.parseColor("#ffffff"));
+                break;
+            case 7:
+                volumeBinding.ivBorder.setImageResource(R.drawable.img_boder_7);
+                volumeBinding.ivButon.setColorFilter(Color.parseColor("#FBA65B"));
+                volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(Color.parseColor("#ffffff"));
+                break;
+            case 8:
+                volumeBinding.ivBorder.setImageResource(R.drawable.img_boder_8);
+                volumeBinding.ivButon.setColorFilter(Color.parseColor("#ffffff"));
+                volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(Color.parseColor("#000000"));
+                break;
+        }
+        if (SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_COLOR, -1) != -1)
+            volumeBinding.ivButon.setColorFilter(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_COLOR, -1));
+        if (SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_BACKGROUND_COLOR, -1) != -1)
+            volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_BACKGROUND_COLOR, -1));
+        volumeView.setAlpha((float) SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_ALPHA, 255) / 255);
         volumeView.setOnTouchListener(new View.OnTouchListener() {
             private int initialX, initialY;
             private float initialTouchX, initialTouchY;
@@ -421,6 +511,8 @@ public class ServiceScreen extends Service {
                             isMoving = true;
                             Log.e("check_service", "move");
                         }
+                        if (SPUtils.getBoolean(ServiceScreen.this, SPUtils.VOLUME_BUTTON_FIX_POSITION, false))
+                            return false;
                         paramsVolume.x = initialX + (int) (event.getRawX() - initialTouchX);
                         paramsVolume.y = initialY + (int) (event.getRawY() - initialTouchY);
                         windowManager.updateViewLayout(volumeView, paramsVolume);
@@ -438,6 +530,7 @@ public class ServiceScreen extends Service {
             }
         });
         // Thêm View nổi vào màn hình
+        dadDarknessView();
         windowManager.addView(volumeView, paramsVolume);
     }
 
@@ -445,6 +538,10 @@ public class ServiceScreen extends Service {
         if (volumeView != null) {
             windowManager.removeView(volumeView);
             volumeView = null;
+            if (darknessView != null) {
+                windowManager.removeView(darknessView);
+                darknessView = null;
+            }
         }
     }
 
@@ -467,15 +564,60 @@ public class ServiceScreen extends Service {
     }
 
     private void onVolumeIconClick() {
-        showPopupVolume(1);
-        Log.e("check_service", "click");
+        showPopupVolume(SPUtils.getInt(this, SPUtils.VOLUME_STYLE_NUMBER, 1));
+        Log.e("check_service", "clickvolume");
     }
 
     private void onVolumeIconLongPress() {
-        Log.e("check_service", "longpress");
-        ItemFunctionIcon icon = SPUtils.getObject(this, SPUtils.FLOATING_ICON_LONG_PRESS, listFunctionFloatingIcon.get(0));
-        onActionDone(icon, null, null, false);
-        setIconStyle(R.drawable.icon_8);
+        Log.e("check_service", "longpressvolume");
+        switch (SPUtils.getInt(this, SPUtils.LONG_PRESS_VOLUME_ACTION, 1)) {
+            case 1:
+                removeVolumeView();
+                if (HomeActivity.instance != null) {
+                    HomeActivity.instance.checkState();
+                }
+                break;
+            case 2:
+                if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
+                    Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    Log.e("check_service", "off");
+                } else {
+                    if (ServiceControl.instance != null) {
+                        ServiceControl.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
+                        Log.e("check_service", "on");
+                    } else {
+                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        Log.e("check_service", "null");
+                    }
+                }
+                break;
+            case 3:
+                if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
+                    Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    Log.e("check_service", "off");
+                } else {
+                    if (ServiceControl.instance != null) {
+                        ServiceControl.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS);
+                        Log.e("check_service", "on");
+                    } else {
+                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        Log.e("check_service", "null");
+                    }
+                }
+                break;
+            case 4:
+                AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, FLAG_SHOW_UI);
+                break;
+        }
     }
 
     @Override
@@ -486,12 +628,170 @@ public class ServiceScreen extends Service {
         instance = null;
     }
 
+    private void initViewAndBindViewVolumePopup(VerticalSeekBar sbMedia, View llMedia, VerticalSeekBar sbRing, View llRing, VerticalSeekBar sbNotification, View llNotification,
+                                                VerticalSeekBar sbCall, View llCall, VerticalSeekBar sbBrightness, View llBright, VerticalSeekBar sbDark, View llDark) {
+        boolean isShowMedia = SPUtils.getBoolean(this, SPUtils.SHOW_MEDIA, true);
+        boolean isShowRing = SPUtils.getBoolean(this, SPUtils.SHOW_RINGTONE, true);
+        boolean isShowNotification = SPUtils.getBoolean(this, SPUtils.SHOW_NOTIFICATION, true);
+        boolean isShowCall = SPUtils.getBoolean(this, SPUtils.SHOW_CALL, true);
+        boolean isShowBright = SPUtils.getBoolean(this, SPUtils.SHOW_BRIGHTNESS, false);
+        boolean isShowDark = SPUtils.getBoolean(this, SPUtils.SHOW_DARKNESS, false);
+        int darkPercent = SPUtils.getInt(this, SPUtils.DARK_PERCENT, 0);
+        llMedia.setVisibility(isShowMedia ? VISIBLE : GONE);
+        llRing.setVisibility(isShowRing ? VISIBLE : GONE);
+        llNotification.setVisibility(isShowNotification ? VISIBLE : GONE);
+        llCall.setVisibility(isShowCall ? VISIBLE : GONE);
+        llBright.setVisibility(isShowBright ? VISIBLE : GONE);
+        llDark.setVisibility(isShowDark ? VISIBLE : GONE);
+
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        int maxMediaVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        int maxCallVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_VOICE_CALL);
+        int maxRingVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_RING);
+        int maxNotificationVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_NOTIFICATION);
+        sbMedia.setMaxValue(maxMediaVolume);
+        sbNotification.setMaxValue(maxNotificationVolume);
+        sbRing.setMaxValue(maxRingVolume);
+        sbCall.setMaxValue(maxCallVolume);
+        int mediaVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int callVolume = audioManager.getStreamVolume(AudioManager.STREAM_VOICE_CALL);
+        int ringVolume = audioManager.getStreamVolume(AudioManager.STREAM_RING);
+        int notificationVolume = audioManager.getStreamVolume(AudioManager.STREAM_NOTIFICATION);
+        sbMedia.setProgress(mediaVolume);
+        sbNotification.setProgress(notificationVolume);
+        sbRing.setProgress(ringVolume);
+        sbCall.setProgress(callVolume);
+        sbDark.setProgress(darkPercent);
+        try {
+            ContentResolver contentResolver = getContentResolver();
+            int bright = Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS);
+            sbBrightness.setProgress(bright);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        sbBrightness.setOnProgressChangeListener(new Function1<Integer, Unit>() {
+            @Override
+            public Unit invoke(Integer integer) {
+                try {
+                    ContentResolver contentResolver = getContentResolver();
+                    Settings.System.putInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, integer);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        });
+        sbMedia.setOnProgressChangeListener(new Function1<Integer, Unit>() {
+            @Override
+            public Unit invoke(Integer integer) {
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, integer, 0);
+                return null;
+            }
+        });
+        sbRing.setOnProgressChangeListener(new Function1<Integer, Unit>() {
+            @Override
+            public Unit invoke(Integer integer) {
+                audioManager.setStreamVolume(AudioManager.STREAM_RING, integer, 0);
+                return null;
+            }
+        });
+        sbNotification.setOnProgressChangeListener(new Function1<Integer, Unit>() {
+            @Override
+            public Unit invoke(Integer integer) {
+                audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, integer, 0);
+                return null;
+            }
+        });
+        sbCall.setOnProgressChangeListener(new Function1<Integer, Unit>() {
+            @Override
+            public Unit invoke(Integer integer) {
+                audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, integer, 0);
+                return null;
+            }
+        });
+        sbDark.setOnProgressChangeListener(new Function1<Integer, Unit>() {
+            @Override
+            public Unit invoke(Integer integer) {
+                SPUtils.setInt(ServiceScreen.this, SPUtils.DARK_PERCENT, integer);
+                setDarknessLevel(integer);
+                return null;
+            }
+        });
+    }
+
     @SuppressLint("ClickableViewAccessibility")
     private void showPopupVolume(int i) {
-        if (menuVolume3Binding == null) {
-            menuVolume3Binding = PopupVoulumeConfig3Binding.inflate(LayoutInflater.from(this));
+        switch (i) {
+            case 1:
+                if (menuVolume1Binding == null) {
+                    menuVolume1Binding = PopupVoulumeConfig1Binding.inflate(LayoutInflater.from(this));
+                }
+                initViewAndBindViewVolumePopup(menuVolume1Binding.sbMedia, menuVolume1Binding.llMedia, menuVolume1Binding.sbRing, menuVolume1Binding.llRing, menuVolume1Binding.sbNotification, menuVolume1Binding.llNotification,
+                        menuVolume1Binding.sbCall, menuVolume1Binding.llCall, menuVolume1Binding.sbBrightness, menuVolume1Binding.llBright, menuVolume1Binding.sbDark, menuVolume1Binding.llDark);
+                addVolumeView(menuVolume1Binding.getRoot());
+                break;
+            case 2:
+                if (menuVolume2Binding == null) {
+                    menuVolume2Binding = PopupVoulumeConfig2Binding.inflate(LayoutInflater.from(this));
+                }
+                initViewAndBindViewVolumePopup(menuVolume2Binding.sbMedia, menuVolume2Binding.llMedia, menuVolume2Binding.sbRing, menuVolume2Binding.llRing, menuVolume2Binding.sbNotification, menuVolume2Binding.llNotification,
+                        menuVolume2Binding.sbCall, menuVolume2Binding.llCall, menuVolume2Binding.sbBrightness, menuVolume2Binding.llBright, menuVolume2Binding.sbDark, menuVolume2Binding.llDark);
+                addVolumeView(menuVolume2Binding.getRoot());
+                break;
+            case 3:
+                if (menuVolume3Binding == null) {
+                    menuVolume3Binding = PopupVoulumeConfig3Binding.inflate(LayoutInflater.from(this));
+                }
+                initViewAndBindViewVolumePopup(menuVolume3Binding.sbMedia, menuVolume3Binding.llMedia, menuVolume3Binding.sbRing, menuVolume3Binding.llRing, menuVolume3Binding.sbNotification, menuVolume3Binding.llNotification,
+                        menuVolume3Binding.sbCall, menuVolume3Binding.llCall, menuVolume3Binding.sbBrightness, menuVolume3Binding.llBright, menuVolume3Binding.sbDark, menuVolume3Binding.llDark);
+                addVolumeView(menuVolume3Binding.getRoot());
+                break;
+            case 4:
+                if (menuVolume4Binding == null) {
+                    menuVolume4Binding = PopupVoulumeConfig4Binding.inflate(LayoutInflater.from(this));
+                }
+                initViewAndBindViewVolumePopup(menuVolume4Binding.sbMedia, menuVolume4Binding.llMedia, menuVolume4Binding.sbRing, menuVolume4Binding.llRing, menuVolume4Binding.sbNotification, menuVolume4Binding.llNotification,
+                        menuVolume4Binding.sbCall, menuVolume4Binding.llCall, menuVolume4Binding.sbBrightness, menuVolume4Binding.llBright, menuVolume4Binding.sbDark, menuVolume4Binding.llDark);
+                addVolumeView(menuVolume4Binding.getRoot());
+                break;
+            case 5:
+                if (menuVolume5Binding == null) {
+                    menuVolume5Binding = PopupVoulumeConfig5Binding.inflate(LayoutInflater.from(this));
+                }
+                initViewAndBindViewVolumePopup(menuVolume5Binding.sbMedia, menuVolume5Binding.llMedia, menuVolume5Binding.sbRing, menuVolume5Binding.llRing, menuVolume5Binding.sbNotification, menuVolume5Binding.llNotification,
+                        menuVolume5Binding.sbCall, menuVolume5Binding.llCall, menuVolume5Binding.sbBrightness, menuVolume5Binding.llBright, menuVolume5Binding.sbDark, menuVolume5Binding.llDark);
+                addVolumeView(menuVolume5Binding.getRoot());
+                break;
+            case 6:
+                if (menuVolume6Binding == null) {
+                    menuVolume6Binding = PopupVoulumeConfig6Binding.inflate(LayoutInflater.from(this));
+                }
+                initViewAndBindViewVolumePopup(menuVolume6Binding.sbMedia, menuVolume6Binding.llMedia, menuVolume6Binding.sbRing, menuVolume6Binding.llRing, menuVolume6Binding.sbNotification, menuVolume6Binding.llNotification,
+                        menuVolume6Binding.sbCall, menuVolume6Binding.llCall, menuVolume6Binding.sbBrightness, menuVolume6Binding.llBright, menuVolume6Binding.sbDark, menuVolume6Binding.llDark);
+                addVolumeView(menuVolume6Binding.getRoot());
+                break;
+            case 7:
+                if (menuVolume7Binding == null) {
+                    menuVolume7Binding = PopupVoulumeConfig7Binding.inflate(LayoutInflater.from(this));
+                }
+                initViewAndBindViewVolumePopup(menuVolume7Binding.sbMedia, menuVolume7Binding.llMedia, menuVolume7Binding.sbRing, menuVolume7Binding.llRing, menuVolume7Binding.sbNotification, menuVolume7Binding.llNotification,
+                        menuVolume7Binding.sbCall, menuVolume7Binding.llCall, menuVolume7Binding.sbBrightness, menuVolume7Binding.llBright, menuVolume7Binding.sbDark, menuVolume7Binding.llDark);
+                addVolumeView(menuVolume7Binding.getRoot());
+                break;
+            case 8:
+                if (menuVolume8Binding == null) {
+                    menuVolume8Binding = PopupVoulumeConfig8Binding.inflate(LayoutInflater.from(this));
+                }
+                initViewAndBindViewVolumePopup(menuVolume8Binding.sbMedia, menuVolume8Binding.llMedia, menuVolume8Binding.sbRing, menuVolume8Binding.llRing, menuVolume8Binding.sbNotification, menuVolume8Binding.llNotification,
+                        menuVolume8Binding.sbCall, menuVolume8Binding.llCall, menuVolume8Binding.sbBrightness, menuVolume8Binding.llBright, menuVolume8Binding.sbDark, menuVolume8Binding.llDark);
+                addVolumeView(menuVolume8Binding.getRoot());
+                break;
         }
-        if (menuVolume3Binding.getRoot().getParent() == null) {  // Check if it's already added
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void addVolumeView(View view) {
+        if (view.getParent() == null) {  // Check if it's already added
             WindowManager.LayoutParams popupParams = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.WRAP_CONTENT,
@@ -502,22 +802,6 @@ public class ServiceScreen extends Service {
                     PixelFormat.TRANSLUCENT
             );
             popupParams.gravity = Gravity.CENTER;
-            menuVolume3Binding.sbBrightness.setOnProgressChangeListener(new Function1<Integer, Unit>() {
-                @Override
-                public Unit invoke(Integer integer) {
-                    updateFloatingViewSize(integer);
-                    Log.e("check_sb", "progress: " + integer);
-                    return null;
-                }
-            });
-            menuVolume3Binding.sbDark.setOnProgressChangeListener(new Function1<Integer, Unit>() {
-                @Override
-                public Unit invoke(Integer integer) {
-                    if (volumeView != null) volumeView.setAlpha((float) integer / 255);
-                    Log.e("check_sb", "progress: " + integer);
-                    return null;
-                }
-            });
             overlayView = new View(this);
             WindowManager.LayoutParams overlayParams = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.MATCH_PARENT,
@@ -538,13 +822,14 @@ public class ServiceScreen extends Service {
 
             try {
                 windowManager.addView(overlayView, overlayParams);
-                windowManager.addView(menuVolume3Binding.getRoot(), popupParams);
+                windowManager.addView(view, popupParams);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
             hidePopup();
         }
+
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -676,8 +961,29 @@ public class ServiceScreen extends Service {
             if (menuBinding != null && menuBinding.getRoot().getParent() != null) {
                 windowManager.removeView(menuBinding.getRoot());
             }
+            if (menuVolume1Binding != null && menuVolume1Binding.getRoot().getParent() != null) {
+                windowManager.removeView(menuVolume1Binding.getRoot());
+            }
+            if (menuVolume2Binding != null && menuVolume2Binding.getRoot().getParent() != null) {
+                windowManager.removeView(menuVolume2Binding.getRoot());
+            }
             if (menuVolume3Binding != null && menuVolume3Binding.getRoot().getParent() != null) {
                 windowManager.removeView(menuVolume3Binding.getRoot());
+            }
+            if (menuVolume4Binding != null && menuVolume4Binding.getRoot().getParent() != null) {
+                windowManager.removeView(menuVolume4Binding.getRoot());
+            }
+            if (menuVolume5Binding != null && menuVolume5Binding.getRoot().getParent() != null) {
+                windowManager.removeView(menuVolume5Binding.getRoot());
+            }
+            if (menuVolume6Binding != null && menuVolume6Binding.getRoot().getParent() != null) {
+                windowManager.removeView(menuVolume6Binding.getRoot());
+            }
+            if (menuVolume7Binding != null && menuVolume7Binding.getRoot().getParent() != null) {
+                windowManager.removeView(menuVolume7Binding.getRoot());
+            }
+            if (menuVolume8Binding != null && menuVolume8Binding.getRoot().getParent() != null) {
+                windowManager.removeView(menuVolume8Binding.getRoot());
             }
             if (overlayView != null && overlayView.getParent() != null) {
                 windowManager.removeView(overlayView);
@@ -1087,9 +1393,9 @@ public class ServiceScreen extends Service {
                 int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
 
                 if (currentVolume > 0) {
-                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume - 1, AudioManager.FLAG_SHOW_UI);
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume - 1, FLAG_SHOW_UI);
                 } else
-                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, AudioManager.FLAG_SHOW_UI);
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, FLAG_SHOW_UI);
                 break;
             case ItemFunctionIcon.ACTION_NONE:
                 Log.d("action_check", "action: none");
@@ -1099,9 +1405,9 @@ public class ServiceScreen extends Service {
                 int maxVolume = audioManagerUp.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
                 int currentVolumeUp = audioManagerUp.getStreamVolume(AudioManager.STREAM_MUSIC);
                 if (currentVolumeUp < maxVolume) {
-                    audioManagerUp.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolumeUp + 1, AudioManager.FLAG_SHOW_UI);
+                    audioManagerUp.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolumeUp + 1, FLAG_SHOW_UI);
                 } else
-                    audioManagerUp.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, AudioManager.FLAG_SHOW_UI);
+                    audioManagerUp.setStreamVolume(AudioManager.STREAM_MUSIC, maxVolume, FLAG_SHOW_UI);
                 Log.d("action_check", "action: volume up");
                 break;
             case ItemFunctionIcon.ACTION_OPEN_MENU:
@@ -2007,6 +2313,10 @@ public class ServiceScreen extends Service {
         animatorY.start();
     }
 
+    public void updatePositionAfterMoveVolume() {
+        updatePositionAfterMoveVolume(volumeView, windowManager, paramsVolume);
+    }
+
     public void updatePositionAfterMoveVolume(
             View view,
             WindowManager windowManager,
@@ -2021,12 +2331,12 @@ public class ServiceScreen extends Service {
                 targetX = Math.min(paramsVolume.x, screenWidth);
                 targetY = screenHeight - view.getHeight() - view.getHeight() / 2;
             } else {
-                targetX = screenWidth - view.getWidth();
+                targetX = screenWidth - view.getWidth() + view.getWidth() * SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_DISTANCE, 0) / 100;
                 targetY = Math.min(paramsVolume.y, screenHeight);
             }
         } else if (centerX > screenWidth / 2 && centerY <= screenHeight / 2) { //top-right
             if (screenWidth - centerX <= centerY) {
-                targetX = screenWidth - view.getWidth();
+                targetX = screenWidth - view.getWidth() + view.getWidth() * SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_DISTANCE, 0) / 100;
                 targetY = Math.max(paramsVolume.y, 0);
             } else {
                 targetX = Math.min(paramsVolume.x, screenWidth);
@@ -2037,12 +2347,12 @@ public class ServiceScreen extends Service {
                 targetX = Math.max(paramsVolume.x, 0);
                 targetY = screenHeight - view.getHeight() - view.getHeight() / 2;
             } else {
-                targetX = 0;
+                targetX = -view.getWidth() * SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_DISTANCE, 0) / 100;
                 targetY = Math.min(paramsVolume.y, screenHeight);
             }
         } else { //top-le
             if (centerX <= centerY) {
-                targetX = 0;
+                targetX = -view.getWidth() * SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_DISTANCE, 0) / 100;
                 targetY = Math.max(paramsVolume.y, 0);
             } else {
                 targetX = Math.max(paramsVolume.x, 0);

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.assistivetouch.easytouch.homebutton.R;
 import com.assistivetouch.easytouch.homebutton.base.BaseFragment;
@@ -100,24 +101,30 @@ public class Menu2Fragment extends BaseFragment<PopupSelectAction2Binding> {
     }
 
     public void restore() {
-        listCurrent.clear();
-        listCurrent.addAll(listDefault);
-        Log.e("menu_check","menu2 restore"+listCurrent);
-        if (listCurrent != null && !listCurrent.isEmpty()) {
-            Log.e("menu_check","menu2 start restore");
-            binding.imgAction1.setImageResource(listCurrent.get(0).getIconShow());
-            binding.txtAction1.setText(listCurrent.get(0).getText());
-            binding.imgAction2.setImageResource(listCurrent.get(1).getIconShow());
-            binding.txtAction2.setText(listCurrent.get(1).getText());
-            binding.imgAction3.setImageResource(listCurrent.get(2).getIconShow());
-            binding.txtAction3.setText(listCurrent.get(2).getText());
-            binding.imgAction5.setImageResource(listCurrent.get(3).getIconShow());
-            binding.txtAction5.setText(listCurrent.get(3).getText());
-            binding.imgAction6.setImageResource(listCurrent.get(4).getIconShow());
-            binding.txtAction6.setText(listCurrent.get(4).getText());
-            binding.imgAction7.setImageResource(listCurrent.get(5).getIconShow());
-            binding.txtAction7.setText(listCurrent.get(5).getText());
+        if (listCurrent.equals(SPUtils.getListDefaultMenu2())){
+            Toast.makeText(requireContext(), R.string.menu_2_already_reset, Toast.LENGTH_SHORT).show();
+        } else {
+            listCurrent.clear();
+            listCurrent.addAll(SPUtils.getListDefaultMenu2());
+            Log.e("menu_check","menu2 restore"+listCurrent);
+            if (listCurrent != null && !listCurrent.isEmpty()) {
+                Log.e("menu_check","menu2 start restore");
+                binding.imgAction1.setImageResource(listCurrent.get(0).getIconShow());
+                binding.txtAction1.setText(listCurrent.get(0).getText());
+                binding.imgAction2.setImageResource(listCurrent.get(1).getIconShow());
+                binding.txtAction2.setText(listCurrent.get(1).getText());
+                binding.imgAction3.setImageResource(listCurrent.get(2).getIconShow());
+                binding.txtAction3.setText(listCurrent.get(2).getText());
+                binding.imgAction5.setImageResource(listCurrent.get(3).getIconShow());
+                binding.txtAction5.setText(listCurrent.get(3).getText());
+                binding.imgAction6.setImageResource(listCurrent.get(4).getIconShow());
+                binding.txtAction6.setText(listCurrent.get(4).getText());
+                binding.imgAction7.setImageResource(listCurrent.get(5).getIconShow());
+                binding.txtAction7.setText(listCurrent.get(5).getText());
+                Toast.makeText(requireContext(), R.string.menu_2_reset_successfully, Toast.LENGTH_SHORT).show();
+            }
         }
+
     }
 
     @Override

@@ -6,12 +6,14 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
@@ -53,7 +55,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
 
 
     ArrayList<String> exitRate = new ArrayList<String>(Arrays.asList("2", "4", "6", "8", "10"));
-
+    public static HomeActivity instance;
 
     @Override
     public ActivityHomeBinding getBinding() {
@@ -61,9 +63,35 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     }
 
     @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        instance = this;
+    }
+
+    @Override
     public void initView() {
         EventTracking.logEvent(this, "home_view");
-        binding.swTouch.setChecked(isMyServiceRunning(ServiceScreen.class));
+
+
+    }
+    public void checkState(){
+        if (!isMyServiceRunning(ServiceScreen.class)) {
+            binding.swTouch.setChecked(false);
+            binding.swVolume.setChecked(false);
+        } else {
+            if (ServiceScreen.instance == null) {
+                binding.swTouch.setChecked(false);
+                binding.swVolume.setChecked(false);
+            } else {
+                binding.swTouch.setChecked(ServiceScreen.instance.floatingView != null);
+                binding.swVolume.setChecked(ServiceScreen.instance.volumeView != null);
+            }
+        }
+    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkState();
     }
 
     @Override
@@ -327,7 +355,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
+        instance = null;
     }
 
     private void showDialogGotoSetting(int type) {

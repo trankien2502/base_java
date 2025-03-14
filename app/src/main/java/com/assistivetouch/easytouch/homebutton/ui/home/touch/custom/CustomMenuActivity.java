@@ -28,7 +28,7 @@ public class CustomMenuActivity extends BaseActivity<ActivityCustomMenuBinding> 
 
     @Override
     public void initView() {
-        oldColor = SPUtils.getInt(this, SPUtils.MENU_BACKGROUND_COLOR, R.color.color_default);
+        oldColor = SPUtils.getInt(this, SPUtils.MENU_BACKGROUND_COLOR, Color.parseColor("#cc000000"));
         currentColor = oldColor;
         menuAdapter = new MenuAdapter(this);
         binding.viewPager.setAdapter(menuAdapter);
@@ -54,10 +54,13 @@ public class CustomMenuActivity extends BaseActivity<ActivityCustomMenuBinding> 
         });
         binding.llRestore.setOnClickListener(v -> {
             if (binding.viewPager.getCurrentItem() == 0) {
-                Menu1Fragment.instance.restore();
+                if (Menu1Fragment.instance != null){
+                    Menu1Fragment.instance.restore();
+                }
                 Log.e("menu_check", "click1");
             } else {
-                Menu2Fragment.instance.restore();
+                if (Menu2Fragment.instance != null)
+                    Menu2Fragment.instance.restore();
                 Log.e("menu_check", "click2");
             }
 
@@ -78,7 +81,7 @@ public class CustomMenuActivity extends BaseActivity<ActivityCustomMenuBinding> 
     }
 
     private void showColorPickerDialog() {
-        ColorPickerDialog dialog = new ColorPickerDialog(this, true);
+        ColorPickerDialog dialog = new ColorPickerDialog(this, false, currentColor);
         dialog.init(new ColorSelectCallBack() {
             @Override
             public void select(int color) {

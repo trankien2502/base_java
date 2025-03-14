@@ -20,6 +20,7 @@
         app:layout_constraintWidth_max="398dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/llMedia"
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="3dp">
@@ -28,10 +29,10 @@
                 android:id="@+id/sbMedia"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:vsb_bar_background="#EFF1F3"
-                app:vsb_bar_corner_radius="48dp"
-                app:vsb_bar_progress_gradient_end="#3392FF"
-                app:vsb_bar_progress_gradient_start="#3392FF"
+                app:vsb_bar_background="#8C96A6"
+                app:vsb_bar_corner_radius="8dp"
+                app:vsb_bar_progress_gradient_end="#FFFFFF"
+                app:vsb_bar_progress_gradient_start="#FFFFFF"
                 app:vsb_bar_width="48dp"
                 app:vsb_click_to_set_progress="true"
                 app:vsb_progress="50"
@@ -44,15 +45,16 @@
                 android:layout_height="28dp"
                 android:layout_marginBottom="18dp"
                 android:padding="4dp"
-                android:src="@drawable/ic_media"
+                android:src="@drawable/ic_media_3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:tint="@color/white" />
+                app:tint="@color/black" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/llRing"
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="3dp">
@@ -61,10 +63,10 @@
                 android:id="@+id/sbRing"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:vsb_bar_background="#EFF1F3"
-                app:vsb_bar_corner_radius="48dp"
-                app:vsb_bar_progress_gradient_end="#3392FF"
-                app:vsb_bar_progress_gradient_start="#3392FF"
+                app:vsb_bar_background="#8C96A6"
+                app:vsb_bar_corner_radius="8dp"
+                app:vsb_bar_progress_gradient_end="#FFFFFF"
+                app:vsb_bar_progress_gradient_start="#FFFFFF"
                 app:vsb_bar_width="48dp"
                 app:vsb_click_to_set_progress="true"
                 app:vsb_progress="50"
@@ -77,14 +79,15 @@
                 android:layout_height="28dp"
                 android:layout_marginBottom="18dp"
                 android:padding="4dp"
-                android:src="@drawable/ic_ring"
+                android:src="@drawable/ic_ring_3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:tint="@color/white" />
+                app:tint="@color/black" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/llNotification"
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="3dp">
@@ -93,10 +96,10 @@
                 android:id="@+id/sbNotification"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:vsb_bar_background="#EFF1F3"
-                app:vsb_bar_corner_radius="48dp"
-                app:vsb_bar_progress_gradient_end="#3392FF"
-                app:vsb_bar_progress_gradient_start="#3392FF"
+                app:vsb_bar_background="#8C96A6"
+                app:vsb_bar_corner_radius="8dp"
+                app:vsb_bar_progress_gradient_end="#FFFFFF"
+                app:vsb_bar_progress_gradient_start="#FFFFFF"
                 app:vsb_bar_width="48dp"
                 app:vsb_click_to_set_progress="true"
                 app:vsb_progress="50"
@@ -109,14 +112,15 @@
                 android:layout_height="28dp"
                 android:layout_marginBottom="18dp"
                 android:padding="4dp"
-                android:src="@drawable/ic_notification"
+                android:src="@drawable/ic_notification_3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:tint="@color/white" />
+                app:tint="@color/black" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/llCall"
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="3dp">
@@ -125,10 +129,10 @@
                 android:id="@+id/sbCall"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:vsb_bar_background="#EFF1F3"
-                app:vsb_bar_corner_radius="48dp"
-                app:vsb_bar_progress_gradient_end="#3392FF"
-                app:vsb_bar_progress_gradient_start="#3392FF"
+                app:vsb_bar_background="#8C96A6"
+                app:vsb_bar_corner_radius="8dp"
+                app:vsb_bar_progress_gradient_end="#FFFFFF"
+                app:vsb_bar_progress_gradient_start="#FFFFFF"
                 app:vsb_bar_width="48dp"
                 app:vsb_click_to_set_progress="true"
                 app:vsb_progress="50"
@@ -141,14 +145,15 @@
                 android:layout_height="28dp"
                 android:layout_marginBottom="18dp"
                 android:padding="4dp"
-                android:src="@drawable/ic_call"
+                android:src="@drawable/ic_call_3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:tint="@color/white" />
+                app:tint="@color/black" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/llBright"
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="3dp">
@@ -157,14 +162,14 @@
                 android:id="@+id/sbBrightness"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:vsb_bar_background="#EFF1F3"
-                app:vsb_bar_corner_radius="48dp"
-                app:vsb_bar_progress_gradient_end="#3392FF"
-                app:vsb_bar_progress_gradient_start="#3392FF"
+                app:vsb_bar_background="#8C96A6"
+                app:vsb_bar_corner_radius="8dp"
+                app:vsb_bar_progress_gradient_end="#FFFFFF"
+                app:vsb_bar_progress_gradient_start="#FFFFFF"
                 app:vsb_bar_width="48dp"
                 app:vsb_click_to_set_progress="true"
                 app:vsb_progress="50"
-
+                app:vsb_max_value="255"
                 app:vsb_show_thumb="true"
                 app:vsb_thumb_container_corner_radius="5dp"
                 app:vsb_use_thumb_to_set_progress="true" />
@@ -174,14 +179,15 @@
                 android:layout_height="28dp"
                 android:layout_marginBottom="18dp"
                 android:padding="4dp"
-                android:src="@drawable/ic_function_bright_ness"
+                android:src="@drawable/ic_function_bright_ness_3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:tint="@color/white" />
+                app:tint="@color/black" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/llDark"
             android:layout_width="48dp"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="3dp">
@@ -190,14 +196,14 @@
                 android:id="@+id/sbDark"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                app:vsb_bar_background="#EFF1F3"
-                app:vsb_bar_corner_radius="48dp"
-                app:vsb_bar_progress_gradient_end="#3392FF"
-                app:vsb_bar_progress_gradient_start="#3392FF"
+                app:vsb_bar_background="#8C96A6"
+                app:vsb_bar_corner_radius="8dp"
+                app:vsb_bar_progress_gradient_end="#FFFFFF"
+                app:vsb_bar_progress_gradient_start="#FFFFFF"
                 app:vsb_bar_width="48dp"
                 app:vsb_click_to_set_progress="true"
-                app:vsb_max_value="255"
                 app:vsb_progress="50"
+                app:vsb_max_value="255"
                 app:vsb_show_thumb="true"
                 app:vsb_thumb_container_corner_radius="5dp"
                 app:vsb_use_thumb_to_set_progress="true" />
@@ -207,11 +213,11 @@
                 android:layout_height="28dp"
                 android:layout_marginBottom="18dp"
                 android:padding="4dp"
-                android:src="@drawable/ic_dark"
+                android:src="@drawable/ic_dark_3"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:tint="@color/white" />
+                app:tint="@color/black" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 

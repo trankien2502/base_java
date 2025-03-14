@@ -1,6 +1,10 @@
 package com.assistivetouch.easytouch.homebutton.ui.home.touch.icon;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.content.Intent;
+import android.os.Handler;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -14,6 +18,7 @@ import java.util.ArrayList;
 
 public class FloatingIconActivity extends BaseActivity<ActivityFloatingIconBinding> {
 
+    Handler handler = new Handler();
     @Override
     public ActivityFloatingIconBinding getBinding() {
         return ActivityFloatingIconBinding.inflate(getLayoutInflater());
@@ -73,6 +78,14 @@ public class FloatingIconActivity extends BaseActivity<ActivityFloatingIconBindi
     ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == RESULT_OK) {
 
+        } else if (result.getResultCode() == 2502) {
+            binding.llSuccess.setVisibility(VISIBLE);
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    binding.llSuccess.setVisibility(GONE);
+                }
+            },1500);
         }
     });
 }

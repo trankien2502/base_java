@@ -1,5 +1,7 @@
 package com.assistivetouch.easytouch.homebutton.item.control;
 
+import androidx.annotation.Nullable;
+
 public class ItemFunctionIcon {
     public static final int ACTION_SCREEN_RECORDER = 1;
     public static final int ACTION_BLUETOOTH = 2;
@@ -34,7 +36,7 @@ public class ItemFunctionIcon {
     private int text;
     private boolean isSelect;
 
-    public ItemFunctionIcon(int actionNumber,int icon, int iconShow, int text) {
+    public ItemFunctionIcon(int actionNumber, int icon, int iconShow, int text) {
         this.icon = icon;
         this.text = text;
         this.iconShow = iconShow;
@@ -42,7 +44,7 @@ public class ItemFunctionIcon {
         this.isSelect = false;
     }
 
-    public ItemFunctionIcon(int id,int actionNumber, int icon, int iconShow, int text) {
+    public ItemFunctionIcon(int id, int actionNumber, int icon, int iconShow, int text) {
         this.id = id;
         this.text = text;
         this.icon = icon;
@@ -97,5 +99,13 @@ public class ItemFunctionIcon {
 
     public void setIconShow(int iconShow) {
         this.iconShow = iconShow;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        ItemFunctionIcon functionIcon = (ItemFunctionIcon) obj;
+        return id == functionIcon.id && actionNumber == functionIcon.actionNumber;
     }
 }

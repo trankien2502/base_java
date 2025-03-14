@@ -47,14 +47,22 @@ public class SPUtils {
     public static String MENU_FUNCTION_2 = "MENU_FUNCTION_2";
     public static String FAVOURITE_APP = "FAVOURITE_APP";
     public static String FAVOURITE_POSITION = "FAVOURITE_POSITION";
-    public static String VOLUME_STYLE_NUMBER = "VOLUME_STYLE_NUMBER";
+
     public static String SHOW_MEDIA = "SHOW_MEDIA";
     public static String SHOW_RINGTONE = "SHOW_RINGTONE";
     public static String SHOW_NOTIFICATION = "SHOW_NOTIFICATION";
     public static String SHOW_CALL = "SHOW_CALL";
     public static String SHOW_BRIGHTNESS = "SHOW_BRIGHTNESS";
     public static String SHOW_DARKNESS = "SHOW_DARKNESS";
+    public static String DARK_PERCENT = "DARK_PERCENT";
     public static String LONG_PRESS_VOLUME_ACTION = "LONG_PRESS_VOLUME_ACTION";
+    public static String VOLUME_STYLE_NUMBER = "VOLUME_STYLE_NUMBER";
+    public static String VOLUME_BUTTON_COLOR = "VOLUME_BUTTON_COLOR";
+    public static String VOLUME_BUTTON_BACKGROUND_COLOR = "VOLUME_BUTTON_BACKGROUND_COLOR";
+    public static String VOLUME_BUTTON_ALPHA = "VOLUME_BUTTON_ALPHA";
+    public static String VOLUME_BUTTON_SIZE = "VOLUME_BUTTON_SIZE";
+    public static String VOLUME_BUTTON_DISTANCE = "VOLUME_BUTTON_DISTANCE";
+    public static String VOLUME_BUTTON_FIX_POSITION = "VOLUME_BUTTON_FIX_POSITION";
 
 
     public static SharedPreferences getPref(Context context) {

@@ -100,6 +100,7 @@ public class FunctionFloatingIconActivity extends BaseActivity<ActivityFunctionF
         });
         binding.ivGone.setOnClickListener(v -> {
             if (functionIcon != null) SPUtils.setObject(this, type, functionIcon);
+            setResult(2502);
             finish();
         });
     }

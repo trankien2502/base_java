@@ -2,6 +2,7 @@ package com.assistivetouch.easytouch.homebutton.ui.home.volume;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.SeekBar;
@@ -23,6 +24,7 @@ import com.assistivetouch.easytouch.homebutton.service.ServiceScreen;
 import com.assistivetouch.easytouch.homebutton.ui.home.touch.custom.Menu1Fragment;
 import com.assistivetouch.easytouch.homebutton.ui.home.touch.custom.Menu2Fragment;
 import com.assistivetouch.easytouch.homebutton.ui.setting.SettingActivity;
+import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 
 public class ButtonStyleActivity extends BaseActivity<ActivityButtonStyleBinding> {
 
@@ -35,9 +37,20 @@ public class ButtonStyleActivity extends BaseActivity<ActivityButtonStyleBinding
         return ActivityButtonStyleBinding.inflate(getLayoutInflater());
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public void initView() {
-
+        if (SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_COLOR, -1) != -1)
+            binding.ivButtonColor.setCardBackgroundColor(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_COLOR, -1));
+        if (SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_BACKGROUND_COLOR, -1) != -1)
+            binding.ivButtonBackgroundColor.setCardBackgroundColor(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_BACKGROUND_COLOR, -1));
+        binding.sbTransparency.setProgress(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_ALPHA, 128));
+        binding.tvPercentTransparency.setText(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_ALPHA, 128) * 100 / 255 + "%");
+        binding.sbSize.setProgress(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_SIZE, 0));
+        binding.tvPercentSize.setText(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_SIZE, 0) * 100 / 60 + "%");
+        binding.sbEdgeDistance.setProgress(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_DISTANCE, 0));
+        binding.tvEdgeDistance.setText(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_DISTANCE, 0) + "%");
+        binding.swPosition.setChecked(SPUtils.getBoolean(this, SPUtils.VOLUME_BUTTON_FIX_POSITION, false));
     }
 
     @SuppressLint("SetTextI18n")
@@ -59,9 +72,13 @@ public class ButtonStyleActivity extends BaseActivity<ActivityButtonStyleBinding
 
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (ServiceScreen.instance != null && ServiceScreen.instance.volumeView != null) {
-                    ServiceScreen.instance.volumeView.setAlpha((float) progress /255);
+                if (ServiceScreen.instance != null) {
+                    if (ServiceScreen.instance.volumeView != null) {
+                        ServiceScreen.instance.volumeView.setAlpha((float) progress / 255);
+                    }
                 }
+
+                SPUtils.setInt(getBaseContext(), SPUtils.VOLUME_BUTTON_ALPHA, progress);
                 binding.tvPercentTransparency.setText(progress * 100 / 255 + "%");
             }
 
@@ -78,9 +95,12 @@ public class ButtonStyleActivity extends BaseActivity<ActivityButtonStyleBinding
         binding.sbSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if (ServiceScreen.instance != null && ServiceScreen.instance.volumeView != null) {
-                    ServiceScreen.instance.updateFloatingViewSize(progress);
+                if (ServiceScreen.instance != null) {
+                    if (ServiceScreen.instance.volumeView != null) {
+                        ServiceScreen.instance.updateFloatingViewSize(progress);
+                    }
                 }
+                SPUtils.setInt(getBaseContext(), SPUtils.VOLUME_BUTTON_SIZE, progress);
                 binding.tvPercentSize.setText(progress * 100 / 60 + "%");
             }
 
@@ -97,8 +117,14 @@ public class ButtonStyleActivity extends BaseActivity<ActivityButtonStyleBinding
         binding.sbEdgeDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
+                SPUtils.setInt(getBaseContext(), SPUtils.VOLUME_BUTTON_DISTANCE, progress);
                 binding.tvEdgeDistance.setText(progress + "%");
+                if (ServiceScreen.instance != null) {
+                    if (ServiceScreen.instance.volumeView != null) {
+                        ServiceScreen.instance.updatePositionAfterMoveVolume();
+                    }
+                }
+
             }
 
             @Override
@@ -112,7 +138,7 @@ public class ButtonStyleActivity extends BaseActivity<ActivityButtonStyleBinding
             }
         });
         binding.swPosition.setOnClickListener(v -> {
-
+            SPUtils.setBoolean(getBaseContext(), SPUtils.VOLUME_BUTTON_FIX_POSITION, binding.swPosition.isChecked());
         });
     }
 
@@ -130,16 +156,25 @@ public class ButtonStyleActivity extends BaseActivity<ActivityButtonStyleBinding
     });
 
     private void showColorPickerDialog(boolean isButtonColor) {
-        ColorPickerDialog dialog = new ColorPickerDialog(this, true);
+        int color = isButtonColor ? SPUtils.getInt(getBaseContext(), SPUtils.VOLUME_BUTTON_COLOR, Color.WHITE) : SPUtils.getInt(getBaseContext(), SPUtils.VOLUME_BUTTON_BACKGROUND_COLOR, Color.WHITE);
+        ColorPickerDialog dialog = new ColorPickerDialog(this, true, color);
         dialog.init(new ColorSelectCallBack() {
             @Override
             public void select(int color) {
                 if (isButtonColor) {
                     currentButtonColor = color;
+                    SPUtils.setInt(getBaseContext(), SPUtils.VOLUME_BUTTON_COLOR, color);
                     binding.ivButtonColor.setCardBackgroundColor(color);
                 } else {
                     currentButtonBackgroundColor = color;
+                    SPUtils.setInt(getBaseContext(), SPUtils.VOLUME_BUTTON_BACKGROUND_COLOR, color);
                     binding.ivButtonBackgroundColor.setCardBackgroundColor(color);
+                }
+                if (ServiceScreen.instance != null) {
+                    if (ServiceScreen.instance.volumeView != null) {
+                        ServiceScreen.instance.removeVolumeView();
+                        ServiceScreen.instance.addVolumeIcon();
+                    }
                 }
             }
         });

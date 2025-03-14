@@ -155,6 +155,12 @@
     <string name="accessibility_permission">Accessibility Permission</string>
     <string name="darkness">Darkness</string>
     <string name="recording_screen">Recording screen...</string>
+    <string name="tap_to_stop_record">Tap to stop record</string>
+    <string name="you_must_choose_at_least_1_volume_option">You must choose at least 1 volume option!</string>
+    <string name="menu_1_already_reset">Menu 1 already reset!</string>
+    <string name="menu_1_reset_successfully">Menu 1 reset successfully!</string>
+    <string name="menu_2_already_reset">Menu 2 already reset!</string>
+    <string name="menu_2_reset_successfully">Menu 2 reset successfully!</string>
 
 
 </resources>

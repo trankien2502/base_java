@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResultLauncher;
@@ -24,6 +25,7 @@ import com.assistivetouch.easytouch.homebutton.base.BaseActivity;
 import com.assistivetouch.easytouch.homebutton.databinding.ActivityVolumeConfigBinding;
 import com.assistivetouch.easytouch.homebutton.dialog.ChooseActionDialog;
 import com.assistivetouch.easytouch.homebutton.dialog.GoToSettingDialog;
+import com.assistivetouch.easytouch.homebutton.service.ServiceControl;
 import com.assistivetouch.easytouch.homebutton.util.CheckUtils;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 import com.assistivetouch.easytouch.homebutton.util.SystemUtil;
@@ -65,32 +67,86 @@ public class VolumeConfigActivity extends BaseActivity<ActivityVolumeConfigBindi
             showChooseActionDialog();
         });
         binding.clMedia.setOnClickListener(v -> {
-            SPUtils.setBoolean(this, SPUtils.SHOW_MEDIA, !SPUtils.getBoolean(this, SPUtils.SHOW_MEDIA, true));
-            changeState();
+            if (SPUtils.getBoolean(this, SPUtils.SHOW_MEDIA, true)) {
+                if (SPUtils.getBoolean(this, SPUtils.SHOW_RINGTONE, true) || SPUtils.getBoolean(this, SPUtils.SHOW_NOTIFICATION, true)
+                        || SPUtils.getBoolean(this, SPUtils.SHOW_BRIGHTNESS, false) || SPUtils.getBoolean(this, SPUtils.SHOW_CALL, true) || SPUtils.getBoolean(this, SPUtils.SHOW_DARKNESS, false)) {
+                    SPUtils.setBoolean(this, SPUtils.SHOW_MEDIA, false);
+                    changeState();
+                } else
+                    Toast.makeText(this, R.string.you_must_choose_at_least_1_volume_option, Toast.LENGTH_SHORT).show();
+            } else {
+                SPUtils.setBoolean(this, SPUtils.SHOW_MEDIA, true);
+                changeState();
+            }
         });
         binding.clRing.setOnClickListener(v -> {
-            SPUtils.setBoolean(this, SPUtils.SHOW_RINGTONE, !SPUtils.getBoolean(this, SPUtils.SHOW_RINGTONE, true));
-            changeState();
+            if (SPUtils.getBoolean(this, SPUtils.SHOW_RINGTONE, true)) {
+                if (SPUtils.getBoolean(this, SPUtils.SHOW_NOTIFICATION, true) || SPUtils.getBoolean(this, SPUtils.SHOW_MEDIA, true)
+                        || SPUtils.getBoolean(this, SPUtils.SHOW_BRIGHTNESS, false) || SPUtils.getBoolean(this, SPUtils.SHOW_CALL, true) || SPUtils.getBoolean(this, SPUtils.SHOW_DARKNESS, false)) {
+                    SPUtils.setBoolean(this, SPUtils.SHOW_RINGTONE, false);
+                    changeState();
+                } else
+                    Toast.makeText(this, R.string.you_must_choose_at_least_1_volume_option, Toast.LENGTH_SHORT).show();
+            } else {
+                SPUtils.setBoolean(this, SPUtils.SHOW_RINGTONE, true);
+                changeState();
+            }
         });
         binding.clNotification.setOnClickListener(v -> {
-            SPUtils.setBoolean(this, SPUtils.SHOW_NOTIFICATION, !SPUtils.getBoolean(this, SPUtils.SHOW_NOTIFICATION, true));
-            changeState();
+            if (SPUtils.getBoolean(this, SPUtils.SHOW_NOTIFICATION, true)) {
+                if (SPUtils.getBoolean(this, SPUtils.SHOW_RINGTONE, true) || SPUtils.getBoolean(this, SPUtils.SHOW_MEDIA, true)
+                        || SPUtils.getBoolean(this, SPUtils.SHOW_BRIGHTNESS, false) || SPUtils.getBoolean(this, SPUtils.SHOW_CALL, true) || SPUtils.getBoolean(this, SPUtils.SHOW_DARKNESS, false)) {
+                    SPUtils.setBoolean(this, SPUtils.SHOW_NOTIFICATION, false);
+                    changeState();
+                } else
+                    Toast.makeText(this, R.string.you_must_choose_at_least_1_volume_option, Toast.LENGTH_SHORT).show();
+            } else {
+                SPUtils.setBoolean(this, SPUtils.SHOW_NOTIFICATION, true);
+                changeState();
+            }
         });
         binding.clCall.setOnClickListener(v -> {
-            SPUtils.setBoolean(this, SPUtils.SHOW_CALL, !SPUtils.getBoolean(this, SPUtils.SHOW_CALL, true));
-            changeState();
+            if (SPUtils.getBoolean(this, SPUtils.SHOW_CALL, true)) {
+                if (SPUtils.getBoolean(this, SPUtils.SHOW_RINGTONE, true) || SPUtils.getBoolean(this, SPUtils.SHOW_NOTIFICATION, true) || SPUtils.getBoolean(this, SPUtils.SHOW_MEDIA, true)
+                        || SPUtils.getBoolean(this, SPUtils.SHOW_BRIGHTNESS, false) || SPUtils.getBoolean(this, SPUtils.SHOW_DARKNESS, false)) {
+                    SPUtils.setBoolean(this, SPUtils.SHOW_CALL, false);
+                    changeState();
+                } else
+                    Toast.makeText(this, R.string.you_must_choose_at_least_1_volume_option, Toast.LENGTH_SHORT).show();
+            } else {
+                SPUtils.setBoolean(this, SPUtils.SHOW_CALL, true);
+                changeState();
+            }
         });
         binding.clBrightness.setOnClickListener(v -> {
             if (!CheckUtils.checkSystemWriteSetting(this)) {
                 showDialogGotoSetting(3);
             } else {
-                SPUtils.setBoolean(this, SPUtils.SHOW_BRIGHTNESS, !SPUtils.getBoolean(this, SPUtils.SHOW_BRIGHTNESS, true));
-                changeState();
+                if (SPUtils.getBoolean(this, SPUtils.SHOW_BRIGHTNESS, false)) {
+                    if (SPUtils.getBoolean(this, SPUtils.SHOW_RINGTONE, true) || SPUtils.getBoolean(this, SPUtils.SHOW_NOTIFICATION, true) || SPUtils.getBoolean(this, SPUtils.SHOW_MEDIA, true)
+                            || SPUtils.getBoolean(this, SPUtils.SHOW_CALL, true) || SPUtils.getBoolean(this, SPUtils.SHOW_DARKNESS, false)) {
+                        SPUtils.setBoolean(this, SPUtils.SHOW_BRIGHTNESS, false);
+                        changeState();
+                    } else
+                        Toast.makeText(this, R.string.you_must_choose_at_least_1_volume_option, Toast.LENGTH_SHORT).show();
+                } else {
+                    SPUtils.setBoolean(this, SPUtils.SHOW_BRIGHTNESS, true);
+                    changeState();
+                }
             }
         });
         binding.clDark.setOnClickListener(v -> {
-            SPUtils.setBoolean(this, SPUtils.SHOW_DARKNESS, !SPUtils.getBoolean(this, SPUtils.SHOW_DARKNESS, true));
-            changeState();
+            if (SPUtils.getBoolean(this, SPUtils.SHOW_DARKNESS, false)) {
+                if (SPUtils.getBoolean(this, SPUtils.SHOW_RINGTONE, true) || SPUtils.getBoolean(this, SPUtils.SHOW_NOTIFICATION, true) || SPUtils.getBoolean(this, SPUtils.SHOW_MEDIA, true)
+                        || SPUtils.getBoolean(this, SPUtils.SHOW_BRIGHTNESS, false) || SPUtils.getBoolean(this, SPUtils.SHOW_CALL, true)) {
+                    SPUtils.setBoolean(this, SPUtils.SHOW_DARKNESS, false);
+                    changeState();
+                } else
+                    Toast.makeText(this, R.string.you_must_choose_at_least_1_volume_option, Toast.LENGTH_SHORT).show();
+            } else {
+                SPUtils.setBoolean(this, SPUtils.SHOW_DARKNESS, true);
+                changeState();
+            }
         });
     }
 
@@ -153,12 +209,20 @@ public class VolumeConfigActivity extends BaseActivity<ActivityVolumeConfigBindi
             changeStateAction(1);
         });
         dialog.binding.llScreenOff.setOnClickListener(v -> {
-            SPUtils.setInt(this, SPUtils.LONG_PRESS_VOLUME_ACTION, 2);
-            changeStateAction(2);
+            if (!CheckUtils.isAccessibilitySettingsOn(getBaseContext(), ServiceControl.class)){
+                showDialogGotoSetting(4);
+            } else {
+                SPUtils.setInt(this, SPUtils.LONG_PRESS_VOLUME_ACTION, 2);
+                changeStateAction(2);
+            }
         });
         dialog.binding.llOpenNotification.setOnClickListener(v -> {
-            SPUtils.setInt(this, SPUtils.LONG_PRESS_VOLUME_ACTION, 3);
-            changeStateAction(3);
+            if (!CheckUtils.isAccessibilitySettingsOn(getBaseContext(), ServiceControl.class)){
+                showDialogGotoSetting(4);
+            } else {
+                SPUtils.setInt(this, SPUtils.LONG_PRESS_VOLUME_ACTION, 3);
+                changeStateAction(3);
+            }
         });
         dialog.binding.llMuteMedia.setOnClickListener(v -> {
             SPUtils.setInt(this, SPUtils.LONG_PRESS_VOLUME_ACTION, 4);

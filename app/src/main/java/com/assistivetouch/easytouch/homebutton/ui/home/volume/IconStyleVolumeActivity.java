@@ -11,6 +11,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.assistivetouch.easytouch.homebutton.R;
 import com.assistivetouch.easytouch.homebutton.base.BaseActivity;
 import com.assistivetouch.easytouch.homebutton.databinding.ActivityIconStyleVolumeBinding;
+import com.assistivetouch.easytouch.homebutton.service.ServiceScreen;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 
 public class IconStyleVolumeActivity extends BaseActivity<ActivityIconStyleVolumeBinding> {
@@ -35,6 +36,12 @@ public class IconStyleVolumeActivity extends BaseActivity<ActivityIconStyleVolum
         });
         binding.ivGone.setOnClickListener(v -> {
             SPUtils.setInt(this,SPUtils.VOLUME_STYLE_NUMBER,currentStyle);
+            if (ServiceScreen.instance!=null){
+                if (ServiceScreen.instance.volumeView !=null){
+                    ServiceScreen.instance.removeVolumeView();
+                    ServiceScreen.instance.addVolumeIcon();
+                }
+            }
             onBack();
         });
         binding.ivStyle1.setOnClickListener(v -> {

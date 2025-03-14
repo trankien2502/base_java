@@ -6,9 +6,11 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ServiceInfo;
 import android.graphics.Rect;
 import android.hardware.display.DisplayManager;
@@ -29,6 +31,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
+import androidx.core.content.ContextCompat;
 
 import com.assistivetouch.easytouch.homebutton.MyApplication;
 import com.assistivetouch.easytouch.homebutton.R;
@@ -79,15 +82,14 @@ public class ScreenRecordService extends Service {
             screenDensity = displayMetrics.densityDpi;
         }
     }
-
     private Notification createNotification() {
         SystemUtil.setLocale(this);
-        Intent intent = new Intent(this, SplashActivity.class);
-        intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
+        Intent stopIntent = new Intent(this, StopServiceRecordReceiver.class);
+        stopIntent.setAction("STOP_SERVICE");
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this, MyApplication.CHANNEL_ID)
                 .setContentTitle(getString(R.string.recording_screen))
-                .setContentText(getString(R.string.tap_to_open))
+                .setContentText(getString(R.string.tap_to_stop_record))
                 .setSmallIcon(R.drawable.img_logo)
                 .setContentIntent(pendingIntent)
                 .setPriority(NotificationCompat.PRIORITY_LOW);
@@ -97,15 +99,17 @@ public class ScreenRecordService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        int resultCode = intent.getIntExtra("RESULT_CODE", Activity.RESULT_CANCELED);
-        Intent data = intent.getParcelableExtra("DATA_INTENT");
-        Log.e("check_record", "on command");
-        if (data != null) {
-            mediaProjection = projectionManager.getMediaProjection(resultCode, data);
-        }
-        setupMediaRecorder();
-        startRecording();
+        if (intent!=null){
+            Log.e("check_record", "on command start");
+            int resultCode = intent.getIntExtra("RESULT_CODE", Activity.RESULT_CANCELED);
+            Intent data = intent.getParcelableExtra("DATA_INTENT");
 
+            if (data != null) {
+                mediaProjection = projectionManager.getMediaProjection(resultCode, data);
+            }
+            setupMediaRecorder();
+            startRecording();
+        }
         return START_STICKY;
     }
 

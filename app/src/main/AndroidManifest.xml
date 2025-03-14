@@ -27,7 +27,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
-    <uses-permission android:name="android.permission.CAPTURE_VIDEO_OUTPUT"
+    <uses-permission
+        android:name="android.permission.CAPTURE_VIDEO_OUTPUT"
         tools:ignore="ProtectedPermissions" />
     <!--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
     <!--    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
@@ -70,19 +71,29 @@
         tools:targetApi="n">
         <activity
             android:name=".ui.home.volume.IconStyleVolumeActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity" />
         <activity
             android:name=".ui.home.volume.ButtonStyleActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity" />
         <activity
             android:name=".ui.home.volume.VolumeConfigActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity" />
         <activity
             android:name=".ui.home.ScreenshotActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity" />
         <activity
             android:name=".ui.home.ScreenRecorderActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait"
+            tools:ignore="DiscouragedApi,LockedOrientationActivity" />
         <activity
             android:name=".ui.home.AllAppActivity"
             android:excludeFromRecents="true"
@@ -202,6 +213,9 @@
             android:exported="false"
             android:foregroundServiceType="mediaProjection" />
 
+        <receiver
+            android:name=".service.StopServiceRecordReceiver"
+            android:exported="false" />
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/app_id" />

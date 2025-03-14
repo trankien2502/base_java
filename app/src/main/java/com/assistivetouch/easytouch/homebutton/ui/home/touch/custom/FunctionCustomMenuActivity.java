@@ -58,7 +58,6 @@ public class FunctionCustomMenuActivity extends BaseActivity<ActivityFunctionCus
                 functionSelectedList.addAll(Menu2Fragment.instance.listCurrent);
         }
         initData();
-        Toast.makeText(this, "menu & position: " + menuFunction + menuPosition, Toast.LENGTH_SHORT).show();
         adapter = new ItemFunctionIconAdapter(this, functionIconList, true, new ItemFunctionCallBack() {
             @Override
             public void select(ItemFunctionIcon icon) {

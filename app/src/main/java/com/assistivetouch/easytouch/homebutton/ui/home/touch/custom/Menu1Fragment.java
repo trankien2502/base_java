@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.assistivetouch.easytouch.homebutton.R;
 import com.assistivetouch.easytouch.homebutton.base.BaseFragment;
@@ -18,8 +19,8 @@ import java.util.ArrayList;
 public class Menu1Fragment extends BaseFragment<PopupSelectActionBinding> {
 
     public static Menu1Fragment instance;
-    ArrayList<ItemFunctionIcon> listDefault = new ArrayList<>();
-    ArrayList<ItemFunctionIcon> listCurrent = new ArrayList<>();
+    public ArrayList<ItemFunctionIcon> listDefault = new ArrayList<>();
+    public ArrayList<ItemFunctionIcon> listCurrent = new ArrayList<>();
 
     @Override
     public PopupSelectActionBinding setBinding(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState) {
@@ -52,25 +53,39 @@ public class Menu1Fragment extends BaseFragment<PopupSelectActionBinding> {
             binding.txtAction7.setText(listCurrent.get(5).getText());
         }
     }
-    public void restore(){
-        listCurrent.clear();
-        listCurrent.addAll(listDefault);
-        Log.e("menu_check","menu1 restore"+listCurrent);
-        if (!listCurrent.isEmpty()) {
-            Log.e("menu_check","menu1 start restore");
-            binding.imgAction1.setImageResource(listCurrent.get(0).getIconShow());
-            binding.txtAction1.setText(listCurrent.get(0).getText());
-            binding.imgAction2.setImageResource(listCurrent.get(1).getIconShow());
-            binding.txtAction2.setText(listCurrent.get(1).getText());
-            binding.imgAction3.setImageResource(listCurrent.get(2).getIconShow());
-            binding.txtAction3.setText(listCurrent.get(2).getText());
-            binding.imgAction5.setImageResource(listCurrent.get(3).getIconShow());
-            binding.txtAction5.setText(listCurrent.get(3).getText());
-            binding.imgAction6.setImageResource(listCurrent.get(4).getIconShow());
-            binding.txtAction6.setText(listCurrent.get(4).getText());
-            binding.imgAction7.setImageResource(listCurrent.get(5).getIconShow());
-            binding.txtAction7.setText(listCurrent.get(5).getText());
+    private boolean checkEqual(){
+        listDefault = SPUtils.getListDefaultMenu1();
+        if (listCurrent.size() != listDefault.size()) return false;
+        for (int i = 0; i < listCurrent.size(); i++) {
+            if (!listCurrent.get(i).equals(listDefault.get(i))) return false;
         }
+        return true;
+    }
+    public void restore(){
+        if (checkEqual()){
+            Toast.makeText(requireContext(), R.string.menu_1_already_reset, Toast.LENGTH_SHORT).show();
+        } else {
+            listCurrent.clear();
+            listCurrent.addAll(SPUtils.getListDefaultMenu1());
+            Log.e("menu_check","menu1 restore"+listCurrent);
+            if (!listCurrent.isEmpty()) {
+                Log.e("menu_check","menu1 start restore");
+                binding.imgAction1.setImageResource(listCurrent.get(0).getIconShow());
+                binding.txtAction1.setText(listCurrent.get(0).getText());
+                binding.imgAction2.setImageResource(listCurrent.get(1).getIconShow());
+                binding.txtAction2.setText(listCurrent.get(1).getText());
+                binding.imgAction3.setImageResource(listCurrent.get(2).getIconShow());
+                binding.txtAction3.setText(listCurrent.get(2).getText());
+                binding.imgAction5.setImageResource(listCurrent.get(3).getIconShow());
+                binding.txtAction5.setText(listCurrent.get(3).getText());
+                binding.imgAction6.setImageResource(listCurrent.get(4).getIconShow());
+                binding.txtAction6.setText(listCurrent.get(4).getText());
+                binding.imgAction7.setImageResource(listCurrent.get(5).getIconShow());
+                binding.txtAction7.setText(listCurrent.get(5).getText());
+                Toast.makeText(requireContext(), R.string.menu_1_reset_successfully, Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
     @Override
     public void bindView() {
