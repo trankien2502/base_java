@@ -29,16 +29,15 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
     <uses-permission
         android:name="android.permission.CAPTURE_VIDEO_OUTPUT"
-        tools:ignore="ProtectedPermissions" />
-    <!--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
-    <!--    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />-->
-    <!--    <uses-permission-->
-    <!--        android:name="android.permission.BLUETOOTH"-->
-    <!--        android:maxSdkVersion="30" />-->
-    <!--    <uses-permission-->
-    <!--        android:name="android.permission.BLUETOOTH_ADMIN"-->
-    <!--        android:maxSdkVersion="30" />-->
-    <!--    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />-->
+        tools:ignore="ProtectedPermissions" /> <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> -->
+    <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> -->
+    <!-- <uses-permission -->
+    <!-- android:name="android.permission.BLUETOOTH" -->
+    <!-- android:maxSdkVersion="30" /> -->
+    <!-- <uses-permission -->
+    <!-- android:name="android.permission.BLUETOOTH_ADMIN" -->
+    <!-- android:maxSdkVersion="30" /> -->
+    <!-- <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /> -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
@@ -58,6 +57,9 @@
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission
+        android:name="android.permission.BIND_DEVICE_ADMIN"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="com.google.android.gms.permission.AD_ID" />
 
     <application
@@ -86,13 +88,19 @@
             tools:ignore="DiscouragedApi,LockedOrientationActivity" />
         <activity
             android:name=".ui.home.ScreenshotActivity"
+            android:excludeFromRecents="true"
             android:exported="false"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
+            android:taskAffinity=""
             tools:ignore="DiscouragedApi,LockedOrientationActivity" />
         <activity
             android:name=".ui.home.ScreenRecorderActivity"
+            android:excludeFromRecents="true"
             android:exported="false"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
+            android:taskAffinity=""
             tools:ignore="DiscouragedApi,LockedOrientationActivity" />
         <activity
             android:name=".ui.home.AllAppActivity"
@@ -210,12 +218,27 @@
             android:foregroundServiceType="specialUse" />
         <service
             android:name=".service.ScreenRecordService"
+            android:enabled="true"
             android:exported="false"
+            android:stopWithTask="false"
             android:foregroundServiceType="mediaProjection" />
 
         <receiver
             android:name=".service.StopServiceRecordReceiver"
             android:exported="false" />
+        <receiver
+            android:name=".service.MyDeviceAdminReceiver"
+            android:exported="true"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />
+
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="@string/app_id" />

@@ -1,5 +1,8 @@
 package com.assistivetouch.easytouch.homebutton.ui.home.touch.icon;
 
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -16,6 +19,7 @@ import com.assistivetouch.easytouch.homebutton.dialog.GoToSettingDialog;
 import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionCallBack;
 import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIcon;
 import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIconAdapter;
+import com.assistivetouch.easytouch.homebutton.service.MyDeviceAdminReceiver;
 import com.assistivetouch.easytouch.homebutton.service.ServiceControl;
 import com.assistivetouch.easytouch.homebutton.util.CheckUtils;
 import com.assistivetouch.easytouch.homebutton.util.PermissionManager;
@@ -60,6 +64,11 @@ public class FunctionFloatingIconActivity extends BaseActivity<ActivityFunctionF
                             isAvailable = false;
                             showDialogGotoSetting(4);
                         }
+                    } else {
+                        if (!checkAdviceAdmin()){
+                            isAvailable = false;
+                            showDialogGotoSetting(7);
+                        }
                     }
                 } else if (icon.getActionNumber() == ItemFunctionIcon.ACTION_CAMERA) {
                     if (!PermissionManager.checkCameraPermission(getBaseContext())) {
@@ -92,7 +101,11 @@ public class FunctionFloatingIconActivity extends BaseActivity<ActivityFunctionF
             adapter.setCheckIcon(SPUtils.getObject(this, type, list.get(0)));
 
     }
-
+    private boolean checkAdviceAdmin() {
+        ComponentName componentName = new ComponentName(this, MyDeviceAdminReceiver.class);
+        DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+        return dpm.isAdminActive(componentName);
+    }
     @Override
     public void bindView() {
         binding.ivBack.setOnClickListener(v -> {

@@ -1,6 +1,9 @@
 package com.assistivetouch.easytouch.homebutton.ui.home.touch.custom;
 
 import android.Manifest;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -20,6 +23,7 @@ import com.assistivetouch.easytouch.homebutton.dialog.GoToSettingDialog;
 import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionCallBack;
 import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIcon;
 import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIconAdapter;
+import com.assistivetouch.easytouch.homebutton.service.MyDeviceAdminReceiver;
 import com.assistivetouch.easytouch.homebutton.service.ServiceControl;
 import com.assistivetouch.easytouch.homebutton.util.CheckUtils;
 import com.assistivetouch.easytouch.homebutton.util.PermissionManager;
@@ -45,7 +49,11 @@ public class FunctionCustomMenuActivity extends BaseActivity<ActivityFunctionCus
     public ActivityFunctionCustomMenuBinding getBinding() {
         return ActivityFunctionCustomMenuBinding.inflate(getLayoutInflater());
     }
-
+    private boolean checkAdviceAdmin() {
+        ComponentName componentName = new ComponentName(this, MyDeviceAdminReceiver.class);
+        DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+        return dpm.isAdminActive(componentName);
+    }
     @Override
     public void initView() {
         menuFunction = getIntent().getIntExtra(SPUtils.MENU_FUNCTION, 1);
@@ -73,6 +81,11 @@ public class FunctionCustomMenuActivity extends BaseActivity<ActivityFunctionCus
                         if (!CheckUtils.isAccessibilitySettingsOn(getBaseContext(), ServiceControl.class)) {
                             isAvailable = false;
                             showDialogGotoSetting(4);
+                        }
+                    } else {
+                        if (!checkAdviceAdmin()){
+                            isAvailable = false;
+                            showDialogGotoSetting(7);
                         }
                     }
                 } else if (icon.getActionNumber() == ItemFunctionIcon.ACTION_SCREEN_SHOT) {
@@ -168,6 +181,8 @@ public class FunctionCustomMenuActivity extends BaseActivity<ActivityFunctionCus
             dialog.binding.tvContent.setText(R.string.content_dialog_per_camera);
         } else if (type == 6) {
             dialog.binding.tvContent.setText(R.string.content_dialog_per_storage);
+        }else if (type == 7) {
+            dialog.binding.tvContent.setText(R.string.you_need_to_enable_device_admin_feature);
         }
 
         dialog.binding.tvStay.setOnClickListener(view -> {
@@ -207,6 +222,12 @@ public class FunctionCustomMenuActivity extends BaseActivity<ActivityFunctionCus
                 Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
                 startActivity(intent);
                 Log.e("check_service", "off");
+            }else if (type == 7) {
+                ComponentName componentName = new ComponentName(this, MyDeviceAdminReceiver.class);
+                Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+                intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+                intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, getString(R.string.allow_assistive_touch_to_lock_screen));
+                startActivity(intent);
             }
         });
         dialog.show();

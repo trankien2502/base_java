@@ -21,7 +21,9 @@ import android.media.projection.MediaProjectionManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -82,6 +84,7 @@ public class ScreenRecordService extends Service {
             screenDensity = displayMetrics.densityDpi;
         }
     }
+
     private Notification createNotification() {
         SystemUtil.setLocale(this);
         Intent stopIntent = new Intent(this, StopServiceRecordReceiver.class);
@@ -99,7 +102,7 @@ public class ScreenRecordService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent!=null){
+        if (intent != null) {
             Log.e("check_record", "on command start");
             int resultCode = intent.getIntExtra("RESULT_CODE", Activity.RESULT_CANCELED);
             Intent data = intent.getParcelableExtra("DATA_INTENT");
@@ -116,7 +119,10 @@ public class ScreenRecordService extends Service {
     private void makePath() {
         String str = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator + "RecordScreen";
         if (!"mounted".equals(Environment.getExternalStorageState())) {
-            Toast.makeText(this, (int) R.string.error_sd, Toast.LENGTH_SHORT).show();
+            new Handler(Looper.getMainLooper()).post(() ->
+                    Toast.makeText(this, (int) R.string.error_sd, Toast.LENGTH_SHORT).show()
+            );
+
             return;
         }
         File file = new File(str);
@@ -124,7 +130,10 @@ public class ScreenRecordService extends Service {
             filePath = str + File.separator + "video_" + System.currentTimeMillis() + ".mp4";
             return;
         }
-        Toast.makeText(this, (int) R.string.error_record, Toast.LENGTH_SHORT).show();
+        new Handler(Looper.getMainLooper()).post(() ->
+                Toast.makeText(this, (int) R.string.error_record, Toast.LENGTH_SHORT).show()
+        );
+
     }
 
     public void setupMediaRecorder() {
@@ -195,7 +204,14 @@ public class ScreenRecordService extends Service {
         isRecord = false;
         Log.e("check_record", "stop!");
         if (mediaRecorder != null) {
-            Toast.makeText(this, "done", Toast.LENGTH_SHORT).show();
+            String str28 = " Movie/RecordScreen!";
+            new Handler(Looper.getMainLooper()).post(() -> {
+                        if (Build.VERSION.SDK_INT >= 28)
+                            Toast.makeText(this, getString(R.string.video_save_on)+str28, Toast.LENGTH_SHORT).show();
+                        else Toast.makeText(this, getString(R.string.video_save_on)+" DCIM/RecordScreen!", Toast.LENGTH_SHORT).show();
+                    }
+            );
+
             mediaRecorder.stop();
             mediaRecorder.reset();
         }

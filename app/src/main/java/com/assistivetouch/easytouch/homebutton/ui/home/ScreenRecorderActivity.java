@@ -3,8 +3,10 @@ package com.assistivetouch.easytouch.homebutton.ui.home;
 import android.content.Context;
 import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -45,7 +47,7 @@ public class ScreenRecorderActivity extends BaseActivity<ActivityScreenRecorderB
     }
 
     public void requestScreenCapturePermission() {
-        Log.e("check_record","????");
+        Log.e("check_record", "????");
         mediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
         Intent intent = mediaProjectionManager.createScreenCaptureIntent();
         startActivityForResult(intent, REQUEST_CODE);
@@ -58,11 +60,17 @@ public class ScreenRecorderActivity extends BaseActivity<ActivityScreenRecorderB
 //            ServiceScreen.instance.mediaProjection = mediaProjectionManager.getMediaProjection(resultCode, data);
 //            ServiceScreen.instance.setupMediaRecorder();
 //            ServiceScreen.instance.startRecording();
-            Log.e("check_record","??");
+            Log.e("check_record", "??");
             Intent serviceIntent = new Intent(this, ScreenRecordService.class);
             serviceIntent.putExtra("RESULT_CODE", resultCode);
             serviceIntent.putExtra("DATA_INTENT", data);
             startService(serviceIntent); // Bắt đầu Service
+//            if (Build.VERSION.SDK_INT < 34) {
+//
+//            } else {
+//                Toast.makeText(this, R.string.this_function_is_only_use_by_system_app, Toast.LENGTH_SHORT).show();
+//            }
+
         }
         onBack();
     }

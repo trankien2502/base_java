@@ -8,6 +8,8 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
@@ -81,22 +83,30 @@ public class ImageUtils {
     }
 
     public static void saveBitmap(Context context, Bitmap bitmap) {
-        File storageDir = new File(Environment.getExternalStorageDirectory() + "/Download/CatMaker");
+        File storageDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "Screenshots");
         if (!storageDir.exists()) {
             storageDir.mkdirs();
         }
-        File imageFile = new File(storageDir, "CatMaker" + System.currentTimeMillis() + ".png");
+        File imageFile = new File(storageDir, "Screenshot_" + System.currentTimeMillis() + ".png");
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(imageFile);
 
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-            Toast.makeText(context, context.getString(R.string.download_success), Toast.LENGTH_SHORT).show();
+            new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(context, context.getString(R.string.image_save_on) + " DCIM/Screenshots", Toast.LENGTH_SHORT).show();
+                    }
+            );
+
             fos.flush();
         } catch (IOException e) {
             e.printStackTrace();
             Log.e("img_check", "failed down: ", e);
-            Toast.makeText(context, context.getString(R.string.download_failed), Toast.LENGTH_SHORT).show();
+            new Handler(Looper.getMainLooper()).post(() -> {
+                        Toast.makeText(context, context.getString(R.string.download_failed), Toast.LENGTH_SHORT).show();
+                    }
+            );
+
         } finally {
             if (fos != null) {
                 try {

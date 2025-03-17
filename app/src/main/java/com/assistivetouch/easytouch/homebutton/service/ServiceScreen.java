@@ -16,6 +16,8 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -29,6 +31,8 @@ import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.hardware.display.DisplayManager;
 import android.hardware.display.VirtualDisplay;
+import android.media.AudioAttributes;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.media.Image;
 import android.media.ImageReader;
@@ -63,6 +67,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.assistivetouch.easytouch.homebutton.MyApplication;
 import com.assistivetouch.easytouch.homebutton.R;
+import com.assistivetouch.easytouch.homebutton.databinding.DialogPermissionBinding;
 import com.assistivetouch.easytouch.homebutton.databinding.LayoutFloatsingButtonBinding;
 import com.assistivetouch.easytouch.homebutton.databinding.LayoutVolumeButtonBinding;
 import com.assistivetouch.easytouch.homebutton.databinding.PopupBrightnessBinding;
@@ -125,7 +130,6 @@ public class ServiceScreen extends Service {
 
     private View overlayView, darknessView;
     private View overlayView2, overlayViewDialog;
-    private View overlayViewPermission;
     public View floatingView;
     public View volumeView;
     private PopupSelectActionBinding menuBinding;
@@ -142,6 +146,7 @@ public class ServiceScreen extends Service {
     private PopupVoulumeConfig4Binding menuVolume4Binding;
     private PopupVoulumeConfig5Binding menuVolume5Binding;
     private PopupVoulumeConfig6Binding menuVolume6Binding;
+    private DialogPermissionBinding permissionBinding;
     private PopupVoulumeConfig7Binding menuVolume7Binding;
     private PopupVoulumeConfig8Binding menuVolume8Binding;
     private WindowManager.LayoutParams params;
@@ -207,6 +212,8 @@ public class ServiceScreen extends Service {
 
     public void setIconStyle(int iconStyle) {
         if (floatingView != null) windowManager.removeView(floatingView);
+        if (floatingBinding == null)
+            floatingBinding = LayoutFloatsingButtonBinding.inflate(LayoutInflater.from(this));
         floatingView = floatingBinding.getRoot();
         floatingBinding.floatingButton.setImageResource(iconStyle);
         windowManager.addView(floatingView, params);
@@ -223,10 +230,14 @@ public class ServiceScreen extends Service {
         return false;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void dadDarknessView() {
         darknessView = new View(this);
         darknessView.setBackgroundColor(Color.parseColor("#66000000"));
-
+        darknessView.setOnTouchListener((v, event) -> {
+            Log.d("DarknessView", "Touch event detected!");
+            return false; // Cho phép sự kiện chạm đi qua
+        });
         // Cấu hình LayoutParams cho Overlay
         WindowManager.LayoutParams params = new WindowManager.LayoutParams(
                 WindowManager.LayoutParams.MATCH_PARENT,
@@ -234,13 +245,17 @@ public class ServiceScreen extends Service {
                 Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
                         WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
                         WindowManager.LayoutParams.TYPE_PHONE,
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
-                        | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
-                        | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                        | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                        | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS| WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                 PixelFormat.TRANSLUCENT
         );
         darknessView.setAlpha((float) SPUtils.getInt(this, SPUtils.DARK_PERCENT, 0) / 255);
-        windowManager.addView(darknessView, params);
+        new Handler(Looper.getMainLooper()).post(() -> {
+            windowManager.addView(darknessView, params);
+        });
+//        windowManager.addView(darknessView, params);
+
     }
 
     public void setDarknessLevel(int alpha) {
@@ -388,6 +403,7 @@ public class ServiceScreen extends Service {
         // Cập nhật kích thước
         paramsVolume.width = newWidthPx;
         paramsVolume.height = newHeightPx;
+        volumeBinding.cv.setRadius((float) newWidthPx / 2);
 
         // Cập nhật lại View nổi
         windowManager.updateViewLayout(volumeView, paramsVolume);
@@ -425,52 +441,53 @@ public class ServiceScreen extends Service {
             paramsVolume.x = screenWidth - w + w * SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_DISTANCE, 0) / 100;
             paramsVolume.y = 100;  // Điều chỉnh vị trí theo chiều dọc
         }
+        volumeBinding.cv.setRadius((float) w / 2);
         switch (SPUtils.getInt(this, SPUtils.VOLUME_STYLE_NUMBER, 1)) {
             case 1:
                 volumeBinding.ivBorder.setImageResource(R.drawable.img_boder_1);
                 volumeBinding.ivButon.setColorFilter(Color.parseColor("#3392FF"));
-                volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(Color.parseColor("#ffffff"));
+                volumeBinding.ivButtonBackgroundColor.setBackgroundColor(Color.parseColor("#ffffff"));
                 break;
             case 2:
                 volumeBinding.ivBorder.setImageResource(R.drawable.img_boder_2);
                 volumeBinding.ivButon.setColorFilter(Color.parseColor("#FF3336"));
-                volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(Color.parseColor("#000000"));
+                volumeBinding.ivButtonBackgroundColor.setBackgroundColor(Color.parseColor("#000000"));
                 break;
             case 3:
                 volumeBinding.ivBorder.setImageResource(R.drawable.img_boder_3);
                 volumeBinding.ivButon.setColorFilter(Color.parseColor("#3392FF"));
-                volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(Color.parseColor("#ffffff"));
+                volumeBinding.ivButtonBackgroundColor.setBackgroundColor(Color.parseColor("#ffffff"));
                 break;
             case 4:
                 volumeBinding.ivBorder.setImageResource(R.drawable.img_boder_1);
                 volumeBinding.ivButon.setColorFilter(Color.parseColor("#ffffff"));
-                volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(Color.parseColor("#3392FF"));
+                volumeBinding.ivButtonBackgroundColor.setBackgroundColor(Color.parseColor("#3392FF"));
                 break;
             case 5:
                 volumeBinding.ivBorder.setImageResource(R.drawable.img_boder_5);
                 volumeBinding.ivButon.setColorFilter(Color.parseColor("#ffffff"));
-                volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(Color.parseColor("#000000"));
+                volumeBinding.ivButtonBackgroundColor.setBackgroundColor(Color.parseColor("#000000"));
                 break;
             case 6:
                 volumeBinding.ivBorder.setImageResource(R.drawable.img_boder_6);
                 volumeBinding.ivButon.setColorFilter(Color.parseColor("#39BDFF"));
-                volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(Color.parseColor("#ffffff"));
+                volumeBinding.ivButtonBackgroundColor.setBackgroundColor(Color.parseColor("#ffffff"));
                 break;
             case 7:
                 volumeBinding.ivBorder.setImageResource(R.drawable.img_boder_7);
                 volumeBinding.ivButon.setColorFilter(Color.parseColor("#FBA65B"));
-                volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(Color.parseColor("#ffffff"));
+                volumeBinding.ivButtonBackgroundColor.setBackgroundColor(Color.parseColor("#ffffff"));
                 break;
             case 8:
                 volumeBinding.ivBorder.setImageResource(R.drawable.img_boder_8);
                 volumeBinding.ivButon.setColorFilter(Color.parseColor("#ffffff"));
-                volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(Color.parseColor("#000000"));
+                volumeBinding.ivButtonBackgroundColor.setBackgroundColor(Color.parseColor("#000000"));
                 break;
         }
         if (SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_COLOR, -1) != -1)
             volumeBinding.ivButon.setColorFilter(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_COLOR, -1));
         if (SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_BACKGROUND_COLOR, -1) != -1)
-            volumeBinding.ivButtonBackgroundColor.setCardBackgroundColor(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_BACKGROUND_COLOR, -1));
+            volumeBinding.ivButtonBackgroundColor.setBackgroundColor(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_BACKGROUND_COLOR, -1));
         volumeView.setAlpha((float) SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_ALPHA, 255) / 255);
         volumeView.setOnTouchListener(new View.OnTouchListener() {
             private int initialX, initialY;
@@ -578,22 +595,39 @@ public class ServiceScreen extends Service {
                 }
                 break;
             case 2:
-                if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
-                    Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    Log.e("check_service", "off");
-                } else {
-                    if (ServiceControl.instance != null) {
-                        ServiceControl.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
-                        Log.e("check_service", "on");
-                    } else {
+                if (Build.VERSION.SDK_INT >= 28) {
+                    if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
                         Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
                         intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
-                        Log.e("check_service", "null");
+                        Log.e("check_service", "off");
+                    } else {
+                        if (ServiceControl.instance != null) {
+                            ServiceControl.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
+                            Log.e("check_service", "on");
+                        } else {
+                            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            Log.e("check_service", "null");
+                        }
+                    }
+                } else {
+                    Log.e("check_admin", "api<28");
+                    ComponentName componentName = new ComponentName(this, MyDeviceAdminReceiver.class);
+                    DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+                    if (!dpm.isAdminActive(componentName)) {
+                        Log.e("check_admin", "not admin");
+                        Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+                        intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+                        intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "Cho phép ứng dụng tắt màn hình.");
+                        startActivity(intent);
+                    } else {
+                        Log.e("check_admin", "admin");
+                        dpm.lockNow();
                     }
                 }
+
                 break;
             case 3:
                 if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
@@ -684,28 +718,40 @@ public class ServiceScreen extends Service {
         sbMedia.setOnProgressChangeListener(new Function1<Integer, Unit>() {
             @Override
             public Unit invoke(Integer integer) {
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, integer, 0);
+                AudioFocusRequest audioFocusRequest = null;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
+                            .setAudioAttributes(new AudioAttributes.Builder()
+                                    .setUsage(AudioAttributes.USAGE_MEDIA)
+                                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                                    .build())
+                            .build();
+                    audioManager.requestAudioFocus(audioFocusRequest);
+                } else {
+                    audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+                }
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, integer, AudioManager.FLAG_SHOW_UI);
                 return null;
             }
         });
         sbRing.setOnProgressChangeListener(new Function1<Integer, Unit>() {
             @Override
             public Unit invoke(Integer integer) {
-                audioManager.setStreamVolume(AudioManager.STREAM_RING, integer, 0);
+                audioManager.setStreamVolume(AudioManager.STREAM_RING, integer, AudioManager.FLAG_SHOW_UI);
                 return null;
             }
         });
         sbNotification.setOnProgressChangeListener(new Function1<Integer, Unit>() {
             @Override
             public Unit invoke(Integer integer) {
-                audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, integer, 0);
+                audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, integer, AudioManager.FLAG_SHOW_UI);
                 return null;
             }
         });
         sbCall.setOnProgressChangeListener(new Function1<Integer, Unit>() {
             @Override
             public Unit invoke(Integer integer) {
-                audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, integer, 0);
+                audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, integer, AudioManager.FLAG_SHOW_UI);
                 return null;
             }
         });
@@ -834,6 +880,7 @@ public class ServiceScreen extends Service {
 
     @SuppressLint("ClickableViewAccessibility")
     private void showPopupChoose() {
+        SystemUtil.setLocale(this);
         if (menuBinding == null) {
             menuBinding = PopupSelectActionBinding.inflate(LayoutInflater.from(this));
 
@@ -892,6 +939,10 @@ public class ServiceScreen extends Service {
                         icon.setText(R.string.lock_rotation);
                     }
 
+                }
+                if (icon.getActionNumber() == ItemFunctionIcon.ACTION_NONE) {
+                    icon.setIconShow(0);
+                    icon.setText(R.string.no);
                 }
             }
             if (listMenu1 != null && !listMenu1.isEmpty()) {
@@ -996,6 +1047,7 @@ public class ServiceScreen extends Service {
 
     @SuppressLint("ClickableViewAccessibility")
     private void showPopupDevice() {
+        SystemUtil.setLocale(this);
         if (menu2Binding == null) {
             menu2Binding = PopupSelectAction2Binding.inflate(LayoutInflater.from(this));
         }
@@ -1054,6 +1106,10 @@ public class ServiceScreen extends Service {
                         icon.setText(R.string.lock_rotation);
                     }
 
+                }
+                if (icon.getActionNumber() == ItemFunctionIcon.ACTION_NONE) {
+                    icon.setIconShow(0);
+                    icon.setText(R.string.no);
                 }
             }
             if (listMenu2 != null && !listMenu2.isEmpty()) {
@@ -1219,18 +1275,13 @@ public class ServiceScreen extends Service {
             case ItemFunctionIcon.ACTION_HOME:
                 Log.d("action_check", "action: home");
                 if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
-                    Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    Log.e("check_service", "off");
+                    showDialogPermissionAccessibility(4);
                 } else {
                     if (ServiceControl.instance != null) {
                         ServiceControl.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_HOME);
                         Log.e("check_service", "on");
                     } else {
-                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        showDialogPermissionAccessibility(4);
                         Log.e("check_service", "null");
                     }
                 }
@@ -1263,25 +1314,25 @@ public class ServiceScreen extends Service {
                 hidePopup2();
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
                     if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
-                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        showDialogPermissionAccessibility(4);
                         Log.e("check_service", "off");
                     } else {
                         if (ServiceControl.instance != null) {
                             ServiceControl.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_TAKE_SCREENSHOT);
                             Log.e("check_service", "on");
                         } else {
-                            Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
+                            showDialogPermissionAccessibility(4);
                             Log.e("check_service", "null");
                         }
                     }
                 } else {
-                    Intent intentVideo = new Intent(this, ScreenshotActivity.class);
-                    intentVideo.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intentVideo);
+                    if (!PermissionManager.checkReadPermission(this))
+                        showDialogPermissionAccessibility(6);
+                    else {
+                        Intent intentVideo = new Intent(this, ScreenshotActivity.class);
+                        intentVideo.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intentVideo);
+                    }
                 }
 
 
@@ -1289,18 +1340,14 @@ public class ServiceScreen extends Service {
             case ItemFunctionIcon.ACTION_NOTIFICATION:
                 Log.d("action_check", "action: notification");
                 if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
-                    Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    showDialogPermissionAccessibility(4);
                     Log.e("check_service", "off");
                 } else {
                     if (ServiceControl.instance != null) {
                         ServiceControl.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_NOTIFICATIONS);
                         Log.e("check_service", "on");
                     } else {
-                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        showDialogPermissionAccessibility(4);
                         Log.e("check_service", "null");
                     }
                 }
@@ -1315,18 +1362,14 @@ public class ServiceScreen extends Service {
                 break;
             case ItemFunctionIcon.ACTION_RECENT:
                 if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
-                    Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    showDialogPermissionAccessibility(4);
                     Log.e("check_service", "off");
                 } else {
                     if (ServiceControl.instance != null) {
                         ServiceControl.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_RECENTS);
                         Log.e("check_service", "on");
                     } else {
-                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        showDialogPermissionAccessibility(4);
                         Log.e("check_service", "null");
                     }
                 }
@@ -1336,20 +1379,31 @@ public class ServiceScreen extends Service {
                 break;
             case ItemFunctionIcon.ACTION_LOCK_SCREEN:
                 Log.d("action_check", "action: lockscreen");
-                if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
-                    Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                    Log.e("check_service", "off");
-                } else {
-                    if (ServiceControl.instance != null) {
-                        ServiceControl.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
-                        Log.e("check_service", "on");
+                if (Build.VERSION.SDK_INT >= 28) {
+                    if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
+                        showDialogPermissionAccessibility(4);
+                        Log.e("check_service", "off");
                     } else {
-                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
-                        Log.e("check_service", "null");
+                        if (ServiceControl.instance != null) {
+                            ServiceControl.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_LOCK_SCREEN);
+                            Log.e("check_service", "on");
+                        } else {
+                            showDialogPermissionAccessibility(4);
+                            Log.e("check_service", "null");
+                        }
+                    }
+                } else {
+                    Log.e("check_admin", "api<28");
+                    ComponentName componentName = new ComponentName(this, MyDeviceAdminReceiver.class);
+                    DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+                    if (!dpm.isAdminActive(componentName)) {
+                        Log.e("check_admin", "not admin");
+                        new Handler(Looper.getMainLooper()).post(() ->
+                                Toast.makeText(this, R.string.you_need_to_enable_device_admin_feature, Toast.LENGTH_SHORT).show()
+                        );
+                    } else {
+                        Log.e("check_admin", "admin");
+                        dpm.lockNow();
                     }
                 }
                 hidePopup();
@@ -1369,18 +1423,14 @@ public class ServiceScreen extends Service {
             case ItemFunctionIcon.ACTION_BACK:
                 Log.d("action_check", "action: back");
                 if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
-                    Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    showDialogPermissionAccessibility(4);
                     Log.e("check_service", "off");
                 } else {
                     if (ServiceControl.instance != null) {
                         ServiceControl.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_BACK);
                         Log.e("check_service", "on");
                     } else {
-                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        showDialogPermissionAccessibility(4);
                         Log.e("check_service", "null");
                     }
                 }
@@ -1417,18 +1467,14 @@ public class ServiceScreen extends Service {
             case ItemFunctionIcon.ACTION_POWER:
                 Log.d("action_check", "action: power");
                 if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
-                    Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
+                    showDialogPermissionAccessibility(4);
                     Log.e("check_service", "off");
                 } else {
                     if (ServiceControl.instance != null) {
                         ServiceControl.instance.performGlobalAction(AccessibilityService.GLOBAL_ACTION_POWER_DIALOG);
                         Log.e("check_service", "on");
                     } else {
-                        Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                        intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);
+                        showDialogPermissionAccessibility(4);
                         Log.e("check_service", "null");
                     }
                 }
@@ -1436,35 +1482,42 @@ public class ServiceScreen extends Service {
                 hidePopup2();
                 break;
             case ItemFunctionIcon.ACTION_CAMERA:
-                Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                intentCamera.addFlags(FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intentCamera);
+                if (!PermissionManager.checkCameraPermission(this))
+                    showDialogPermissionAccessibility(6);
+                else {
+                    Intent intentCamera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                    intentCamera.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intentCamera);
+                }
                 hidePopup();
                 hidePopup2();
                 Log.d("action_check", "action: camera");
                 break;
             case ItemFunctionIcon.ACTION_LOCK_ROTATION:
                 Log.d("action_check", "action: lock rotation");
-                try {
-                    ContentResolver contentResolver = getContentResolver();
-                    int rotation = Settings.System.getInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION);
-                    if (rotation == 1) {
-                        isLockRotation = true;
-                        Settings.System.putInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0); //khoa xoay man hinh
-                        view.setImageResource(R.drawable.ic_action_unlock_rotation);
-                        textView.setText(R.string.unlock_rotation);
-                        icon.setIconShow(R.drawable.ic_action_unlock_rotation);
-                        icon.setText(R.string.unlock_rotation);
-                    } else {
-                        isLockRotation = false;
-                        Settings.System.putInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, 1);
-                        view.setImageResource(R.drawable.ic_action_lock_rotation);
-                        textView.setText(R.string.lock_rotation);
-                        icon.setIconShow(R.drawable.ic_action_lock_rotation);
-                        icon.setText(R.string.lock_rotation);
+                if (!CheckUtils.checkSystemWriteSetting(this)) showDialogPermissionAccessibility(3);
+                else {
+                    try {
+                        ContentResolver contentResolver = getContentResolver();
+                        int rotation = Settings.System.getInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION);
+                        if (rotation == 1) {
+                            isLockRotation = true;
+                            Settings.System.putInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, 0); //khoa xoay man hinh
+                            view.setImageResource(R.drawable.ic_action_unlock_rotation);
+                            textView.setText(R.string.unlock_rotation);
+                            icon.setIconShow(R.drawable.ic_action_unlock_rotation);
+                            icon.setText(R.string.unlock_rotation);
+                        } else {
+                            isLockRotation = false;
+                            Settings.System.putInt(contentResolver, Settings.System.ACCELEROMETER_ROTATION, 1);
+                            view.setImageResource(R.drawable.ic_action_lock_rotation);
+                            textView.setText(R.string.lock_rotation);
+                            icon.setIconShow(R.drawable.ic_action_lock_rotation);
+                            icon.setText(R.string.lock_rotation);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
                 break;
         }
@@ -1473,15 +1526,21 @@ public class ServiceScreen extends Service {
     private void makePath() {
         String str = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator + "RecordScreen";
         if (!"mounted".equals(Environment.getExternalStorageState())) {
-            Toast.makeText(this, (int) R.string.error_sd, Toast.LENGTH_SHORT).show();
+            new Handler(Looper.getMainLooper()).post(() ->
+                    Toast.makeText(this, (int) R.string.error_sd, Toast.LENGTH_SHORT).show()
+            );
+
             return;
         }
         File file = new File(str);
-        if (file.exists() ? true : file.mkdir()) {
+        if (file.exists() || file.mkdir()) {
             filePath = str + File.separator + "video_" + System.currentTimeMillis() + ".mp4";
             return;
         }
-        Toast.makeText(this, (int) R.string.error_record, Toast.LENGTH_SHORT).show();
+        new Handler(Looper.getMainLooper()).post(() ->
+                Toast.makeText(this, (int) R.string.error_record, Toast.LENGTH_SHORT).show()
+        );
+
     }
 
     public void setupMediaRecorder() {
@@ -1552,7 +1611,10 @@ public class ServiceScreen extends Service {
         isRecord = false;
         Log.e("check_record", "stop!");
         if (mediaRecorder != null) {
-            Toast.makeText(this, "done", Toast.LENGTH_SHORT).show();
+            new Handler(Looper.getMainLooper()).post(() -> Toast.makeText(this, "done", Toast.LENGTH_SHORT).show()
+
+            );
+
             mediaRecorder.stop();
             mediaRecorder.reset();
         }
@@ -1923,7 +1985,10 @@ public class ServiceScreen extends Service {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     if (!fromUser) return;
-                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, AudioManager.FLAG_SHOW_UI);
+                    });
                 }
 
                 @Override
@@ -2001,6 +2066,9 @@ public class ServiceScreen extends Service {
             timeOutBinding.ll15s.setOnClickListener(v -> {
                 changeStateTimeOut(15, true);
             });
+            timeOutBinding.ll30s.setOnClickListener(v -> {
+                changeStateTimeOut(30, true);
+            });
             timeOutBinding.ll1m.setOnClickListener(v -> {
                 changeStateTimeOut(60, true);
             });
@@ -2051,6 +2119,7 @@ public class ServiceScreen extends Service {
     private void changeStateTimeOut(int time, boolean isChange) {
         if (timeOutBinding != null && timeOutBinding.getRoot().getParent() != null) {
             timeOutBinding.iv15s.setImageResource(R.drawable.time_out_button_sn);
+            timeOutBinding.iv30s.setImageResource(R.drawable.time_out_button_sn);
             timeOutBinding.iv1m.setImageResource(R.drawable.time_out_button_sn);
             timeOutBinding.iv5m.setImageResource(R.drawable.time_out_button_sn);
             timeOutBinding.iv10m.setImageResource(R.drawable.time_out_button_sn);
@@ -2059,6 +2128,9 @@ public class ServiceScreen extends Service {
             switch (time) {
                 case 15:
                     timeOutBinding.iv15s.setImageResource(R.drawable.time_out_button_s);
+                    break;
+                case 30:
+                    timeOutBinding.iv30s.setImageResource(R.drawable.time_out_button_s);
                     break;
                 case 60:
                     timeOutBinding.iv1m.setImageResource(R.drawable.time_out_button_s);
@@ -2093,6 +2165,9 @@ public class ServiceScreen extends Service {
 
     private void hideDialog(boolean isBack) {
         try {
+            if (permissionBinding != null && permissionBinding.getRoot().getParent() != null) {
+                windowManager.removeView(permissionBinding.getRoot());
+            }
             if (timeOutBinding != null && timeOutBinding.getRoot().getParent() != null) {
                 windowManager.removeView(timeOutBinding.getRoot());
             }
@@ -2119,11 +2194,11 @@ public class ServiceScreen extends Service {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    private void showDialogPermissionAccessibility() {
-        if (menuBinding == null) {
-            menuBinding = PopupSelectActionBinding.inflate(LayoutInflater.from(this));
+    private void showDialogPermissionAccessibility(int type) {
+        if (permissionBinding == null) {
+            permissionBinding = DialogPermissionBinding.inflate(LayoutInflater.from(this));
         }
-        if (menuBinding.getRoot().getParent() == null) {  // Check if it's already added
+        if (permissionBinding.getRoot().getParent() == null) {  // Check if it's already added
             WindowManager.LayoutParams popupParams = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.WRAP_CONTENT,
@@ -2134,8 +2209,69 @@ public class ServiceScreen extends Service {
                     PixelFormat.TRANSLUCENT
             );
             popupParams.gravity = Gravity.CENTER;
+            if (type == 1) {
+                permissionBinding.tvContent.setText(R.string.content_dialog_per_noti);
+            } else if (type == 2) {
+                permissionBinding.tvContent.setText(R.string.content_dialog_per_overlay);
+            } else if (type == 3) {
+                permissionBinding.tvContent.setText(R.string.content_dialog_per_write_setting);
+            } else if (type == 4) {
+                permissionBinding.tvContent.setText(R.string.content_dialog_per_accessibility);
+            } else if (type == 5) {
+                permissionBinding.tvContent.setText(R.string.content_dialog_per_camera);
+            } else if (type == 6) {
+                permissionBinding.tvContent.setText(R.string.content_dialog_per_storage);
+            } else if (type == 7) {
+                permissionBinding.tvContent.setText(R.string.you_need_to_enable_device_admin_feature);
+            }
 
-            overlayViewPermission = new View(this);
+            permissionBinding.tvStay.setOnClickListener(view -> {
+                hideDialog(false);
+            });
+            permissionBinding.tvAgree.setOnClickListener(view -> {
+//            AppOpenManager.getInstance().disableAppResumeWithActivity(HomeActivity.class);
+                if (type == 1 || type == 5 || type == 6) {
+                    Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
+                } else if (type == 2) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        try {
+                            Intent intent = new Intent();
+                            intent.setAction(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                            Uri uri = Uri.fromParts("package", getPackageName(), null);
+                            intent.setData(uri);
+                            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.e("PermissionError", "Error opening settings: " + e.getMessage());
+                        }
+                    }
+                } else if (type == 3) {
+                    Intent intent = new Intent("android.settings.action.MANAGE_WRITE_SETTINGS");
+                    intent.setData(Uri.parse("package:" + getPackageName()));
+                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } else if (type == 4) {
+                    Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
+                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    Log.e("check_service", "off");
+                } else if (type == 7) {
+                    ComponentName componentName = new ComponentName(this, MyDeviceAdminReceiver.class);
+                    Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+                    intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+                    intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
+                    intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, getString(R.string.allow_assistive_touch_to_lock_screen));
+                    startActivity(intent);
+                }
+                hideDialog(false);
+            });
+            overlayViewDialog = new View(this);
             WindowManager.LayoutParams overlayParams = new WindowManager.LayoutParams(
                     WindowManager.LayoutParams.MATCH_PARENT,
                     WindowManager.LayoutParams.MATCH_PARENT,
@@ -2146,54 +2282,77 @@ public class ServiceScreen extends Service {
                     PixelFormat.TRANSLUCENT
             );
             overlayParams.gravity = Gravity.CENTER;
-            overlayViewPermission.setLayoutParams(overlayParams);
+            overlayViewDialog.setLayoutParams(overlayParams);
 
-            overlayViewPermission.setOnTouchListener((v, event) -> {
-                hideDialogPermission();
+            overlayViewDialog.setOnTouchListener((v, event) -> {
+                hideDialog(false);
                 return true;
             });
 
             try {
-                windowManager.addView(overlayViewPermission, overlayParams);
-                windowManager.addView(menuBinding.getRoot(), popupParams);
+                windowManager.addView(overlayViewDialog, overlayParams);
+                windowManager.addView(permissionBinding.getRoot(), popupParams);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else {
-            hideDialogPermission();
+            hideDialog(false);
         }
     }
-
-    private void hideDialogPermission() {
-        try {
-            if (menuBinding != null && menuBinding.getRoot().getParent() != null) {
-                windowManager.removeView(menuBinding.getRoot());
-            }
-            if (overlayViewPermission != null && overlayViewPermission.getParent() != null) {
-                windowManager.removeView(overlayViewPermission);
-            }
-            overlayViewPermission = null;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
 
     public void takeScreenshot(MediaProjection mediaProjection) {
-        ImageReader imageReader = ImageReader.newInstance(screenWidth, screenHeight, PixelFormat.RGBA_8888, 1);
-        VirtualDisplay virtualDisplay = mediaProjection.createVirtualDisplay(
-                "ScreenCapture", screenWidth, screenHeight, screenDensity,
-                DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, imageReader.getSurface(), null, null);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                ImageReader imageReader = ImageReader.newInstance(screenWidth, screenHeight, PixelFormat.RGBA_8888, 1);
+                VirtualDisplay virtualDisplay = mediaProjection.createVirtualDisplay(
+                        "ScreenCapture", screenWidth, screenHeight, screenDensity,
+                        DisplayManager.VIRTUAL_DISPLAY_FLAG_AUTO_MIRROR, imageReader.getSurface(), null, null);
 
-        imageReader.setOnImageAvailableListener(reader -> {
-            Image image = reader.acquireLatestImage();
-            if (image != null) {
-                // Lưu ảnh
-                saveImage(image);
-                image.close();
-                mediaProjection.stop();
+                imageReader.setOnImageAvailableListener(reader -> {
+                    Image image = reader.acquireLatestImage();
+                    if (image != null) {
+
+                        Image.Plane plane = image.getPlanes()[0];
+                        ByteBuffer buffer = plane.getBuffer();
+                        int pixelStride = plane.getPixelStride(); // Khoảng cách giữa 2 pixel liên tiếp
+                        int rowStride = plane.getRowStride(); // Khoảng cách giữa 2 dòng pixel
+
+                        // Tạo bitmap đúng kích thước
+                        Bitmap bitmap = Bitmap.createBitmap(screenWidth, screenHeight, Bitmap.Config.ARGB_8888);
+                        int[] pixels = new int[screenWidth * screenHeight];
+
+                        // Đọc từng dòng pixel từ buffer
+                        for (int y = 0; y < screenHeight; y++) {
+                            int offset = y * rowStride;
+                            for (int x = 0; x < screenWidth; x++) {
+                                int index = offset + x * pixelStride;
+                                buffer.position(index);
+
+                                // Đọc pixel (ARGB)
+                                int pixel = (buffer.get() & 0xFF) << 16 | // Red
+                                        (buffer.get() & 0xFF) << 8 |  // Green
+                                        (buffer.get() & 0xFF) |       // Blue
+                                        (0xFF << 24);                 // Alpha (Full)
+
+                                pixels[y * screenWidth + x] = pixel;
+                            }
+                        }
+
+                        // Đưa pixel vào bitmap
+                        bitmap.setPixels(pixels, 0, screenWidth, 0, 0, screenWidth, screenHeight);
+
+                        // Lưu vào thư mục DCIM/Screenshots
+                        ImageUtils.saveBitmap(ServiceScreen.this, bitmap);
+                        // Lưu ảnh
+//                        saveImage(image);
+                        image.close();
+                        mediaProjection.stop();
+                    }
+                }, null);
             }
-        }, null);
+        }, 0);
+
     }
 
     private void saveImage(Image image) {

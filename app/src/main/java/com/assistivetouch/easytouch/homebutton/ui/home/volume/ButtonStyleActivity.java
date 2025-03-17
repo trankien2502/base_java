@@ -41,9 +41,9 @@ public class ButtonStyleActivity extends BaseActivity<ActivityButtonStyleBinding
     @Override
     public void initView() {
         if (SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_COLOR, -1) != -1)
-            binding.ivButtonColor.setCardBackgroundColor(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_COLOR, -1));
+            binding.ivButtonColor.setBackgroundColor(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_COLOR, -1));
         if (SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_BACKGROUND_COLOR, -1) != -1)
-            binding.ivButtonBackgroundColor.setCardBackgroundColor(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_BACKGROUND_COLOR, -1));
+            binding.ivButtonBackgroundColor.setBackgroundColor(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_BACKGROUND_COLOR, -1));
         binding.sbTransparency.setProgress(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_ALPHA, 128));
         binding.tvPercentTransparency.setText(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_ALPHA, 128) * 100 / 255 + "%");
         binding.sbSize.setProgress(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_SIZE, 0));
@@ -164,11 +164,11 @@ public class ButtonStyleActivity extends BaseActivity<ActivityButtonStyleBinding
                 if (isButtonColor) {
                     currentButtonColor = color;
                     SPUtils.setInt(getBaseContext(), SPUtils.VOLUME_BUTTON_COLOR, color);
-                    binding.ivButtonColor.setCardBackgroundColor(color);
+                    binding.ivButtonColor.setBackgroundColor(color);
                 } else {
                     currentButtonBackgroundColor = color;
                     SPUtils.setInt(getBaseContext(), SPUtils.VOLUME_BUTTON_BACKGROUND_COLOR, color);
-                    binding.ivButtonBackgroundColor.setCardBackgroundColor(color);
+                    binding.ivButtonBackgroundColor.setBackgroundColor(color);
                 }
                 if (ServiceScreen.instance != null) {
                     if (ServiceScreen.instance.volumeView != null) {

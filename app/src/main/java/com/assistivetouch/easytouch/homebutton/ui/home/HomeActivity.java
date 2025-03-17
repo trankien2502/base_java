@@ -1,6 +1,10 @@
 package com.assistivetouch.easytouch.homebutton.ui.home;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 import android.app.ActivityManager;
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -24,6 +28,7 @@ import com.assistivetouch.easytouch.homebutton.dialog.exit.ExitAppDialog;
 import com.assistivetouch.easytouch.homebutton.dialog.exit.IClickDialogExit;
 import com.assistivetouch.easytouch.homebutton.dialog.rate.IClickDialogRate;
 import com.assistivetouch.easytouch.homebutton.dialog.rate.RatingDialog;
+import com.assistivetouch.easytouch.homebutton.service.MyDeviceAdminReceiver;
 import com.assistivetouch.easytouch.homebutton.service.ServiceControl;
 import com.assistivetouch.easytouch.homebutton.service.ServiceScreen;
 import com.assistivetouch.easytouch.homebutton.ui.home.touch.custom.CustomMenuActivity;
@@ -74,7 +79,8 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
 
 
     }
-    public void checkState(){
+
+    public void checkState() {
         if (!isMyServiceRunning(ServiceScreen.class)) {
             binding.swTouch.setChecked(false);
             binding.swVolume.setChecked(false);
@@ -88,6 +94,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
             }
         }
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -125,6 +132,58 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
                 showDialogGotoSetting(2);
                 binding.swTouch.setChecked(false);
             } else {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.P) {
+                    if (!checkAdviceAdmin())
+                        showDialogGotoSetting(7);
+                    else {
+                        if (binding.swTouch.isChecked()) {
+                            if (ServiceScreen.instance != null && isMyServiceRunning(ServiceScreen.class)) {
+                                ServiceScreen.instance.addFloatingIcon();
+                            } else {
+                                Intent serviceIntent = new Intent(this, ServiceScreen.class);
+                                serviceIntent.putExtra("IS_ADD_TOUCH_ICON", true);
+                                startService(serviceIntent);
+                            }
+                            Toast.makeText(this, R.string.enable_assistive_touch_success, Toast.LENGTH_SHORT).show();
+                        } else {
+                            if (ServiceScreen.instance != null) {
+                                if (ServiceScreen.instance.floatingView != null)
+                                    ServiceScreen.instance.removeFloatingView();
+                                if (ServiceScreen.instance.floatingView == null && ServiceScreen.instance.volumeView == null) {
+                                    Intent serviceIntent = new Intent(this, ServiceScreen.class);
+                                    stopService(serviceIntent);
+                                }
+                            }
+                            Toast.makeText(this, R.string.disable_assistive_touch_success, Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                } else {
+                    if (binding.swTouch.isChecked()) {
+                        if (ServiceScreen.instance != null && isMyServiceRunning(ServiceScreen.class)) {
+                            ServiceScreen.instance.addFloatingIcon();
+                        } else {
+                            Intent serviceIntent = new Intent(this, ServiceScreen.class);
+                            serviceIntent.putExtra("IS_ADD_TOUCH_ICON", true);
+                            startService(serviceIntent);
+                        }
+                        Toast.makeText(this, R.string.enable_assistive_touch_success, Toast.LENGTH_SHORT).show();
+                    } else {
+                        if (ServiceScreen.instance != null) {
+                            if (ServiceScreen.instance.floatingView != null)
+                                ServiceScreen.instance.removeFloatingView();
+                            if (ServiceScreen.instance.floatingView == null && ServiceScreen.instance.volumeView == null) {
+                                Intent serviceIntent = new Intent(this, ServiceScreen.class);
+                                stopService(serviceIntent);
+                            }
+                        }
+                        Toast.makeText(this, R.string.disable_assistive_touch_success, Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        } else {
+            if (!checkAdviceAdmin())
+                showDialogGotoSetting(7);
+            else {
                 if (binding.swTouch.isChecked()) {
                     if (ServiceScreen.instance != null && isMyServiceRunning(ServiceScreen.class)) {
                         ServiceScreen.instance.addFloatingIcon();
@@ -144,30 +203,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
                         }
                     }
                     Toast.makeText(this, R.string.disable_assistive_touch_success, Toast.LENGTH_SHORT).show();
-
                 }
-            }
-        } else {
-            if (binding.swTouch.isChecked()) {
-                if (ServiceScreen.instance != null && isMyServiceRunning(ServiceScreen.class)) {
-                    ServiceScreen.instance.addFloatingIcon();
-                } else {
-                    Intent serviceIntent = new Intent(this, ServiceScreen.class);
-                    serviceIntent.putExtra("IS_ADD_TOUCH_ICON", true);
-                    startService(serviceIntent);
-                }
-                Toast.makeText(this, R.string.enable_assistive_touch_success, Toast.LENGTH_SHORT).show();
-            } else {
-                if (ServiceScreen.instance != null) {
-                    if (ServiceScreen.instance.floatingView != null)
-                        ServiceScreen.instance.removeFloatingView();
-                    if (ServiceScreen.instance.floatingView == null && ServiceScreen.instance.volumeView == null) {
-                        Intent serviceIntent = new Intent(this, ServiceScreen.class);
-                        stopService(serviceIntent);
-                    }
-                }
-                Toast.makeText(this, R.string.disable_assistive_touch_success, Toast.LENGTH_SHORT).show();
-
             }
         }
     }
@@ -251,6 +287,21 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
                 Log.e("check_service", "null");
             }
         }
+    }
+
+    private boolean checkAdviceAdmin() {
+        ComponentName componentName = new ComponentName(this, MyDeviceAdminReceiver.class);
+        DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
+        return dpm.isAdminActive(componentName);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == 1100 && resultCode == RESULT_OK) {
+            Toast.makeText(instance, "enable", Toast.LENGTH_SHORT).show();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 
     @Override
@@ -374,6 +425,8 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
             dialog.binding.tvContent.setText(R.string.content_dialog_per_camera);
         } else if (type == 6) {
             dialog.binding.tvContent.setText(R.string.content_dialog_per_storage);
+        }else if (type == 7) {
+            dialog.binding.tvContent.setText(R.string.you_need_to_enable_device_admin_feature);
         }
 
         dialog.binding.tvStay.setOnClickListener(view -> {
@@ -413,6 +466,12 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
                 Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
                 startActivity(intent);
                 Log.e("check_service", "off");
+            }else if (type == 7) {
+                ComponentName componentName = new ComponentName(this, MyDeviceAdminReceiver.class);
+                Intent intent = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
+                intent.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName);
+                intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, getString(R.string.allow_assistive_touch_to_lock_screen));
+                startActivity(intent);
             }
         });
         dialog.show();
