@@ -69,7 +69,7 @@
     <string name="none">没有任何</string>
     <string name="long_press">长按</string>
     <string name="set_action_successfully">设置动作成功！</string>
-    <string name="accessibility_service_description">Dịch vụ này giúp điều khiển màn hình bằng nut nổi。</string>
+    <string name="accessibility_service_description">该服务有助于使用浮动按钮控制屏幕。</string>
     <string name="tap_to_open">点击打开</string>
     <string name="asisitive_touch_s_service_is_running">辅助触摸服务正在运行</string>
     <string name="enable_assistive_touch_success">成功启用辅助触摸</string>

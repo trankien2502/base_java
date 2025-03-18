@@ -69,7 +69,7 @@
     <string name="none">Tidak ada</string>
     <string name="long_press">Tekan Lama</string>
     <string name="set_action_successfully">Tetapkan tindakan dengan sukses!</string>
-    <string name="accessibility_service_description">Jangan lupa untuk menghubungi kami.</string>
+    <string name="accessibility_service_description">Layanan ini membantu mengontrol layar dengan tombol mengambang.</string>
     <string name="tap_to_open">Ketuk untuk membuka</string>
     <string name="asisitive_touch_s_service_is_running">Layanan Assistive Touch sedang berjalan</string>
     <string name="enable_assistive_touch_success">Aktifkan sentuhan bantu dengan sukses</string>

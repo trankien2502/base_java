@@ -29,6 +29,7 @@ import com.assistivetouch.easytouch.homebutton.dialog.exit.IClickDialogExit;
 import com.assistivetouch.easytouch.homebutton.dialog.rate.IClickDialogRate;
 import com.assistivetouch.easytouch.homebutton.dialog.rate.RatingDialog;
 import com.assistivetouch.easytouch.homebutton.service.MyDeviceAdminReceiver;
+import com.assistivetouch.easytouch.homebutton.service.ScreenRecordService;
 import com.assistivetouch.easytouch.homebutton.service.ServiceControl;
 import com.assistivetouch.easytouch.homebutton.service.ServiceScreen;
 import com.assistivetouch.easytouch.homebutton.ui.home.touch.custom.CustomMenuActivity;
@@ -105,9 +106,12 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     public void bindView() {
         binding.ivSetting.setOnClickListener(view -> {
             resultLauncher.launch(new Intent(this, SettingActivity.class));
+//            resultLauncher.launch(new Intent(this, ScreenRecorderActivity.class));
         });
         binding.swTouch.setOnClickListener(view -> {
             enableTouch();
+//            Intent serviceIntent = new Intent(this, ScreenRecordService.class);
+//            stopService(serviceIntent);
         });
         binding.clMenuTouch.setOnClickListener(view -> {
             resultLauncher.launch(new Intent(this, CustomMenuActivity.class));

@@ -24,6 +24,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
+import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -108,8 +109,16 @@ public class ScreenRecordService extends Service {
             Intent data = intent.getParcelableExtra("DATA_INTENT");
 
             if (data != null) {
+                mediaProjection = null;
                 mediaProjection = projectionManager.getMediaProjection(resultCode, data);
             }
+            mediaProjection.registerCallback(new MediaProjection.Callback() {
+                @Override
+                public void onStop() {
+                    super.onStop();
+                    stopRecording();
+                }
+            }, null);
             setupMediaRecorder();
             startRecording();
         }
@@ -117,39 +126,44 @@ public class ScreenRecordService extends Service {
     }
 
     private void makePath() {
-        String str = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + File.separator + "RecordScreen";
-        if (!"mounted".equals(Environment.getExternalStorageState())) {
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
             new Handler(Looper.getMainLooper()).post(() ->
-                    Toast.makeText(this, (int) R.string.error_sd, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.error_sd, Toast.LENGTH_SHORT).show()
             );
-
             return;
         }
-        File file = new File(str);
-        if (file.exists() ? true : file.mkdir()) {
-            filePath = str + File.separator + "video_" + System.currentTimeMillis() + ".mp4";
+
+        File directory;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // Android 10+ dùng Scoped Storage -> Ghi vào thư mục riêng của app
+            directory = new File(getExternalFilesDir(Environment.DIRECTORY_MOVIES), "RecordScreen");
+        } else {
+            // Android 9 trở xuống -> Ghi vào DCIM
+            directory = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), "RecordScreen");
+        }
+
+        // Đảm bảo thư mục tồn tại
+        if (!directory.exists() && !directory.mkdirs()) {
+            new Handler(Looper.getMainLooper()).post(() ->
+                    Toast.makeText(this, R.string.error_record, Toast.LENGTH_SHORT).show()
+            );
             return;
         }
-        new Handler(Looper.getMainLooper()).post(() ->
-                Toast.makeText(this, (int) R.string.error_record, Toast.LENGTH_SHORT).show()
-        );
 
+        // Tạo đường dẫn file
+        filePath = new File(directory, "video_" + System.currentTimeMillis() + ".mp4").getAbsolutePath();
     }
+
 
     public void setupMediaRecorder() {
         mediaRecorder = new MediaRecorder();
+        mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
         if (PermissionManager.checkMicrophonePermission(this)) {
             mediaRecorder.setAudioSource(MediaRecorder.AudioSource.MIC);
         }
-        mediaRecorder.setVideoSource(MediaRecorder.VideoSource.SURFACE);
+
         mediaRecorder.setOutputFormat(MediaRecorder.OutputFormat.MPEG_4);
-        mediaRecorder.setVideoSize(screenWidth, screenHeight);
-        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
-        if (PermissionManager.checkMicrophonePermission(this)) {
-            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
-        }
-        mediaRecorder.setVideoFrameRate(60);     // 60 FPS
-        mediaRecorder.setVideoEncodingBitRate(8 * 1000 * 1000);
+
         if (Build.VERSION.SDK_INT < 29) {
             makePath();
         } else {
@@ -164,28 +178,42 @@ public class ScreenRecordService extends Service {
             this.mUri = getContentResolver().insert(MediaStore.Video.Media.EXTERNAL_CONTENT_URI, contentValues);
         }
         if (this.mUri == null) {
+            makePath();
+            Log.e("check_record", "urinull, filefath = :"+filePath);
             this.mediaRecorder.setOutputFile(this.filePath);
         } else {
             try {
-                FileDescriptor fileDescriptor = getContentResolver().openFileDescriptor(this.mUri, "rw").getFileDescriptor();
-                if (fileDescriptor != null) {
-                    this.mediaRecorder.setOutputFile(fileDescriptor);
+                ParcelFileDescriptor pfd = getContentResolver().openFileDescriptor(mUri, "rw");
+                if (pfd != null) {
+                    Log.e("check_record", "uri not null, output file = "+pfd.getFileDescriptor());
+                    mediaRecorder.setOutputFile(pfd.getFileDescriptor());
                 } else {
                     makePath();
-                    this.mediaRecorder.setOutputFile(this.filePath);
+                    Log.e("check_record", "urinull, filefath = :"+filePath);
+                    mediaRecorder.setOutputFile(filePath);
                 }
-            } catch (Exception unused2) {
+            } catch (Exception e) {
+                Log.e("check_record", "Lỗi khi mở file descriptor", e);
                 makePath();
-                this.mediaRecorder.setOutputFile(this.filePath);
+                mediaRecorder.setOutputFile(filePath);
             }
         }
+        mediaRecorder.setVideoEncoder(MediaRecorder.VideoEncoder.H264);
+        if (PermissionManager.checkMicrophonePermission(this)) {
+            mediaRecorder.setAudioEncoder(MediaRecorder.AudioEncoder.AAC);
+        }
+        mediaRecorder.setVideoSize(screenWidth, screenHeight);
+        mediaRecorder.setVideoFrameRate(60);     // 60 FPS
+        mediaRecorder.setVideoEncodingBitRate(8 * 1000 * 1000);
+
 
 
         try {
             mediaRecorder.prepare();
         } catch (IOException e) {
-            e.printStackTrace();
             Log.e("check_record", "error: ", e);
+            Log.e("check_record", "error: "+e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -214,13 +242,19 @@ public class ScreenRecordService extends Service {
 
             mediaRecorder.stop();
             mediaRecorder.reset();
+            mediaRecorder.release();
+            mediaRecorder = null;
         }
         if (virtualDisplay != null) {
             virtualDisplay.release();
+            virtualDisplay = null;
         }
         if (mediaProjection != null) {
-            mediaProjection.stop();
+            mediaProjection.stop(); // Giải phóng MediaProjection
+            mediaProjection = null;
         }
+        stopForeground(true); // Dừng dịch vụ Foreground
+        stopSelf(); // Dừng Service
     }
 
     @Override

@@ -69,7 +69,7 @@
     <string name="none">Nenhum</string>
     <string name="long_press">Pressão longa</string>
     <string name="set_action_successfully">Defina a ação com sucesso!</string>
-    <string name="accessibility_service_description">Dịch vụ này giúp điều khiển màn hình bằng nút nổi.</string>
+    <string name="accessibility_service_description">Este serviço ajuda a controlar a tela com botões flutuantes.</string>
     <string name="tap_to_open">Toque para abrir</string>
     <string name="asisitive_touch_s_service_is_running">O serviço do Assistive Touch está em execução</string>
     <string name="enable_assistive_touch_success">Habilite o toque assistido com sucesso</string>

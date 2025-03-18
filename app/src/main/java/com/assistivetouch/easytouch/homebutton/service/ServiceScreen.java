@@ -7,6 +7,7 @@ import static android.view.View.VISIBLE;
 
 import android.Manifest;
 import android.accessibilityservice.AccessibilityService;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
@@ -111,6 +112,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+
 import kotlin.Unit;
 import kotlin.jvm.functions.Function1;
 
@@ -156,7 +158,6 @@ public class ServiceScreen extends Service {
 
     private int screenDensity;
 
-    private Handler handler;
     private boolean isMoving = false;
     private boolean isPress = false;
     private long touchStartTime;
@@ -179,6 +180,11 @@ public class ServiceScreen extends Service {
     private int edgeDistance = 0;
     int w, h;
 
+    private Handler handler = new Handler();
+    private Runnable fadeOutRunnable = () -> {
+        if (floatingView != null)
+            floatingView.animate().alpha(0.5f).setDuration(200).start();
+    };
 
     @Override
     public IBinder onBind(Intent intent) {
@@ -247,7 +253,7 @@ public class ServiceScreen extends Service {
                         WindowManager.LayoutParams.TYPE_PHONE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE | WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
                         | WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
-                        | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS| WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
+                        | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH,
                 PixelFormat.TRANSLUCENT
         );
         darknessView.setAlpha((float) SPUtils.getInt(this, SPUtils.DARK_PERCENT, 0) / 255);
@@ -330,6 +336,8 @@ public class ServiceScreen extends Service {
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        v.animate().scaleX(0.8f).scaleY(0.8f).alpha(1.0f).setDuration(200).start();
+                        handler.removeCallbacks(fadeOutRunnable);
                         initialX = params.x;
                         initialY = params.y;
                         initialTouchX = event.getRawX();
@@ -349,7 +357,6 @@ public class ServiceScreen extends Service {
                                         handler.removeCallbacks(this);
                                     } else {
                                         handler.postDelayed(this, 100);
-//                                        Log.e("check_service", "pressing: ");
                                     }
                                 } else {
                                     handler.removeCallbacks(this);
@@ -367,6 +374,8 @@ public class ServiceScreen extends Service {
                         windowManager.updateViewLayout(floatingView, params);
                         return true;
                     case MotionEvent.ACTION_UP:
+                        v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(200).start();
+                        handler.postDelayed(fadeOutRunnable, 2000);
                         isPress = false;
                         countDouble++;
                         if (!isMoving && !isLongPress) {
@@ -393,6 +402,7 @@ public class ServiceScreen extends Service {
         // Thêm View nổi vào màn hình
         windowManager.addView(floatingView, params);
         setIconStyle(SPUtils.getInt(this, SPUtils.ICON_STYLE, R.drawable.icon_1));
+        handler.postDelayed(fadeOutRunnable, 2000);
     }
 
     public void updateFloatingViewSize(int newSizeDp) {
@@ -497,6 +507,7 @@ public class ServiceScreen extends Service {
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
+                        v.animate().scaleX(0.8f).scaleY(0.8f).alpha(1.0f).setDuration(200).start();
                         initialX = paramsVolume.x;
                         initialY = paramsVolume.y;
                         initialTouchX = event.getRawX();
@@ -535,6 +546,7 @@ public class ServiceScreen extends Service {
                         windowManager.updateViewLayout(volumeView, paramsVolume);
                         return true;
                     case MotionEvent.ACTION_UP:
+                        v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(200).start();
                         isPress = false;
                         countDouble++;
                         if (!isMoving && !isLongPress) {
@@ -718,40 +730,28 @@ public class ServiceScreen extends Service {
         sbMedia.setOnProgressChangeListener(new Function1<Integer, Unit>() {
             @Override
             public Unit invoke(Integer integer) {
-                AudioFocusRequest audioFocusRequest = null;
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    audioFocusRequest = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN)
-                            .setAudioAttributes(new AudioAttributes.Builder()
-                                    .setUsage(AudioAttributes.USAGE_MEDIA)
-                                    .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
-                                    .build())
-                            .build();
-                    audioManager.requestAudioFocus(audioFocusRequest);
-                } else {
-                    audioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
-                }
-                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, integer, AudioManager.FLAG_SHOW_UI);
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, integer, 0);
                 return null;
             }
         });
         sbRing.setOnProgressChangeListener(new Function1<Integer, Unit>() {
             @Override
             public Unit invoke(Integer integer) {
-                audioManager.setStreamVolume(AudioManager.STREAM_RING, integer, AudioManager.FLAG_SHOW_UI);
+                audioManager.setStreamVolume(AudioManager.STREAM_RING, integer, 0);
                 return null;
             }
         });
         sbNotification.setOnProgressChangeListener(new Function1<Integer, Unit>() {
             @Override
             public Unit invoke(Integer integer) {
-                audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, integer, AudioManager.FLAG_SHOW_UI);
+                audioManager.setStreamVolume(AudioManager.STREAM_NOTIFICATION, integer, 0);
                 return null;
             }
         });
         sbCall.setOnProgressChangeListener(new Function1<Integer, Unit>() {
             @Override
             public Unit invoke(Integer integer) {
-                audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, integer, AudioManager.FLAG_SHOW_UI);
+                audioManager.setStreamVolume(AudioManager.STREAM_VOICE_CALL, integer, 0);
                 return null;
             }
         });
@@ -1204,7 +1204,7 @@ public class ServiceScreen extends Service {
                     if (ScreenRecordService.instance.isRecord) {
                         Log.e("check_record", "instance isrecord");
                         Intent serviceIntent = new Intent(this, ScreenRecordService.class);
-                        stopService(serviceIntent); // Bắt đầu Service
+                        stopService(serviceIntent);
                     } else {
                         Log.e("check_record", "instance !isrecord");
                         Intent intentVideo = new Intent(this, ScreenRecorderActivity.class);
@@ -1985,10 +1985,7 @@ public class ServiceScreen extends Service {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                     if (!fromUser) return;
-                    new Handler(Looper.getMainLooper()).post(() -> {
-                        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-                        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, AudioManager.FLAG_SHOW_UI);
-                    });
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
                 }
 
                 @Override
@@ -2396,6 +2393,24 @@ public class ServiceScreen extends Service {
         animatorY.start();
     }
 
+    private void animateClick(View view) {
+        ObjectAnimator scaleDownX = ObjectAnimator.ofFloat(view, "scaleX", 0.8f);
+        ObjectAnimator scaleDownY = ObjectAnimator.ofFloat(view, "scaleY", 0.8f);
+        ObjectAnimator scaleUpX = ObjectAnimator.ofFloat(view, "scaleX", 1.0f);
+        ObjectAnimator scaleUpY = ObjectAnimator.ofFloat(view, "scaleY", 1.0f);
+
+        scaleDownX.setDuration(100);
+        scaleDownY.setDuration(100);
+        scaleUpX.setDuration(100);
+        scaleUpY.setDuration(100);
+
+        AnimatorSet scaleAnimation = new AnimatorSet();
+        scaleAnimation.play(scaleDownX).with(scaleDownY);
+        scaleAnimation.play(scaleUpX).with(scaleUpY).after(scaleDownX);
+
+        scaleAnimation.start();
+    }
+
     public void updatePositionAfterMove(
             View view,
             WindowManager windowManager,
@@ -2409,34 +2424,34 @@ public class ServiceScreen extends Service {
 
         if (centerX > screenWidth / 2 && centerY > screenHeight / 2) { // Bottom-right quadrant
             if (screenHeight - centerY <= screenWidth - centerX) {
-                targetX = params.x;
-                targetY = screenHeight - 4;
+                targetX = Math.min(params.x, screenWidth);
+                targetY = screenHeight - view.getHeight() - view.getHeight() / 2;
             } else {
-                targetX = screenWidth - 4;
-                targetY = params.y;
+                targetX = screenWidth - view.getWidth();
+                targetY = Math.min(params.y, screenHeight);
             }
-        } else if (centerX > screenWidth / 2 && centerY <= screenHeight / 2) {
+        } else if (centerX > screenWidth / 2 && centerY <= screenHeight / 2) { //top-right
             if (screenWidth - centerX <= centerY) {
-                targetX = screenWidth - 4;
-                targetY = params.y;
+                targetX = screenWidth - view.getWidth();
+                targetY = Math.max(params.y, 0);
             } else {
-                targetX = params.x;
-                targetY = 4;
+                targetX = Math.min(params.x, screenWidth);
+                targetY = 0;
             }
-        } else if (centerX <= screenWidth / 2 && centerY > screenHeight / 2) {
+        } else if (centerX <= screenWidth / 2 && centerY > screenHeight / 2) { //bottom-lèt
             if (screenHeight - centerY <= centerX) {
-                targetX = params.x;
-                targetY = screenHeight - 4;
+                targetX = Math.max(params.x, 0);
+                targetY = screenHeight - view.getHeight() - view.getHeight() / 2;
             } else {
-                targetX = 4;
-                targetY = params.y;
+                targetX = 0;
+                targetY = Math.min(params.y, screenHeight);
             }
-        } else {
+        } else { //top-le
             if (centerX <= centerY) {
-                targetX = 4;
-                targetY = params.y;
+                targetX = 0;
+                targetY = Math.max(params.y, 0);
             } else {
-                targetX = params.x;
+                targetX = Math.max(params.x, 0);
                 targetY = 0;
             }
         }

@@ -69,7 +69,7 @@
     <string name="none">कोई नहीं</string>
     <string name="long_press">देर तक दबाएँ</string>
     <string name="set_action_successfully">कार्रवाई सफलतापूर्वक सेट करें!</string>
-    <string name="accessibility_service_description">मुझे अभी भी कुछ नहीं मिला है.</string>
+    <string name="accessibility_service_description">यह सेवा फ्लोटिंग बटन के साथ स्क्रीन को नियंत्रित करने में मदद करती है।</string>
     <string name="tap_to_open">खोलने के लिए नल</string>
     <string name="asisitive_touch_s_service_is_running">सहायक टच की सेवा चल रही है</string>
     <string name="enable_assistive_touch_success">सहायक स्पर्श सफलतापूर्वक सक्षम करें</string>

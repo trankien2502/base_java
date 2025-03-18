@@ -27,17 +27,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
-    <uses-permission
-        android:name="android.permission.CAPTURE_VIDEO_OUTPUT"
-        tools:ignore="ProtectedPermissions" /> <!-- <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" /> -->
-    <!-- <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> -->
-    <!-- <uses-permission -->
-    <!-- android:name="android.permission.BLUETOOTH" -->
-    <!-- android:maxSdkVersion="30" /> -->
-    <!-- <uses-permission -->
-    <!-- android:name="android.permission.BLUETOOTH_ADMIN" -->
-    <!-- android:maxSdkVersion="30" /> -->
-    <!-- <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" /> -->
+    <uses-permission android:name="android.permission.CAPTURE_VIDEO_OUTPUT"
+        tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
@@ -90,6 +81,7 @@
             android:name=".ui.home.ScreenshotActivity"
             android:excludeFromRecents="true"
             android:exported="false"
+            android:theme="@style/ThemeWallpaper"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:taskAffinity=""
@@ -98,6 +90,7 @@
             android:name=".ui.home.ScreenRecorderActivity"
             android:excludeFromRecents="true"
             android:exported="false"
+            android:theme="@style/ThemeWallpaper"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:taskAffinity=""

@@ -69,7 +69,7 @@
     <string name="none">Keiner</string>
     <string name="long_press">Langes Drücken</string>
     <string name="set_action_successfully">Aktion erfolgreich eingestellt!</string>
-    <string name="accessibility_service_description">Es ist nicht einfach, dies zu tun.</string>
+    <string name="accessibility_service_description">Dieser Dienst hilft bei der Steuerung des Bildschirms mit schwebenden Schaltflächen.</string>
     <string name="tap_to_open">Zum Öffnen tippen</string>
     <string name="asisitive_touch_s_service_is_running">Der Dienst von Assistive Touch wird ausgeführt</string>
     <string name="enable_assistive_touch_success">Aktivieren Sie Assistive Touch erfolgreich</string>
