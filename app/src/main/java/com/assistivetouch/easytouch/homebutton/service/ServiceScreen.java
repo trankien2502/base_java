@@ -1207,6 +1207,9 @@ public class ServiceScreen extends Service {
                         stopService(serviceIntent);
                     } else {
                         Log.e("check_record", "instance !isrecord");
+                        if (ScreenRecordService.instance != null) {
+                            ScreenRecordService.instance.stopSelf();
+                        }
                         Intent intentVideo = new Intent(this, ScreenRecorderActivity.class);
                         intentVideo.addFlags(FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intentVideo);

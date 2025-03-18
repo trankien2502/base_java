@@ -128,7 +128,8 @@ public class ScreenRecorderActivity extends BaseActivity<ActivityScreenRecorderB
             if (Build.VERSION.SDK_INT < 34) {
                 startService(serviceIntent); // Bắt đầu Service
             } else {
-                startForegroundService(serviceIntent);            }
+                startForegroundService(serviceIntent);
+            }
 
         }
         onBack();

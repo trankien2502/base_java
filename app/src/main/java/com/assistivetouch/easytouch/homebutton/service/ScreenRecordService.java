@@ -120,7 +120,7 @@ public class ScreenRecordService extends Service {
                 }
             }, null);
             setupMediaRecorder();
-            startRecording();
+
         }
         return START_STICKY;
     }
@@ -210,10 +210,12 @@ public class ScreenRecordService extends Service {
 
         try {
             mediaRecorder.prepare();
+            startRecording();
         } catch (IOException e) {
             Log.e("check_record", "error: ", e);
             Log.e("check_record", "error: "+e.getMessage());
             e.printStackTrace();
+            isRecord = true;
         }
     }
 
@@ -239,11 +241,14 @@ public class ScreenRecordService extends Service {
                         else Toast.makeText(this, getString(R.string.video_save_on)+" DCIM/RecordScreen!", Toast.LENGTH_SHORT).show();
                     }
             );
-
-            mediaRecorder.stop();
-            mediaRecorder.reset();
-            mediaRecorder.release();
-            mediaRecorder = null;
+            try {
+                mediaRecorder.stop();
+                mediaRecorder.reset();
+                mediaRecorder.release();
+                mediaRecorder = null;
+            } catch (Exception e){
+                Log.e("check_record","stop");
+            }
         }
         if (virtualDisplay != null) {
             virtualDisplay.release();
