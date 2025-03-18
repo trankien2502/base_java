@@ -4,6 +4,7 @@ import android.os.Handler;
 
 import com.assistivetouch.easytouch.homebutton.base.BaseActivity;
 import com.assistivetouch.easytouch.homebutton.ui.language.LanguageStartActivity;
+import com.assistivetouch.easytouch.homebutton.util.EventTracking;
 import com.assistivetouch.easytouch.homebutton.util.SharePrefUtils;
 import com.assistivetouch.easytouch.homebutton.databinding.ActivitySplashBinding;
 
@@ -19,6 +20,7 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
     @Override
     public void initView() {
         SharePrefUtils.increaseCountOpenApp(this);
+        EventTracking.logEvent(this,"splash_open");
         new Handler().postDelayed(() -> {
             startNextActivity(LanguageStartActivity.class, null);
             finishAffinity();

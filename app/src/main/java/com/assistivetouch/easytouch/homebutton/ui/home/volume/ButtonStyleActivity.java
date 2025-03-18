@@ -24,6 +24,7 @@ import com.assistivetouch.easytouch.homebutton.service.ServiceScreen;
 import com.assistivetouch.easytouch.homebutton.ui.home.touch.custom.Menu1Fragment;
 import com.assistivetouch.easytouch.homebutton.ui.home.touch.custom.Menu2Fragment;
 import com.assistivetouch.easytouch.homebutton.ui.setting.SettingActivity;
+import com.assistivetouch.easytouch.homebutton.util.EventTracking;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 
 public class ButtonStyleActivity extends BaseActivity<ActivityButtonStyleBinding> {
@@ -40,6 +41,7 @@ public class ButtonStyleActivity extends BaseActivity<ActivityButtonStyleBinding
     @SuppressLint("SetTextI18n")
     @Override
     public void initView() {
+        EventTracking.logEvent(getBaseContext(), "volume_config_button_style_view");
         if (SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_COLOR, -1) != -1)
             binding.ivButtonColor.setBackgroundColor(SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_COLOR, -1));
         if (SPUtils.getInt(this, SPUtils.VOLUME_BUTTON_BACKGROUND_COLOR, -1) != -1)
@@ -57,15 +59,19 @@ public class ButtonStyleActivity extends BaseActivity<ActivityButtonStyleBinding
     @Override
     public void bindView() {
         binding.ivBack.setOnClickListener(v -> {
+
             onBack();
         });
         binding.clIconStyle.setOnClickListener(v -> {
+            EventTracking.logEvent(getBaseContext(), "volume_config_button_style_icon_click");
             resultLauncher.launch(new Intent(this, IconStyleVolumeActivity.class));
         });
         binding.clButtonColor.setOnClickListener(v -> {
+            EventTracking.logEvent(getBaseContext(), "volume_config_button_style_color_click");
             showColorPickerDialog(true);
         });
         binding.clButtonBackgroundColor.setOnClickListener(v -> {
+            EventTracking.logEvent(getBaseContext(), "volume_config_button_style_background_color_click");
             showColorPickerDialog(false);
         });
         binding.sbTransparency.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -89,7 +95,7 @@ public class ButtonStyleActivity extends BaseActivity<ActivityButtonStyleBinding
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                EventTracking.logEvent(getBaseContext(), "volume_config_button_style_transparency_click");
             }
         });
         binding.sbSize.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -111,7 +117,7 @@ public class ButtonStyleActivity extends BaseActivity<ActivityButtonStyleBinding
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                EventTracking.logEvent(getBaseContext(), "volume_config_button_style_size_click");
             }
         });
         binding.sbEdgeDistance.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -134,16 +140,18 @@ public class ButtonStyleActivity extends BaseActivity<ActivityButtonStyleBinding
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                EventTracking.logEvent(getBaseContext(), "volume_config_button_style_distance_click");
             }
         });
         binding.swPosition.setOnClickListener(v -> {
+            EventTracking.logEvent(getBaseContext(), "volume_config_button_style_enable_position_click");
             SPUtils.setBoolean(getBaseContext(), SPUtils.VOLUME_BUTTON_FIX_POSITION, binding.swPosition.isChecked());
         });
     }
 
     @Override
     public void onBack() {
+        EventTracking.logEvent(getBaseContext(), "volume_config_button_style_back_click");
         setResult(RESULT_OK);
         finish();
     }

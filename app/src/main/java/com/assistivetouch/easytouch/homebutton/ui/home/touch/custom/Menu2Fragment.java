@@ -11,6 +11,7 @@ import com.assistivetouch.easytouch.homebutton.R;
 import com.assistivetouch.easytouch.homebutton.base.BaseFragment;
 import com.assistivetouch.easytouch.homebutton.databinding.PopupSelectAction2Binding;
 import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIcon;
+import com.assistivetouch.easytouch.homebutton.util.EventTracking;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 
 import java.util.ArrayList;
@@ -38,36 +39,42 @@ public class Menu2Fragment extends BaseFragment<PopupSelectAction2Binding> {
     public void bindView() {
         binding.llAction1.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
+            EventTracking.logEvent(requireContext(), "custom_menu_item_click");
             intent.putExtra(SPUtils.MENU_FUNCTION, 2);
             intent.putExtra(SPUtils.MENU_POSITION, 0);
             startArc(intent);
         });
         binding.llAction2.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
+            EventTracking.logEvent(requireContext(), "custom_menu_item_click");
             intent.putExtra(SPUtils.MENU_FUNCTION, 2);
             intent.putExtra(SPUtils.MENU_POSITION, 1);
             startArc(intent);
         });
         binding.llAction3.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
+            EventTracking.logEvent(requireContext(), "custom_menu_item_click");
             intent.putExtra(SPUtils.MENU_FUNCTION, 2);
             intent.putExtra(SPUtils.MENU_POSITION, 2);
             startArc(intent);
         });
         binding.llAction5.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
+            EventTracking.logEvent(requireContext(), "custom_menu_item_click");
             intent.putExtra(SPUtils.MENU_FUNCTION, 2);
             intent.putExtra(SPUtils.MENU_POSITION, 3);
             startArc(intent);
         });
         binding.llAction6.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
+            EventTracking.logEvent(requireContext(), "custom_menu_item_click");
             intent.putExtra(SPUtils.MENU_FUNCTION, 2);
             intent.putExtra(SPUtils.MENU_POSITION, 4);
             startArc(intent);
         });
         binding.llAction7.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
+            EventTracking.logEvent(requireContext(), "custom_menu_item_click");
             intent.putExtra(SPUtils.MENU_FUNCTION, 2);
             intent.putExtra(SPUtils.MENU_POSITION, 5);
             startArc(intent);

@@ -12,6 +12,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import com.assistivetouch.easytouch.homebutton.base.BaseActivity;
 import com.assistivetouch.easytouch.homebutton.databinding.ActivityFloatingIconBinding;
 import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIcon;
+import com.assistivetouch.easytouch.homebutton.util.EventTracking;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class FloatingIconActivity extends BaseActivity<ActivityFloatingIconBindi
 
     @Override
     public void initView() {
-
+        EventTracking.logEvent(getBaseContext(), "floating_icon_view");
     }
 
     @Override
@@ -44,33 +45,39 @@ public class FloatingIconActivity extends BaseActivity<ActivityFloatingIconBindi
     @Override
     public void bindView() {
         binding.clIconStyle.setOnClickListener(v -> {
+            EventTracking.logEvent(getBaseContext(), "floating_icon_icon_style_click");
             resultLauncher.launch(new Intent(this, IconStyleActivity.class));
         });
         binding.clSingleTap.setOnClickListener(v -> {
+            EventTracking.logEvent(getBaseContext(), "floating_icon_single_tap_click");
             Intent intent = new Intent(this, FunctionFloatingIconActivity.class);
             intent.putExtra(SPUtils.INTENT_SELECT_FUNCTION,SPUtils.FLOATING_ICON_SINGLE_TAP);
             resultLauncher.launch(intent);
         });
         binding.clDoubleTap.setOnClickListener(v -> {
+            EventTracking.logEvent(getBaseContext(), "floating_icon_double_tap_click");
             Intent intent = new Intent(this, FunctionFloatingIconActivity.class);
             intent.putExtra(SPUtils.INTENT_SELECT_FUNCTION,SPUtils.FLOATING_ICON_DOUBLE_TAP);
             resultLauncher.launch(intent);
         });
         binding.clLongPress.setOnClickListener(v -> {
+            EventTracking.logEvent(getBaseContext(), "floating_icon_long_press_click");
             Intent intent = new Intent(this, FunctionFloatingIconActivity.class);
             intent.putExtra(SPUtils.INTENT_SELECT_FUNCTION,SPUtils.FLOATING_ICON_LONG_PRESS);
             resultLauncher.launch(intent);
         });
         binding.ivBack.setOnClickListener(v -> {
+
             onBack();
         });
         binding.ivGone.setOnClickListener(v -> {
-
+            EventTracking.logEvent(getBaseContext(), "floating_icon_done_click");
         });
     }
 
     @Override
     public void onBack() {
+        EventTracking.logEvent(getBaseContext(), "floating_icon_back_click");
         setResult(RESULT_OK);
         finish();
     }

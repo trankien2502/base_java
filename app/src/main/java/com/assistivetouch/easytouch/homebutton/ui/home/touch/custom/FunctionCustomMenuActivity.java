@@ -26,6 +26,7 @@ import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIconAdap
 import com.assistivetouch.easytouch.homebutton.service.MyDeviceAdminReceiver;
 import com.assistivetouch.easytouch.homebutton.service.ServiceControl;
 import com.assistivetouch.easytouch.homebutton.util.CheckUtils;
+import com.assistivetouch.easytouch.homebutton.util.EventTracking;
 import com.assistivetouch.easytouch.homebutton.util.PermissionManager;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 import com.assistivetouch.easytouch.homebutton.util.SystemUtil;
@@ -56,6 +57,7 @@ public class FunctionCustomMenuActivity extends BaseActivity<ActivityFunctionCus
     }
     @Override
     public void initView() {
+        EventTracking.logEvent(this, "custom_menu_select_function_view");
         menuFunction = getIntent().getIntExtra(SPUtils.MENU_FUNCTION, 1);
         menuPosition = getIntent().getIntExtra(SPUtils.MENU_POSITION, 0);
         if (menuFunction == 1) {
@@ -102,6 +104,7 @@ public class FunctionCustomMenuActivity extends BaseActivity<ActivityFunctionCus
                     }
                 } else isAvailable = true;
                 if (isAvailable) {
+                    EventTracking.logEvent(getBaseContext(), "custom_menu_select_function_item_click");
                     adapter.setCheckIcon(icon);
                     currentSelectItem = icon;
                 }
@@ -120,11 +123,13 @@ public class FunctionCustomMenuActivity extends BaseActivity<ActivityFunctionCus
     @Override
     public void bindView() {
         binding.ivBack.setOnClickListener(v -> {
+
             onBack();
         });
         binding.ivGone.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                EventTracking.logEvent(getBaseContext(), "custom_menu_select_function_done_click");
                 if (currentSelectItem != null) {
                     currentSelectItem.setId(menuPosition);
                     if (menuFunction == 1) {
@@ -143,6 +148,7 @@ public class FunctionCustomMenuActivity extends BaseActivity<ActivityFunctionCus
 
     @Override
     public void onBack() {
+        EventTracking.logEvent(getBaseContext(), "custom_menu_select_function_back_click");
         setResult(RESULT_OK);
         finish();
     }

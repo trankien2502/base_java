@@ -22,6 +22,7 @@ import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIconAdap
 import com.assistivetouch.easytouch.homebutton.service.MyDeviceAdminReceiver;
 import com.assistivetouch.easytouch.homebutton.service.ServiceControl;
 import com.assistivetouch.easytouch.homebutton.util.CheckUtils;
+import com.assistivetouch.easytouch.homebutton.util.EventTracking;
 import com.assistivetouch.easytouch.homebutton.util.PermissionManager;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 import com.assistivetouch.easytouch.homebutton.util.SystemUtil;
@@ -45,6 +46,7 @@ public class FunctionFloatingIconActivity extends BaseActivity<ActivityFunctionF
 
     @Override
     public void initView() {
+        EventTracking.logEvent(getBaseContext(), "floating_icon_select_function_view");
         list = SPUtils.getListFloatingIcon();
         type = getIntent().getStringExtra(SPUtils.INTENT_SELECT_FUNCTION);
         initData();
@@ -65,7 +67,7 @@ public class FunctionFloatingIconActivity extends BaseActivity<ActivityFunctionF
                             showDialogGotoSetting(4);
                         }
                     } else {
-                        if (!checkAdviceAdmin()){
+                        if (!checkAdviceAdmin()) {
                             isAvailable = false;
                             showDialogGotoSetting(7);
                         }
@@ -89,6 +91,7 @@ public class FunctionFloatingIconActivity extends BaseActivity<ActivityFunctionF
                     }
                 } else isAvailable = true;
                 if (isAvailable) {
+                    EventTracking.logEvent(getBaseContext(), "floating_icon_select_function_item_click");
                     adapter.setCheckIcon(icon);
                     functionIcon = icon;
                 }
@@ -101,17 +104,21 @@ public class FunctionFloatingIconActivity extends BaseActivity<ActivityFunctionF
             adapter.setCheckIcon(SPUtils.getObject(this, type, list.get(0)));
 
     }
+
     private boolean checkAdviceAdmin() {
         ComponentName componentName = new ComponentName(this, MyDeviceAdminReceiver.class);
         DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
         return dpm.isAdminActive(componentName);
     }
+
     @Override
     public void bindView() {
         binding.ivBack.setOnClickListener(v -> {
+
             onBack();
         });
         binding.ivGone.setOnClickListener(v -> {
+            EventTracking.logEvent(getBaseContext(), "floating_icon_select_function_done_click");
             if (functionIcon != null) SPUtils.setObject(this, type, functionIcon);
             setResult(2502);
             finish();
@@ -120,6 +127,7 @@ public class FunctionFloatingIconActivity extends BaseActivity<ActivityFunctionF
 
     @Override
     public void onBack() {
+        EventTracking.logEvent(getBaseContext(), "floating_icon_select_function_back_click");
         setResult(RESULT_OK);
         finish();
     }

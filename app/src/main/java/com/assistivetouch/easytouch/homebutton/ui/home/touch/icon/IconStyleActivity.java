@@ -4,6 +4,7 @@ import com.assistivetouch.easytouch.homebutton.R;
 import com.assistivetouch.easytouch.homebutton.base.BaseActivity;
 import com.assistivetouch.easytouch.homebutton.databinding.ActivityIconStyleBinding;
 import com.assistivetouch.easytouch.homebutton.service.ServiceScreen;
+import com.assistivetouch.easytouch.homebutton.util.EventTracking;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 
 import java.util.ArrayList;
@@ -22,10 +23,12 @@ public class IconStyleActivity extends BaseActivity<ActivityIconStyleBinding> {
 
     @Override
     public void initView() {
+        EventTracking.logEvent(getBaseContext(), "floating_icon_style_view");
         initData();
         iconStyleAdapter = new IconStyleAdapter(this, iconStyleList, new IconStyleCallBack() {
             @Override
             public void select(IconStyle iconStyle) {
+                EventTracking.logEvent(getBaseContext(), "floating_icon_style_item_click");
                 if (ServiceScreen.instance != null)
                     ServiceScreen.instance.setIconStyle(iconStyle.getSource());
                 currentIconSource = iconStyle.getSource();
@@ -67,11 +70,13 @@ public class IconStyleActivity extends BaseActivity<ActivityIconStyleBinding> {
     @Override
     public void bindView() {
         binding.ivBack.setOnClickListener(v -> {
+
             if (ServiceScreen.instance != null)
                 ServiceScreen.instance.setIconStyle(oldIconSource);
             onBack();
         });
         binding.ivGone.setOnClickListener(v -> {
+            EventTracking.logEvent(getBaseContext(), "floating_icon_style_done_click");
             SPUtils.setInt(this, SPUtils.ICON_STYLE, currentIconSource);
             onBack();
         });
@@ -79,6 +84,7 @@ public class IconStyleActivity extends BaseActivity<ActivityIconStyleBinding> {
 
     @Override
     public void onBack() {
+        EventTracking.logEvent(getBaseContext(), "floating_icon_style_back_click");
         setResult(RESULT_OK);
         finish();
     }

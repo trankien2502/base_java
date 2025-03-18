@@ -34,7 +34,6 @@ public class IntroActivity extends BaseActivity<ActivityIntroBinding> {
 
     @Override
     public void initView() {
-        EventTracking.logEvent(IntroActivity.this, "Intro1_view");
         listImage = new ArrayList<>();
 //        if (IsNetWork.haveNetworkConnection(this) && !ConstantIdAds.listIDAdsNativeIntroFull.isEmpty() && ConstantRemote.native_intro_full && CheckAds.getInstance().isShowAds(getBaseContext())) {
 //            binding.circle4.setVisibility(View.VISIBLE);

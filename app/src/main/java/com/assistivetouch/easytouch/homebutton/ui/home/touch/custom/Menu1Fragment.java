@@ -12,6 +12,7 @@ import com.assistivetouch.easytouch.homebutton.R;
 import com.assistivetouch.easytouch.homebutton.base.BaseFragment;
 import com.assistivetouch.easytouch.homebutton.databinding.PopupSelectActionBinding;
 import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIcon;
+import com.assistivetouch.easytouch.homebutton.util.EventTracking;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 
 import java.util.ArrayList;
@@ -53,7 +54,8 @@ public class Menu1Fragment extends BaseFragment<PopupSelectActionBinding> {
             binding.txtAction7.setText(listCurrent.get(5).getText());
         }
     }
-    private boolean checkEqual(){
+
+    private boolean checkEqual() {
         listDefault = SPUtils.getListDefaultMenu1();
         if (listCurrent.size() != listDefault.size()) return false;
         for (int i = 0; i < listCurrent.size(); i++) {
@@ -61,15 +63,16 @@ public class Menu1Fragment extends BaseFragment<PopupSelectActionBinding> {
         }
         return true;
     }
-    public void restore(){
-        if (checkEqual()){
+
+    public void restore() {
+        if (checkEqual()) {
             Toast.makeText(requireContext(), R.string.menu_1_already_reset, Toast.LENGTH_SHORT).show();
         } else {
             listCurrent.clear();
             listCurrent.addAll(SPUtils.getListDefaultMenu1());
-            Log.e("menu_check","menu1 restore"+listCurrent);
+            Log.e("menu_check", "menu1 restore" + listCurrent);
             if (!listCurrent.isEmpty()) {
-                Log.e("menu_check","menu1 start restore");
+                Log.e("menu_check", "menu1 start restore");
                 binding.imgAction1.setImageResource(listCurrent.get(0).getIconShow());
                 binding.txtAction1.setText(listCurrent.get(0).getText());
                 binding.imgAction2.setImageResource(listCurrent.get(1).getIconShow());
@@ -87,42 +90,49 @@ public class Menu1Fragment extends BaseFragment<PopupSelectActionBinding> {
         }
 
     }
+
     @Override
     public void bindView() {
         binding.llAction1.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
-            intent.putExtra(SPUtils.MENU_FUNCTION,1);
-            intent.putExtra(SPUtils.MENU_POSITION,0);
+            EventTracking.logEvent(requireContext(), "custom_menu_item_click");
+            intent.putExtra(SPUtils.MENU_FUNCTION, 1);
+            intent.putExtra(SPUtils.MENU_POSITION, 0);
             startArc(intent);
         });
         binding.llAction2.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
-            intent.putExtra(SPUtils.MENU_FUNCTION,1);
-            intent.putExtra(SPUtils.MENU_POSITION,1);
+            EventTracking.logEvent(requireContext(), "custom_menu_item_click");
+            intent.putExtra(SPUtils.MENU_FUNCTION, 1);
+            intent.putExtra(SPUtils.MENU_POSITION, 1);
             startArc(intent);
         });
         binding.llAction3.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
-            intent.putExtra(SPUtils.MENU_FUNCTION,1);
-            intent.putExtra(SPUtils.MENU_POSITION,2);
+            EventTracking.logEvent(requireContext(), "custom_menu_item_click");
+            intent.putExtra(SPUtils.MENU_FUNCTION, 1);
+            intent.putExtra(SPUtils.MENU_POSITION, 2);
             startArc(intent);
         });
         binding.llAction5.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
-            intent.putExtra(SPUtils.MENU_FUNCTION,1);
-            intent.putExtra(SPUtils.MENU_POSITION,3);
+            EventTracking.logEvent(requireContext(), "custom_menu_item_click");
+            intent.putExtra(SPUtils.MENU_FUNCTION, 1);
+            intent.putExtra(SPUtils.MENU_POSITION, 3);
             startArc(intent);
         });
         binding.llAction6.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
-            intent.putExtra(SPUtils.MENU_FUNCTION,1);
-            intent.putExtra(SPUtils.MENU_POSITION,4);
+            EventTracking.logEvent(requireContext(), "custom_menu_item_click");
+            intent.putExtra(SPUtils.MENU_FUNCTION, 1);
+            intent.putExtra(SPUtils.MENU_POSITION, 4);
             startArc(intent);
         });
         binding.llAction7.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
-            intent.putExtra(SPUtils.MENU_FUNCTION,1);
-            intent.putExtra(SPUtils.MENU_POSITION,5);
+            EventTracking.logEvent(requireContext(), "custom_menu_item_click");
+            intent.putExtra(SPUtils.MENU_FUNCTION, 1);
+            intent.putExtra(SPUtils.MENU_POSITION, 5);
             startArc(intent);
         });
     }
@@ -140,5 +150,5 @@ public class Menu1Fragment extends BaseFragment<PopupSelectActionBinding> {
         instance = null;
     }
 
-    
+
 }

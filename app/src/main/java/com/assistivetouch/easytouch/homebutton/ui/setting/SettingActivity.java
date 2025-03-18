@@ -59,7 +59,7 @@ public class SettingActivity extends BaseActivity<ActivitySettingBinding> {
     }
 
     private void onRate() {
-        EventTracking.logEvent(this, "setting_rate_us_click");
+        EventTracking.logEvent(this, "setting_rate_click");
         RatingDialog ratingDialog = new RatingDialog(SettingActivity.this, true);
         ratingDialog.init(new IClickDialogRate() {
             @Override

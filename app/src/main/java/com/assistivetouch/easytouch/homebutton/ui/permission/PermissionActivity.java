@@ -82,6 +82,7 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
         });
         binding.swAccessibility.setOnClickListener(v -> {
             if (!CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
+                EventTracking.logEvent(this, "permission_allow_click");
                 Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
                 startActivity(intent);
                 Log.e("check_service", "off");
@@ -89,6 +90,7 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
         });
         binding.swWriteSetting.setOnClickListener(v -> {
             if (!CheckUtils.checkSystemWriteSetting(this)) {
+                EventTracking.logEvent(this, "permission_allow_click");
                 Intent intent = new Intent("android.settings.action.MANAGE_WRITE_SETTINGS");
                 intent.setData(Uri.parse("package:" + getPackageName()));
                 startActivity(intent);

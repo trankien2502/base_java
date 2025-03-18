@@ -13,6 +13,7 @@ import com.assistivetouch.easytouch.homebutton.base.BaseActivity;
 import com.assistivetouch.easytouch.homebutton.databinding.ActivityCustomMenuBinding;
 import com.assistivetouch.easytouch.homebutton.dialog.pick_color.ColorPickerDialog;
 import com.assistivetouch.easytouch.homebutton.dialog.pick_color.ColorSelectCallBack;
+import com.assistivetouch.easytouch.homebutton.util.EventTracking;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 
 public class CustomMenuActivity extends BaseActivity<ActivityCustomMenuBinding> {
@@ -28,6 +29,7 @@ public class CustomMenuActivity extends BaseActivity<ActivityCustomMenuBinding> 
 
     @Override
     public void initView() {
+        EventTracking.logEvent(this, "custom_menu_view");
         oldColor = SPUtils.getInt(this, SPUtils.MENU_BACKGROUND_COLOR, Color.parseColor("#cc000000"));
         currentColor = oldColor;
         menuAdapter = new MenuAdapter(this);
@@ -39,20 +41,25 @@ public class CustomMenuActivity extends BaseActivity<ActivityCustomMenuBinding> 
     @Override
     public void bindView() {
         binding.ivBack.setOnClickListener(v -> {
+
             onBack();
         });
         binding.menu1.setOnClickListener(v -> {
+            EventTracking.logEvent(this, "custom_menu_back_features_click");
             binding.viewPager.setCurrentItem(0);
             changeState(0);
         });
         binding.menu2.setOnClickListener(v -> {
+            EventTracking.logEvent(this, "custom_menu_next_features_click");
             binding.viewPager.setCurrentItem(1);
             changeState(1);
         });
         binding.llColor.setOnClickListener(v -> {
+            EventTracking.logEvent(this, "custom_menu_color_click");
             showColorPickerDialog();
         });
         binding.llRestore.setOnClickListener(v -> {
+            EventTracking.logEvent(this, "custom_menu_restore_click");
             if (binding.viewPager.getCurrentItem() == 0) {
                 if (Menu1Fragment.instance != null){
                     Menu1Fragment.instance.restore();
@@ -66,6 +73,7 @@ public class CustomMenuActivity extends BaseActivity<ActivityCustomMenuBinding> 
 
         });
         binding.ivGone.setOnClickListener(v -> {
+            EventTracking.logEvent(this, "custom_menu_done_click");
             SPUtils.setList(this, SPUtils.MENU_FUNCTION_1, Menu1Fragment.instance.listCurrent);
             SPUtils.setList(this, SPUtils.MENU_FUNCTION_2, Menu2Fragment.instance.listCurrent);
             SPUtils.setInt(this, SPUtils.MENU_BACKGROUND_COLOR, currentColor);
@@ -115,6 +123,7 @@ public class CustomMenuActivity extends BaseActivity<ActivityCustomMenuBinding> 
 
     @Override
     public void onBack() {
+        EventTracking.logEvent(this, "custom_menu_back_click");
         setResult(RESULT_OK);
         finish();
     }

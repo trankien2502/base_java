@@ -77,8 +77,6 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     @Override
     public void initView() {
         EventTracking.logEvent(this, "home_view");
-
-
     }
 
     public void checkState() {
@@ -106,26 +104,33 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     public void bindView() {
         binding.ivSetting.setOnClickListener(view -> {
             resultLauncher.launch(new Intent(this, SettingActivity.class));
+            EventTracking.logEvent(this, "home_setting_click");
 //            resultLauncher.launch(new Intent(this, ScreenRecorderActivity.class));
         });
         binding.swTouch.setOnClickListener(view -> {
+            EventTracking.logEvent(this, "home_enable_touch_click");
             enableTouch();
 //            Intent serviceIntent = new Intent(this, ScreenRecordService.class);
 //            stopService(serviceIntent);
         });
         binding.clMenuTouch.setOnClickListener(view -> {
+            EventTracking.logEvent(this, "home_custom_menu_click");
             resultLauncher.launch(new Intent(this, CustomMenuActivity.class));
         });
         binding.clIconTouch.setOnClickListener(view -> {
+            EventTracking.logEvent(this, "home_floating_icon_click");
             resultLauncher.launch(new Intent(this, FloatingIconActivity.class));
         });
         binding.swVolume.setOnClickListener(view -> {
+            EventTracking.logEvent(this, "home_enable_volume_click");
             enableVolume();
         });
         binding.clVolumeConfig.setOnClickListener(view -> {
+            EventTracking.logEvent(this, "home_volume_config_click");
             resultLauncher.launch(new Intent(this, VolumeConfigActivity.class));
         });
         binding.clButtonVolume.setOnClickListener(view -> {
+            EventTracking.logEvent(this, "home_button_style_click");
             resultLauncher.launch(new Intent(this, ButtonStyleActivity.class));
         });
     }

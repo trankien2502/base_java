@@ -31,6 +31,7 @@ import com.assistivetouch.easytouch.homebutton.dialog.GoToSettingDialog;
 import com.assistivetouch.easytouch.homebutton.service.MyDeviceAdminReceiver;
 import com.assistivetouch.easytouch.homebutton.service.ServiceControl;
 import com.assistivetouch.easytouch.homebutton.util.CheckUtils;
+import com.assistivetouch.easytouch.homebutton.util.EventTracking;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 import com.assistivetouch.easytouch.homebutton.util.SystemUtil;
 
@@ -45,6 +46,7 @@ public class VolumeConfigActivity extends BaseActivity<ActivityVolumeConfigBindi
 
     @Override
     public void initView() {
+        EventTracking.logEvent(getBaseContext(), "volume_config_view");
         changeState();
         switch (SPUtils.getInt(getBaseContext(), SPUtils.LONG_PRESS_VOLUME_ACTION, 1)) {
             case 1:
@@ -65,12 +67,15 @@ public class VolumeConfigActivity extends BaseActivity<ActivityVolumeConfigBindi
     @Override
     public void bindView() {
         binding.ivBack.setOnClickListener(v -> {
+
             onBack();
         });
         binding.llHideButton.setOnClickListener(v -> {
+            EventTracking.logEvent(getBaseContext(), "volume_config_hide_button_click");
             showChooseActionDialog();
         });
         binding.clMedia.setOnClickListener(v -> {
+            EventTracking.logEvent(getBaseContext(), "volume_config_item_click");
             if (SPUtils.getBoolean(this, SPUtils.SHOW_MEDIA, true)) {
                 if (SPUtils.getBoolean(this, SPUtils.SHOW_RINGTONE, true) || SPUtils.getBoolean(this, SPUtils.SHOW_NOTIFICATION, true)
                         || SPUtils.getBoolean(this, SPUtils.SHOW_BRIGHTNESS, false) || SPUtils.getBoolean(this, SPUtils.SHOW_CALL, true) || SPUtils.getBoolean(this, SPUtils.SHOW_DARKNESS, false)) {
@@ -84,6 +89,7 @@ public class VolumeConfigActivity extends BaseActivity<ActivityVolumeConfigBindi
             }
         });
         binding.clRing.setOnClickListener(v -> {
+            EventTracking.logEvent(getBaseContext(), "volume_config_item_click");
             if (SPUtils.getBoolean(this, SPUtils.SHOW_RINGTONE, true)) {
                 if (SPUtils.getBoolean(this, SPUtils.SHOW_NOTIFICATION, true) || SPUtils.getBoolean(this, SPUtils.SHOW_MEDIA, true)
                         || SPUtils.getBoolean(this, SPUtils.SHOW_BRIGHTNESS, false) || SPUtils.getBoolean(this, SPUtils.SHOW_CALL, true) || SPUtils.getBoolean(this, SPUtils.SHOW_DARKNESS, false)) {
@@ -97,6 +103,7 @@ public class VolumeConfigActivity extends BaseActivity<ActivityVolumeConfigBindi
             }
         });
         binding.clNotification.setOnClickListener(v -> {
+            EventTracking.logEvent(getBaseContext(), "volume_config_item_click");
             if (SPUtils.getBoolean(this, SPUtils.SHOW_NOTIFICATION, true)) {
                 if (SPUtils.getBoolean(this, SPUtils.SHOW_RINGTONE, true) || SPUtils.getBoolean(this, SPUtils.SHOW_MEDIA, true)
                         || SPUtils.getBoolean(this, SPUtils.SHOW_BRIGHTNESS, false) || SPUtils.getBoolean(this, SPUtils.SHOW_CALL, true) || SPUtils.getBoolean(this, SPUtils.SHOW_DARKNESS, false)) {
@@ -110,6 +117,7 @@ public class VolumeConfigActivity extends BaseActivity<ActivityVolumeConfigBindi
             }
         });
         binding.clCall.setOnClickListener(v -> {
+            EventTracking.logEvent(getBaseContext(), "volume_config_item_click");
             if (SPUtils.getBoolean(this, SPUtils.SHOW_CALL, true)) {
                 if (SPUtils.getBoolean(this, SPUtils.SHOW_RINGTONE, true) || SPUtils.getBoolean(this, SPUtils.SHOW_NOTIFICATION, true) || SPUtils.getBoolean(this, SPUtils.SHOW_MEDIA, true)
                         || SPUtils.getBoolean(this, SPUtils.SHOW_BRIGHTNESS, false) || SPUtils.getBoolean(this, SPUtils.SHOW_DARKNESS, false)) {
@@ -126,6 +134,7 @@ public class VolumeConfigActivity extends BaseActivity<ActivityVolumeConfigBindi
             if (!CheckUtils.checkSystemWriteSetting(this)) {
                 showDialogGotoSetting(3);
             } else {
+                EventTracking.logEvent(getBaseContext(), "volume_config_item_click");
                 if (SPUtils.getBoolean(this, SPUtils.SHOW_BRIGHTNESS, false)) {
                     if (SPUtils.getBoolean(this, SPUtils.SHOW_RINGTONE, true) || SPUtils.getBoolean(this, SPUtils.SHOW_NOTIFICATION, true) || SPUtils.getBoolean(this, SPUtils.SHOW_MEDIA, true)
                             || SPUtils.getBoolean(this, SPUtils.SHOW_CALL, true) || SPUtils.getBoolean(this, SPUtils.SHOW_DARKNESS, false)) {
@@ -140,6 +149,7 @@ public class VolumeConfigActivity extends BaseActivity<ActivityVolumeConfigBindi
             }
         });
         binding.clDark.setOnClickListener(v -> {
+            EventTracking.logEvent(getBaseContext(), "volume_config_item_click");
             if (SPUtils.getBoolean(this, SPUtils.SHOW_DARKNESS, false)) {
                 if (SPUtils.getBoolean(this, SPUtils.SHOW_RINGTONE, true) || SPUtils.getBoolean(this, SPUtils.SHOW_NOTIFICATION, true) || SPUtils.getBoolean(this, SPUtils.SHOW_MEDIA, true)
                         || SPUtils.getBoolean(this, SPUtils.SHOW_BRIGHTNESS, false) || SPUtils.getBoolean(this, SPUtils.SHOW_CALL, true)) {
@@ -156,6 +166,7 @@ public class VolumeConfigActivity extends BaseActivity<ActivityVolumeConfigBindi
 
     @Override
     public void onBack() {
+        EventTracking.logEvent(getBaseContext(), "volume_config_back_click");
         setResult(RESULT_OK);
         finish();
     }

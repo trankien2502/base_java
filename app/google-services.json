@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "730200001672",
+    "project_id": "assistivetouchtest",
+    "storage_bucket": "assistivetouchtest.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:730200001672:android:e205bff6b2e925855aa33d",
+        "android_client_info": {
+          "package_name": "com.assistivetouch.easytouch.homebutton"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC85Z1LgEmt5fwb4yHB7DKfXusnI95k_XQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
