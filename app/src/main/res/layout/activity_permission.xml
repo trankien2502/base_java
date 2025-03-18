@@ -204,7 +204,7 @@
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_marginHorizontal="16dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="8dp"
         android:fontFamily="@font/poppins_medium"
         android:gravity="center"
         android:includeFontPadding="false"
@@ -225,15 +225,14 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
+        <FrameLayout
+            android:id="@+id/fr_ads_intro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
 
-        <!--        <FrameLayout-->
-        <!--            android:id="@+id/fr_ads_intro"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:visibility="visible">-->
-
-        <!--            <include layout="@layout/layout_native_load_large" />-->
-        <!--        </FrameLayout>-->
+            <include layout="@layout/layout_native_load_large_cta_above" />
+        </FrameLayout>
     </RelativeLayout>
 
 

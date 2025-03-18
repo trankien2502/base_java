@@ -37,19 +37,56 @@ android {
     productFlavors {
         appDeug{
             manifestPlaceholders = [app_id: "ca-app-pub-3940256099942544~3347511713"]
+            buildConfigField "String", "resume", "\"ca-app-pub-3940256099942544/9257395921\""
+            buildConfigField "String", "banner_splash", "\"ca-app-pub-3940256099942544/6300978111\""
             buildConfigField "String", "open_splash", "\"ca-app-pub-3940256099942544/9257395921\""
             buildConfigField "String", "inter_splash", "\"ca-app-pub-3940256099942544/1033173712\""
-            buildConfigField "String", "banner_splash", "\"ca-app-pub-3940256099942544/6300978111\""
             buildConfigField "String", "native_language", "\"ca-app-pub-3940256099942544/2247696110\""
-            buildConfigField "String", "banner_collapsible", "\"ca-app-pub-3940256099942544/2014213617\""
-            buildConfigField "String", "resume", "\"ca-app-pub-3940256099942544/9257395921\""
+            buildConfigField "String", "native_intro", "\"ca-app-pub-3940256099942544/2247696110\""
+            buildConfigField "String", "native_intro_full", "\"ca-app-pub-3940256099942544/2247696110\""
+            buildConfigField "String", "inter_intro", "\"ca-app-pub-3940256099942544/1033173712\""
+            buildConfigField "String", "native_permission", "\"ca-app-pub-3940256099942544/2247696110\""
+            buildConfigField "String", "native_resume", "\"ca-app-pub-3940256099942544/2247696110\""
+            buildConfigField "String", "banner_all", "\"ca-app-pub-3940256099942544/6300978111\""
+            buildConfigField "String", "native_popup", "\"ca-app-pub-3940256099942544/2247696110\""
+            buildConfigField "String", "collapse_home", "\"ca-app-pub-3940256099942544/2014213617\""
+            buildConfigField "String", "inter_home", "\"ca-app-pub-3940256099942544/1033173712\""
+            buildConfigField "String", "native_home", "\"ca-app-pub-3940256099942544/2247696110\""
+            buildConfigField "String", "native_menu", "\"ca-app-pub-3940256099942544/2247696110\""
+            buildConfigField "String", "inter_menu", "\"ca-app-pub-3940256099942544/1033173712\""
+            buildConfigField "String", "native_floating", "\"ca-app-pub-3940256099942544/2247696110\""
+            buildConfigField "String", "inter_floating", "\"ca-app-pub-3940256099942544/1033173712\""
+            buildConfigField "String", "native_volume", "\"ca-app-pub-3940256099942544/2247696110\""
+            buildConfigField "String", "native_button", "\"ca-app-pub-3940256099942544/2247696110\""
+            buildConfigField "String", "inter_button", "\"ca-app-pub-3940256099942544/1033173712\""
 
             buildConfigField "Boolean", "build_debug", "true"
         }
 
         appRelease{
             manifestPlaceholders = [app_id: "ca-app-pub-6263349256068158~5615734892"]
-            
+            buildConfigField "String", "resume", "\"NUMBER\""
+            buildConfigField "String", "banner_splash", "\"NUMBER\""
+            buildConfigField "String", "open_splash", "\"NUMBER\""
+            buildConfigField "String", "inter_splash", "\"NUMBER\""
+            buildConfigField "String", "native_language", "\"NUMBER\""
+            buildConfigField "String", "native_intro", "\"NUMBER\""
+            buildConfigField "String", "native_intro_full", "\"NUMBER\""
+            buildConfigField "String", "inter_intro", "\"NUMBER\""
+            buildConfigField "String", "native_permission", "\"NUMBER\""
+            buildConfigField "String", "native_resume", "\"NUMBER\""
+            buildConfigField "String", "banner_all", "\"NUMBER\""
+            buildConfigField "String", "native_popup", "\"NUMBER\""
+            buildConfigField "String", "collapse_home", "\"NUMBER\""
+            buildConfigField "String", "inter_home", "\"NUMBER\""
+            buildConfigField "String", "native_home", "\"NUMBER\""
+            buildConfigField "String", "native_menu", "\"NUMBER\""
+            buildConfigField "String", "inter_menu", "\"NUMBER\""
+            buildConfigField "String", "native_floating", "\"NUMBER\""
+            buildConfigField "String", "inter_floating", "\"NUMBER\""
+            buildConfigField "String", "native_volume", "\"NUMBER\""
+            buildConfigField "String", "native_button", "\"NUMBER\""
+            buildConfigField "String", "inter_button", "\"NUMBER\""
             buildConfigField "Boolean", "build_debug", "false"
         }
     }
@@ -136,38 +173,38 @@ dependencies {
     implementation "com.squareup.okhttp3:okhttp:4.11.0"
 //
 //    //fb sdk
-//    implementation 'com.facebook.android:facebook-android-sdk:16.0.1'
+    implementation 'com.facebook.android:facebook-android-sdk:16.0.1'
 
     //ads
-    //implementation 'com.github.tutrandinh:SappModuleAds:1.2.9'
-//    implementation 'com.google.android.gms:play-services-ads:21.1.0'
-//    implementation 'com.applovin:applovin-sdk:11.4.2'
-//    implementation 'com.facebook.shimmer:shimmer:0.5.0'
-//    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-//    implementation 'androidx.multidex:multidex:2.0.1'
-//    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'com.haiyan:ads:1.0.0'
+    implementation 'com.google.android.gms:play-services-ads:21.1.0'
+    implementation 'com.applovin:applovin-sdk:11.4.2'
+    implementation 'com.facebook.shimmer:shimmer:0.5.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
+    implementation 'androidx.multidex:multidex:2.0.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     //mediation
-//    implementation 'com.google.ads.mediation:applovin:11.8.2.1'
-//    implementation 'com.google.ads.mediation:vungle:6.12.1.0'
-//    implementation 'com.google.ads.mediation:unity:4.6.1.0'
+    implementation 'com.google.ads.mediation:applovin:11.8.2.1'
+    implementation 'com.google.ads.mediation:vungle:6.12.1.0'
+    implementation 'com.google.ads.mediation:unity:4.6.1.0'
 
     //retrofit
-//    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-//    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-//    implementation 'androidx.lifecycle:lifecycle-process:2.7.0'
-    //       implementation "com.squareup.okhttp3:okhttp:4.11.0"
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'androidx.lifecycle:lifecycle-process:2.7.0'
+           implementation "com.squareup.okhttp3:okhttp:4.11.0"
 
     //SDK
-//    implementation 'com.google.ads.mediation:fyber:8.2.4.0'
-//    implementation 'com.google.ads.mediation:facebook:6.16.0.0'
-//    implementation 'com.google.ads.mediation:vungle:6.12.1.1'
-//    implementation 'com.google.ads.mediation:applovin:11.11.3.0'
-//    implementation 'com.google.ads.mediation:pangle:5.4.1.1.0'
-//    implementation 'com.google.ads.mediation:ironsource:7.5.1.0'
-//    implementation 'com.unity3d.ads:unity-ads:4.8.0'
-//    implementation 'com.google.ads.mediation:unity:4.8.0.0'
-//    implementation 'com.google.ads.mediation:mintegral:16.5.21.0'
+    implementation 'com.google.ads.mediation:fyber:8.2.4.0'
+    implementation 'com.google.ads.mediation:facebook:6.16.0.0'
+    implementation 'com.google.ads.mediation:vungle:6.12.1.1'
+    implementation 'com.google.ads.mediation:applovin:11.11.3.0'
+    implementation 'com.google.ads.mediation:pangle:5.4.1.1.0'
+    implementation 'com.google.ads.mediation:ironsource:7.5.1.0'
+    implementation 'com.unity3d.ads:unity-ads:4.8.0'
+    implementation 'com.google.ads.mediation:unity:4.8.0.0'
+    implementation 'com.google.ads.mediation:mintegral:16.5.21.0'
 
 
 }

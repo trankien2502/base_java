@@ -11,8 +11,12 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -21,6 +25,10 @@ import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.ads.sapp.ads.CommonAd;
+import com.assistivetouch.easytouch.homebutton.ads.ConstantIdAds;
+import com.assistivetouch.easytouch.homebutton.ads.ConstantRemote;
+import com.assistivetouch.easytouch.homebutton.ads.IsNetWork;
 import com.assistivetouch.easytouch.homebutton.base.BaseActivity;
 import com.assistivetouch.easytouch.homebutton.dialog.GoToSettingDialog;
 import com.assistivetouch.easytouch.homebutton.dialog.TestDialog;
@@ -56,11 +64,19 @@ import com.assistivetouch.easytouch.homebutton.util.SystemUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
 
+    private boolean isStartActivity = true;
+    private CountDownTimer countDownTimer;
+    private long timeLeftInMillis;
+    private boolean isPaused = false;
+    private boolean isResume = false;
+    private boolean isReloadAds = true;
+    private ExecutorService executorService;
 
-    ArrayList<String> exitRate = new ArrayList<String>(Arrays.asList("2", "4", "6", "8", "10"));
     public static HomeActivity instance;
 
     @Override
@@ -77,6 +93,32 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     @Override
     public void initView() {
         EventTracking.logEvent(this, "home_view");
+        if (isReloadAds) {
+            isReloadAds = false;
+            timeLeftInMillis = ConstantRemote.collap_reload_interval * 1000L;
+            executorService = Executors.newSingleThreadExecutor();
+            executorService.execute(() -> {
+                if (IsNetWork.haveNetworkConnection(this)
+                        && !ConstantIdAds.listIDAdsCollapseHome.isEmpty()
+                        && ConstantRemote.collapse_home) {
+
+                    runOnUiThread(() -> {
+                        CommonAd.getInstance().loadCollapsibleBannerFloor(this,
+                                ConstantIdAds.listIDAdsCollapseHome, "bottom");
+                        isReloadAds = true;
+                        startTimer(ConstantRemote.collap_reload_interval * 1000L);
+                        binding.rlBanner.setVisibility(View.VISIBLE);
+                        executorService.shutdown();
+                    });
+                } else {
+                    runOnUiThread(() -> {
+                        isReloadAds = true;
+                        binding.rlBanner.setVisibility(View.GONE);
+                        binding.rlBanner.removeAllViews();
+                    });
+                }
+            });
+        }
     }
 
     public void checkState() {
@@ -94,11 +136,6 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        checkState();
-    }
 
     @Override
     public void bindView() {
@@ -315,15 +352,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
 
     @Override
     public void onBack() {
-        if (!SharePrefUtils.isRated(this)) {
-            if (exitRate.contains(String.valueOf(SharePrefUtils.getCountOpenApp(this)))) {
-                rateApp();
-            } else {
-                exitApp();
-            }
-        } else {
-            exitApp();
-        }
+        exitApp();
     }
 
     ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -332,62 +361,6 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
             Log.d("activity_check", "home");
         }
     });
-
-    private void rateApp() {
-        RatingDialog ratingDialog = new RatingDialog(HomeActivity.this, true);
-        ratingDialog.init(new IClickDialogRate() {
-            @Override
-            public void send() {
-                //binding.rlRate.setVisibility(View.GONE);
-                ratingDialog.dismiss();
-                String uriText = "mailto:" + SharePrefUtils.email + "?subject=" + "Review for " + SharePrefUtils.subject + "&body=" + SharePrefUtils.subject + "\nRate : " + ratingDialog.getRating() + "\nContent: ";
-                Uri uri = Uri.parse(uriText);
-                Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
-                sendIntent.setData(uri);
-                try {
-                    finishAffinity();
-                    startActivity(Intent.createChooser(sendIntent, getString(R.string.Send_Email)));
-                    SharePrefUtils.forceRated(HomeActivity.this);
-                    int star = SPUtils.getInt(HomeActivity.this, SPUtils.RATE_STAR, 0);
-                    EventTracking.logEvent(HomeActivity.this, "rate_submit", "rate_star" + star, String.valueOf(star));
-                } catch (android.content.ActivityNotFoundException ex) {
-                    Toast.makeText(HomeActivity.this, getString(R.string.There_is_no), Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void rate() {
-                ReviewManager manager = ReviewManagerFactory.create(HomeActivity.this);
-                Task<ReviewInfo> request = manager.requestReviewFlow();
-                request.addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        ReviewInfo reviewInfo = task.getResult();
-                        Task<Void> flow = manager.launchReviewFlow(HomeActivity.this, reviewInfo);
-                        flow.addOnSuccessListener(result -> {
-                            //binding.rlRate.setVisibility(View.GONE);
-                            int star = SPUtils.getInt(HomeActivity.this, SPUtils.RATE_STAR, 0);
-                            EventTracking.logEvent(HomeActivity.this, "rate_submit", "rate_star" + star, String.valueOf(star));
-                            SharePrefUtils.forceRated(HomeActivity.this);
-                            ratingDialog.dismiss();
-                            finishAffinity();
-                        });
-                    } else {
-                        ratingDialog.dismiss();
-                    }
-                });
-            }
-
-            @Override
-            public void later() {
-                EventTracking.logEvent(HomeActivity.this, "rate_not_now");
-                ratingDialog.dismiss();
-                finishAffinity();
-            }
-
-        });
-        ratingDialog.show();
-        EventTracking.logEvent(this, "rate_show");
-    }
 
     private void exitApp() {
         ExitAppDialog exitAppDialog = new ExitAppDialog(this, true);
@@ -412,11 +385,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     }
 
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        instance = null;
-    }
+
 
     private void showDialogGotoSetting(int type) {
         GoToSettingDialog dialog = new GoToSettingDialog(this, true);
@@ -485,4 +454,113 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         });
         dialog.show();
     }
+    private void onReloadBannerCollapse() {
+        resetTimer();
+        if (isReloadAds) {
+            isReloadAds = false;
+            reloadBannerCo();
+        }
+    }
+
+    public void reloadBannerCo() {
+        binding.rlBanner.removeAllViews();
+        RelativeLayout layout = (RelativeLayout) LayoutInflater.from(this).inflate(com.ads.sapp.R.layout.layout_banner_control, null, false);
+        binding.rlBanner.addView(layout);
+
+        new Thread(() -> runOnUiThread(() -> {
+            if (IsNetWork.haveNetworkConnection(this) && !ConstantIdAds.listIDAdsCollapseHome.isEmpty() && ConstantRemote.collapse_home) {
+                CommonAd.getInstance().loadCollapsibleBannerFloor(this, ConstantIdAds.listIDAdsCollapseHome, "bottom");
+                binding.rlBanner.setVisibility(View.VISIBLE);
+                isReloadAds = true;
+                startTimer(ConstantRemote.collap_reload_interval * 1000L);
+            } else {
+                binding.rlBanner.setVisibility(View.GONE);
+                isReloadAds = true;
+            }
+        })).start();
+    }
+
+    private void startTimer(long millis) {
+        if (ConstantRemote.collap_reload_interval > 0) {
+            if (countDownTimer != null) {
+                countDownTimer.cancel();
+                countDownTimer = null;
+            }
+            if (IsNetWork.haveNetworkConnectionUMP(this) && !ConstantIdAds.listIDAdsCollapseHome.isEmpty() && ConstantRemote.collapse_home) {
+                countDownTimer = new CountDownTimer(millis, 1000) {
+                    @Override
+                    public void onTick(long millisUntilFinished) {
+                        timeLeftInMillis = millisUntilFinished;
+                        if (!IsNetWork.haveNetworkConnection(
+                                HomeActivity.this)) {
+                            cancel();
+                        }
+                    }
+
+                    @Override
+                    public void onFinish() {
+                        if (isReloadAds) {
+                            isReloadAds = false;
+                            reloadBannerCo();
+                        }
+                    }
+                }.start();
+            }
+        }
+    }
+
+    private void resetTimer() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+        }
+        timeLeftInMillis = ConstantRemote.collap_reload_interval * 1000L;
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkState();
+        if (isResume) {
+            if (isStartActivity) {
+                if (isPaused) {
+                    startTimer(timeLeftInMillis);
+                    isPaused = false;
+                }
+            }
+        }
+
+        if (!isResume) {
+            isResume = true;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (isStartActivity) {
+            Log.e("sdklfl0", "1");
+            if (countDownTimer != null) {
+                countDownTimer.cancel();
+                countDownTimer = null;
+                isPaused = true;
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        instance = null;
+        if (executorService != null) {
+            if (!executorService.isShutdown()) {
+                executorService.shutdown();
+            }
+        }
+
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
+    }
+
 }

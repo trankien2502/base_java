@@ -7,15 +7,25 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 
+import com.ads.sapp.admob.Admob;
+import com.ads.sapp.ads.CommonAd;
+import com.ads.sapp.funtion.AdCallback;
+import com.ads.sapp.util.CheckAds;
 import com.assistivetouch.easytouch.homebutton.R;
+import com.assistivetouch.easytouch.homebutton.ads.ConstantIdAds;
+import com.assistivetouch.easytouch.homebutton.ads.ConstantRemote;
+import com.assistivetouch.easytouch.homebutton.ads.IsNetWork;
 import com.assistivetouch.easytouch.homebutton.base.BaseActivity;
 import com.assistivetouch.easytouch.homebutton.databinding.ActivityPermissionBinding;
 import com.assistivetouch.easytouch.homebutton.dialog.GoToSettingDialog;
@@ -26,6 +36,11 @@ import com.assistivetouch.easytouch.homebutton.util.EventTracking;
 import com.assistivetouch.easytouch.homebutton.util.PermissionManager;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 import com.assistivetouch.easytouch.homebutton.util.SystemUtil;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.nativead.NativeAd;
+import com.google.android.gms.ads.nativead.NativeAdView;
+
+import org.jetbrains.annotations.Nullable;
 
 
 public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> {
@@ -34,6 +49,8 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
     private static final int REQUEST_CODE_NOTIFICATION_PERMISSION = 130;
     private int countCamera = 0;
     private int countNotification = 0;
+    Handler handler = new Handler();
+    Runnable runnableNativeAds;
 
     @Override
     public ActivityPermissionBinding getBinding() {
@@ -42,6 +59,7 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
 
     @Override
     public void initView() {
+        loadNativePermissionAds();
         EventTracking.logEvent(this, "permission_open");
         countCamera = SPUtils.getInt(this, SPUtils.CAMERA, 0);
         countNotification = SPUtils.getInt(this, SPUtils.NOTIFICATION, 0);
@@ -148,6 +166,53 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
         }
     }
 
+    public void loadNativePermissionAds() {
+        try {
+            if (IsNetWork.haveNetworkConnectionUMP(this) && !ConstantIdAds.listIDAdsNativePermission.isEmpty() && ConstantRemote.native_permission) {
+                runnableNativeAds = new Runnable() {
+                    @Override
+                    public void run() {
+                        loadNativePermissionAds();
+                    }
+                };
+                @SuppressLint("InflateParams") NativeAdView adViewLoad = (NativeAdView) LayoutInflater.from(PermissionActivity.this).inflate(R.layout.layout_native_load_large_cta_above, null);
+                binding.nativePermission.removeAllViews();
+                binding.nativePermission.addView(adViewLoad);
+                binding.nativePermission.setVisibility(View.VISIBLE);
+                new Thread(() -> {
+                    Admob.getInstance().loadNativeAd(this, ConstantIdAds.listIDAdsNativePermission, new AdCallback() {
+                        @Override
+                        public void onUnifiedNativeAdLoaded(@NonNull NativeAd unifiedNativeAd) {
+                            runOnUiThread(() -> {
+                                @SuppressLint("InflateParams") NativeAdView adView = (NativeAdView) LayoutInflater.from(PermissionActivity.this).inflate(R.layout.layout_native_show_large_cta_above, null);
+                                binding.nativePermission.removeAllViews();
+                                binding.nativePermission.addView(adView);
+                                Admob.getInstance().populateUnifiedNativeAdView(unifiedNativeAd, adView);
+                                if (ConstantRemote.time_native_reload != 0)
+                                    handler.postDelayed(runnableNativeAds, ConstantRemote.time_native_reload * 1000);
+                                CheckAds.getInstance().checkAds(adView, CheckAds.PE);
+                            });
+                        }
+
+                        @Override
+                        public void onAdFailedToLoad(@Nullable LoadAdError i) {
+                            runOnUiThread(() -> {
+                                binding.nativePermission.setVisibility(View.GONE);
+                            });
+                        }
+                    });
+                }).start();
+
+            } else {
+                binding.nativePermission.setVisibility(View.GONE);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            binding.nativePermission.setVisibility(View.GONE);
+        }
+    }
+
     private void showDialogGotoSetting(int type) {
         GoToSettingDialog dialog = new GoToSettingDialog(this, true);
         SystemUtil.setLocale(this);
@@ -220,6 +285,7 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
             binding.swPerNotification.setOnTouchListener((view, motionEvent) -> false);
         }
     }
+
     @SuppressLint("ClickableViewAccessibility")
     private void checkSwWriteSetting() {
         if (CheckUtils.checkSystemWriteSetting(this)) {
@@ -230,6 +296,7 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
             binding.swWriteSetting.setOnTouchListener((view, motionEvent) -> false);
         }
     }
+
     @SuppressLint("ClickableViewAccessibility")
     private void checkSwAccessibility() {
         if (CheckUtils.isAccessibilitySettingsOn(this, ServiceControl.class)) {
@@ -253,6 +320,7 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        handler.removeCallbacks(runnableNativeAds);
     }
 
     @Override

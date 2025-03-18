@@ -1,8 +1,11 @@
 package com.assistivetouch.easytouch.homebutton.ui.intro;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -10,8 +13,17 @@ import com.assistivetouch.easytouch.homebutton.R;
 import com.assistivetouch.easytouch.homebutton.ads.IsNetWork;
 import com.assistivetouch.easytouch.homebutton.base.BaseActivity;
 import com.assistivetouch.easytouch.homebutton.databinding.ActivityIntroBinding;
+import com.assistivetouch.easytouch.homebutton.dialog.rate.IClickDialogRate;
+import com.assistivetouch.easytouch.homebutton.dialog.rate.RatingDialog;
+import com.assistivetouch.easytouch.homebutton.ui.home.HomeActivity;
 import com.assistivetouch.easytouch.homebutton.ui.permission.PermissionActivity;
 import com.assistivetouch.easytouch.homebutton.util.EventTracking;
+import com.assistivetouch.easytouch.homebutton.util.SPUtils;
+import com.assistivetouch.easytouch.homebutton.util.SharePrefUtils;
+import com.google.android.gms.tasks.Task;
+import com.google.android.play.core.review.ReviewInfo;
+import com.google.android.play.core.review.ReviewManager;
+import com.google.android.play.core.review.ReviewManagerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -208,6 +220,60 @@ public class IntroActivity extends BaseActivity<ActivityIntroBinding> {
         super.onStart();
         changeContentInit(binding.viewPager.getCurrentItem());
     }
+    private void rateApp() {
+        RatingDialog ratingDialog = new RatingDialog(IntroActivity.this, true);
+        ratingDialog.init(new IClickDialogRate() {
+            @Override
+            public void send() {
+                //binding.rlRate.setVisibility(View.GONE);
+                ratingDialog.dismiss();
+                String uriText = "mailto:" + SharePrefUtils.email + "?subject=" + "Review for " + SharePrefUtils.subject + "&body=" + SharePrefUtils.subject + "\nRate : " + ratingDialog.getRating() + "\nContent: ";
+                Uri uri = Uri.parse(uriText);
+                Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
+                sendIntent.setData(uri);
+                try {
+                    finishAffinity();
+                    startActivity(Intent.createChooser(sendIntent, getString(R.string.Send_Email)));
+                    SharePrefUtils.forceRated(IntroActivity.this);
+                    int star = SPUtils.getInt(IntroActivity.this, SPUtils.RATE_STAR, 0);
+                    EventTracking.logEvent(IntroActivity.this, "rate_submit", "rate_star" + star, String.valueOf(star));
+                } catch (android.content.ActivityNotFoundException ex) {
+                    Toast.makeText(IntroActivity.this, getString(R.string.There_is_no), Toast.LENGTH_SHORT).show();
+                }
+            }
 
+            @Override
+            public void rate() {
+                ReviewManager manager = ReviewManagerFactory.create(IntroActivity.this);
+                Task<ReviewInfo> request = manager.requestReviewFlow();
+                request.addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        ReviewInfo reviewInfo = task.getResult();
+                        Task<Void> flow = manager.launchReviewFlow(IntroActivity.this, reviewInfo);
+                        flow.addOnSuccessListener(result -> {
+                            //binding.rlRate.setVisibility(View.GONE);
+                            int star = SPUtils.getInt(IntroActivity.this, SPUtils.RATE_STAR, 0);
+                            EventTracking.logEvent(IntroActivity.this, "rate_submit", "rate_star" + star, String.valueOf(star));
+                            SharePrefUtils.forceRated(IntroActivity.this);
+                            ratingDialog.dismiss();
+                            finishAffinity();
+                        });
+                    } else {
+                        ratingDialog.dismiss();
+                    }
+                });
+            }
+
+            @Override
+            public void later() {
+                EventTracking.logEvent(IntroActivity.this, "rate_not_now");
+                ratingDialog.dismiss();
+                finishAffinity();
+            }
+
+        });
+        ratingDialog.show();
+        EventTracking.logEvent(this, "rate_show");
+    }
 
 }

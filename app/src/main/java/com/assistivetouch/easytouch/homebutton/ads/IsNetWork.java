@@ -1,5 +1,7 @@
 package com.assistivetouch.easytouch.homebutton.ads;
 
+import static com.ads.sapp.util.GoogleMobileAdsConsentManager.getConsentResult;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -21,7 +23,7 @@ public class IsNetWork {
         return haveConnectedWifi || haveConnectedMobile;
     }
 
-    /*public static boolean haveNetworkConnectionUMP(Context context) {
+    public static boolean haveNetworkConnectionUMP(Context context) {
         boolean haveConnectedWifi = false;
         boolean haveConnectedMobile = false;
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -33,6 +35,6 @@ public class IsNetWork {
                 if (ni.isConnected()) haveConnectedMobile = true;
         }
         return (haveConnectedWifi || haveConnectedMobile) && getConsentResult(context);
-    }*/
+    }
 
 }
