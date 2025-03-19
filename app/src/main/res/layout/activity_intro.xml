@@ -9,7 +9,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/clInrto"
+        app:layout_constraintBottom_toTopOf="@id/clIntro"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -26,10 +26,12 @@
         android:layout_height="match_parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clIntro"
         android:layout_width="match_parent"
+        android:visibility="visible"
         android:layout_height="wrap_content"
-        android:id="@+id/clInrto"
         app:layout_constraintBottom_toBottomOf="parent">
+
         <TextView
             android:id="@+id/tvIntro"
             android:layout_width="match_parent"
@@ -161,7 +163,7 @@
                     android:layout_height="wrap_content"
                     android:visibility="visible">
 
-                    <!--                <include layout="@layout/layout_native_load_small" />-->
+                    <include layout="@layout/layout_native_load_small_cta_above" />
                 </FrameLayout>
             </RelativeLayout>
 

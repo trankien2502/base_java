@@ -154,4 +154,6 @@
     <string name="allow_assistive_touch_to_lock_screen">允许辅助触摸锁定屏幕。</string>
     <string name="no" />
     <string name="this_function_is_only_use_by_system_app">此功能仅供系统应用使用！</string>
+    <string name="welcome_back">欢迎回来！</string>
+    <string name="let_s_start">让我们开始吧</string>
 </resources>

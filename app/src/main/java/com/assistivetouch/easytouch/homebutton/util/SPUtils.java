@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.lang.reflect.Type;
 
 public class SPUtils {
+    public static int WELCOME = 250255;
     public static final String CONSENT_CHECK = "CONSENT_CHECK";
     public static Gson gson = new Gson();
     public static final String SHARED_PREFS_NAME = "Assistive Touch - Home Button";

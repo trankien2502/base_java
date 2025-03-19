@@ -1,18 +1,31 @@
 package com.assistivetouch.easytouch.homebutton.ui.home.touch.icon;
 
+import android.annotation.SuppressLint;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 
+import com.ads.sapp.admob.Admob;
+import com.ads.sapp.admob.AppOpenManager;
+import com.ads.sapp.funtion.AdCallback;
+import com.ads.sapp.util.CheckAds;
 import com.assistivetouch.easytouch.homebutton.R;
+import com.assistivetouch.easytouch.homebutton.ads.ConstantIdAds;
+import com.assistivetouch.easytouch.homebutton.ads.ConstantRemote;
+import com.assistivetouch.easytouch.homebutton.ads.IsNetWork;
 import com.assistivetouch.easytouch.homebutton.base.BaseActivity;
 import com.assistivetouch.easytouch.homebutton.databinding.ActivityFunctionFloatingIconBinding;
 import com.assistivetouch.easytouch.homebutton.dialog.GoToSettingDialog;
@@ -26,6 +39,9 @@ import com.assistivetouch.easytouch.homebutton.util.EventTracking;
 import com.assistivetouch.easytouch.homebutton.util.PermissionManager;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 import com.assistivetouch.easytouch.homebutton.util.SystemUtil;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.nativead.NativeAd;
+import com.google.android.gms.ads.nativead.NativeAdView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +54,10 @@ public class FunctionFloatingIconActivity extends BaseActivity<ActivityFunctionF
     String type = "";
     ArrayList<ItemFunctionIcon> list;
     boolean isAvailable = true;
+    Handler handler = new Handler();
+    Runnable runnableNativeAds;
+    Runnable runnableNativeDialogAds;
+    GoToSettingDialog permissionDialog;
 
     @Override
     public ActivityFunctionFloatingIconBinding getBinding() {
@@ -46,6 +66,7 @@ public class FunctionFloatingIconActivity extends BaseActivity<ActivityFunctionF
 
     @Override
     public void initView() {
+        loadNativeFloatingAds();
         EventTracking.logEvent(getBaseContext(), "floating_icon_select_function_view");
         list = SPUtils.getListFloatingIcon();
         type = getIntent().getStringExtra(SPUtils.INTENT_SELECT_FUNCTION);
@@ -137,32 +158,32 @@ public class FunctionFloatingIconActivity extends BaseActivity<ActivityFunctionF
     }
 
     private void showDialogGotoSetting(int type) {
-        GoToSettingDialog dialog = new GoToSettingDialog(this, true);
+        permissionDialog = new GoToSettingDialog(this, true);
         SystemUtil.setLocale(this);
 
         if (type == 1) {
-            dialog.binding.tvContent.setText(R.string.content_dialog_per_noti);
+            permissionDialog.binding.tvContent.setText(R.string.content_dialog_per_noti);
         } else if (type == 2) {
-            dialog.binding.tvContent.setText(R.string.content_dialog_per_overlay);
+            permissionDialog.binding.tvContent.setText(R.string.content_dialog_per_overlay);
         } else if (type == 3) {
-            dialog.binding.tvContent.setText(R.string.content_dialog_per_write_setting);
+            permissionDialog.binding.tvContent.setText(R.string.content_dialog_per_write_setting);
         } else if (type == 4) {
-            dialog.binding.tvContent.setText(R.string.content_dialog_per_accessibility);
+            permissionDialog.binding.tvContent.setText(R.string.content_dialog_per_accessibility);
         } else if (type == 5) {
-            dialog.binding.tvContent.setText(R.string.content_dialog_per_camera);
+            permissionDialog.binding.tvContent.setText(R.string.content_dialog_per_camera);
         } else if (type == 6) {
-            dialog.binding.tvContent.setText(R.string.content_dialog_per_storage);
+            permissionDialog.binding.tvContent.setText(R.string.content_dialog_per_storage);
         }
 
-        dialog.binding.tvStay.setOnClickListener(view -> {
-            dialog.dismiss();
+        permissionDialog.binding.tvStay.setOnClickListener(view -> {
+            permissionDialog.dismiss();
         });
-        dialog.binding.tvContent.setOnClickListener(view -> {
-            dialog.dismiss();
+        permissionDialog.binding.tvContent.setOnClickListener(view -> {
+            permissionDialog.dismiss();
         });
-        dialog.binding.tvAgree.setOnClickListener(view -> {
-//            AppOpenManager.getInstance().disableAppResumeWithActivity(HomeActivity.class);
-            dialog.dismiss();
+        permissionDialog.binding.tvAgree.setOnClickListener(view -> {
+            AppOpenManager.getInstance().disableAppResumeWithActivity(FunctionFloatingIconActivity.class);
+            permissionDialog.dismiss();
             if (type == 1 || type == 5 || type == 6) {
                 Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -186,20 +207,128 @@ public class FunctionFloatingIconActivity extends BaseActivity<ActivityFunctionF
             } else if (type == 3) {
                 Intent intent = new Intent("android.settings.action.MANAGE_WRITE_SETTINGS");
                 intent.setData(Uri.parse("package:" + getPackageName()));
-                startActivity(intent);
+                resultLauncher.launch(intent);
             } else if (type == 4) {
                 Intent intent = new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS);
-                startActivity(intent);
+                resultLauncher.launch(intent);
                 Log.e("check_service", "off");
             }
         });
-        dialog.show();
+        permissionDialog.show();
+        loadNativePopupPermissionAds();
+        permissionDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                handler.removeCallbacks(runnableNativeDialogAds);
+            }
+        });
     }
 
     ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        isResume = false;
         if (result.getResultCode() == RESULT_OK || result.getResultCode() == RESULT_CANCELED) {
             //ads
+            loadNativeFloatingAds();
             Log.d("activity_check", "home");
         }
     });
+    public void loadNativeFloatingAds() {
+        try {
+            if (IsNetWork.haveNetworkConnectionUMP(this) && !ConstantIdAds.listIDAdsNativeFloating.isEmpty() && ConstantRemote.native_floating && ConstantRemote.show_ads) {
+                handler.removeCallbacks(runnableNativeAds);
+                runnableNativeAds = new Runnable() {
+                    @Override
+                    public void run() {
+                        loadNativeFloatingAds();
+                    }
+                };
+                handler.removeCallbacks(runnableNativeAds);
+                @SuppressLint("InflateParams") NativeAdView adViewLoad = (NativeAdView) LayoutInflater.from(this).inflate(R.layout.layout_native_load_large_cta_above, null);
+                binding.nativeFloating.removeAllViews();
+                binding.nativeFloating.addView(adViewLoad);
+                binding.nativeFloating.setVisibility(View.VISIBLE);
+                new Thread(() -> {
+                    Admob.getInstance().loadNativeAd(this, ConstantIdAds.listIDAdsNativeFloating, new AdCallback() {
+                        @Override
+                        public void onUnifiedNativeAdLoaded(@NonNull NativeAd unifiedNativeAd) {
+                            runOnUiThread(() -> {
+                                @SuppressLint("InflateParams") NativeAdView adView = (NativeAdView) LayoutInflater.from(getBaseContext()).inflate(R.layout.layout_native_show_large_cta_above, null);
+                                binding.nativeFloating.removeAllViews();
+                                binding.nativeFloating.addView(adView);
+                                Admob.getInstance().populateUnifiedNativeAdView(unifiedNativeAd, adView);
+                                if (ConstantRemote.time_native_reload != 0)
+                                    handler.postDelayed(runnableNativeAds, ConstantRemote.time_native_reload * 1000);
+                                CheckAds.getInstance().checkAds(adView, CheckAds.OT);
+                            });
+                        }
+
+                        @Override
+                        public void onAdFailedToLoad(@org.jetbrains.annotations.Nullable LoadAdError i) {
+                            runOnUiThread(() -> {
+                                binding.nativeFloating.setVisibility(View.GONE);
+                            });
+                        }
+                    });
+                }).start();
+
+            } else {
+                binding.nativeFloating.setVisibility(View.GONE);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            binding.nativeFloating.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        handler.removeCallbacks(runnableNativeAds);
+    }
+    public void loadNativePopupPermissionAds() {
+        if (permissionDialog!=null && permissionDialog.isShowing()){
+            try {
+                if (IsNetWork.haveNetworkConnectionUMP(this) && !ConstantIdAds.listIDAdsNativePopup.isEmpty() && ConstantRemote.native_popup && ConstantRemote.show_ads) {
+                    handler.removeCallbacks(runnableNativeDialogAds);
+                    runnableNativeDialogAds = new Runnable() {
+                        @Override
+                        public void run() {
+                            loadNativePopupPermissionAds();
+                        }
+                    };
+                    @SuppressLint("InflateParams") NativeAdView adViewLoad = (NativeAdView) LayoutInflater.from(this).inflate(R.layout.layout_native_load_large_cta_above, null);
+                    permissionDialog.binding.nativePopup.removeAllViews();
+                    permissionDialog.binding.nativePopup.addView(adViewLoad);
+                    permissionDialog.binding.nativePopup.setVisibility(View.VISIBLE);
+                    Admob.getInstance().loadNativeAd(this, ConstantIdAds.listIDAdsNativePopup, new AdCallback() {
+                        @Override
+                        public void onUnifiedNativeAdLoaded(@NonNull NativeAd unifiedNativeAd) {
+                            @SuppressLint("InflateParams") NativeAdView adView = (NativeAdView) LayoutInflater.from(getBaseContext()).inflate(R.layout.layout_native_show_large_cta_above, null);
+                            permissionDialog.binding.nativePopup.removeAllViews();
+                            permissionDialog.binding.nativePopup.addView(adView);
+                            Admob.getInstance().populateUnifiedNativeAdView(unifiedNativeAd, adView);
+                            if (ConstantRemote.time_native_reload != 0)
+                                handler.postDelayed(runnableNativeDialogAds, ConstantRemote.time_native_reload * 1000);
+                            CheckAds.getInstance().checkAds(adView, CheckAds.OT);
+
+                        }
+
+                        @Override
+                        public void onAdFailedToLoad(@org.jetbrains.annotations.Nullable LoadAdError i) {
+                            permissionDialog.binding.nativePopup.setVisibility(View.GONE);
+                        }
+                    });
+
+                } else {
+                    permissionDialog.binding.nativePopup.setVisibility(View.GONE);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                permissionDialog.binding.nativePopup.setVisibility(View.GONE);
+            }
+        }
+
+    }
 }

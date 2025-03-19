@@ -1,5 +1,6 @@
 package com.assistivetouch.easytouch.homebutton.ui.intro;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,10 +10,20 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.ads.sapp.admob.Admob;
+import com.ads.sapp.funtion.AdCallback;
+import com.ads.sapp.util.CheckAds;
 import com.assistivetouch.easytouch.homebutton.R;
+import com.assistivetouch.easytouch.homebutton.ads.ConstantIdAds;
+import com.assistivetouch.easytouch.homebutton.ads.ConstantRemote;
+import com.assistivetouch.easytouch.homebutton.ads.IsNetWork;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.nativead.NativeAd;
+import com.google.android.gms.ads.nativead.NativeAdView;
 
 import java.util.List;
 
@@ -21,16 +32,13 @@ public class SlideAdapter extends RecyclerView.Adapter<SlideAdapter.SlideViewHol
     private List<Integer> images;
     private Context context;
     private Activity activity;
-    private boolean isCheckAds;
-    private boolean isLoadAds = false;
     private OnClickItem onClickItem;
     private int height;
 
-    public SlideAdapter(Context context, Activity activity, List<Integer> images, boolean isCheckAds, int height, OnClickItem onClickItem) {
+    public SlideAdapter(Context context, Activity activity, List<Integer> images, int height, OnClickItem onClickItem) {
         this.context = context;
         this.activity = activity;
         this.images = images;
-        this.isCheckAds = isCheckAds;
         this.onClickItem = onClickItem;
         this.height = height;
     }
@@ -53,23 +61,22 @@ public class SlideAdapter extends RecyclerView.Adapter<SlideAdapter.SlideViewHol
         ViewGroup.LayoutParams layoutParams = holder.scrollView.getLayoutParams();
         layoutParams.height = height;
         holder.scrollView.setLayoutParams(layoutParams);
-//        if (IsNetWork.haveNetworkConnection(context) && !ConstantIdAds.listIDAdsNativeIntroFull.isEmpty() && ConstantRemote.native_intro_full && CheckAds.getInstance().isShowAds(context)) {
-//            if (position == 2) {
-//                holder.rlAds.setVisibility(View.VISIBLE);
-//                holder.ivClose.setVisibility(View.VISIBLE);
-//                holder.img.setVisibility(View.GONE);
-//                loadAds(holder.rlAds);
-//            } else {
-//                holder.rlAds.setVisibility(View.GONE);
-//                holder.ivClose.setVisibility(View.GONE);
-//                holder.img.setVisibility(View.VISIBLE);
-//            }
-//        } else {
-//
-//        }
-        holder.rlAds.setVisibility(View.GONE);
-        holder.ivClose.setVisibility(View.GONE);
-        holder.img.setVisibility(View.VISIBLE);
+        if (IsNetWork.haveNetworkConnection(context) && !ConstantIdAds.listIDAdsNativeIntroFull.isEmpty() && ConstantRemote.native_intro_full  && ConstantRemote.show_ads) {
+            if (position == 2) {
+                holder.rlAds.setVisibility(View.VISIBLE);
+                holder.ivClose.setVisibility(View.VISIBLE);
+                holder.img.setVisibility(View.GONE);
+                loadAds(holder.rlAds);
+            } else {
+                holder.rlAds.setVisibility(View.GONE);
+                holder.ivClose.setVisibility(View.GONE);
+                holder.img.setVisibility(View.VISIBLE);
+            }
+        } else {
+            holder.rlAds.setVisibility(View.GONE);
+            holder.ivClose.setVisibility(View.GONE);
+            holder.img.setVisibility(View.VISIBLE);
+        }
         holder.ivClose.setOnClickListener(view -> {
             onClickItem.onClickItem();
         });
@@ -80,37 +87,36 @@ public class SlideAdapter extends RecyclerView.Adapter<SlideAdapter.SlideViewHol
         return images.size();
     }
 
-//    private void loadAds(RelativeLayout rlAds) {
-//        new Thread(() -> {
-//            try {
-//                if (IsNetWork.haveNetworkConnection(context) && !ConstantIdAds.listIDAdsNativeIntroFull.isEmpty() && ConstantRemote.native_intro_full && CheckAds.getInstance().isShowAds(context)) {
-//                    Admob.getInstance().loadNativeAd(context, ConstantIdAds.listIDAdsNativeIntroFull, new AdCallback() {
-//                        @Override
-//                        public void onUnifiedNativeAdLoaded(@NonNull NativeAd unifiedNativeAd) {
-//                            activity.runOnUiThread(() -> {
-//                                @SuppressLint("InflateParams") NativeAdView adView = (NativeAdView) LayoutInflater.from(context).inflate(R.layout.layout_native_show_full, null);
-//                                rlAds.removeAllViews();
-//                                rlAds.addView(adView);
-//                                Admob.getInstance().populateUnifiedNativeAdView(unifiedNativeAd, adView);
-//                                CheckAds.checkAds(adView, CheckAds.IN);
-//                                isLoadAds = true;
-//                            });
-//                        }
-//
-//                        @Override
-//                        public void onAdFailedToLoad(@Nullable LoadAdError i) {
-//                            activity.runOnUiThread(() -> rlAds.setVisibility(View.INVISIBLE));
-//                        }
-//                    });
-//                } else {
-//                    activity.runOnUiThread(() -> rlAds.setVisibility(View.INVISIBLE));
-//                }
-//
-//            } catch (Exception e) {
-//                activity.runOnUiThread(() -> rlAds.setVisibility(View.INVISIBLE));
-//            }
-//        }).start();
-//    }
+    private void loadAds(RelativeLayout rlAds) {
+        new Thread(() -> {
+            try {
+                if (IsNetWork.haveNetworkConnection(context) && !ConstantIdAds.listIDAdsNativeIntroFull.isEmpty() && ConstantRemote.native_intro_full  && ConstantRemote.show_ads) {
+                    Admob.getInstance().loadNativeAd(context, ConstantIdAds.listIDAdsNativeIntroFull, new AdCallback() {
+                        @Override
+                        public void onUnifiedNativeAdLoaded(@NonNull NativeAd unifiedNativeAd) {
+                            activity.runOnUiThread(() -> {
+                                @SuppressLint("InflateParams") NativeAdView adView = (NativeAdView) LayoutInflater.from(context).inflate(R.layout.layout_native_show_full, null);
+                                rlAds.removeAllViews();
+                                rlAds.addView(adView);
+                                Admob.getInstance().populateUnifiedNativeAdView(unifiedNativeAd, adView);
+                                CheckAds.checkAds(adView, CheckAds.IN);
+                            });
+                        }
+
+                        @Override
+                        public void onAdFailedToLoad(@Nullable LoadAdError i) {
+                            activity.runOnUiThread(() -> rlAds.setVisibility(View.INVISIBLE));
+                        }
+                    });
+                } else {
+                    activity.runOnUiThread(() -> rlAds.setVisibility(View.INVISIBLE));
+                }
+
+            } catch (Exception e) {
+                activity.runOnUiThread(() -> rlAds.setVisibility(View.INVISIBLE));
+            }
+        }).start();
+    }
 
     public static class SlideViewHolder extends RecyclerView.ViewHolder {
         ImageView img, ivClose;

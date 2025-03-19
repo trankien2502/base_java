@@ -154,4 +154,6 @@
     <string name="allow_assistive_touch_to_lock_screen">Izinkan Assistive Touch untuk mengunci layar.</string>
     <string name="no" />
     <string name="this_function_is_only_use_by_system_app">Fungsi ini hanya digunakan oleh aplikasi sistem!</string>
+    <string name="welcome_back">Selamat Datang kembali!</string>
+    <string name="let_s_start">Ayo Mulai</string>
 </resources>

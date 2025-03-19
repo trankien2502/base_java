@@ -62,8 +62,8 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginVertical="8dp"
+        app:layout_constraintBottom_toTopOf="@id/nativeVolume"
         app:layout_constraintTop_toBottomOf="@id/clHeader">
 
         <LinearLayout
@@ -397,5 +397,23 @@
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
+    <RelativeLayout
+        android:id="@+id/nativeVolume"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <FrameLayout
+            android:id="@+id/fr_ads_intro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
+
+            <include layout="@layout/layout_native_load_large_cta_above" />
+        </FrameLayout>
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

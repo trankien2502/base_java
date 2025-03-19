@@ -32,7 +32,6 @@
                         android:id="@+id/ad_call_to_action"
                         android:layout_width="fill_parent"
                         android:layout_height="52dp"
-
                         android:background="#B5B5B5"
                         android:gravity="center"
                         android:textColor="@color/colorWhite"

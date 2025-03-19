@@ -7,7 +7,12 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.ads.sapp.ads.CommonAd;
+import com.ads.sapp.ads.CommonAdCallback;
 import com.assistivetouch.easytouch.homebutton.R;
+import com.assistivetouch.easytouch.homebutton.ads.ConstantIdAds;
+import com.assistivetouch.easytouch.homebutton.ads.ConstantRemote;
+import com.assistivetouch.easytouch.homebutton.ads.IsNetWork;
 import com.assistivetouch.easytouch.homebutton.base.BaseFragment;
 import com.assistivetouch.easytouch.homebutton.databinding.PopupSelectAction2Binding;
 import com.assistivetouch.easytouch.homebutton.item.control.ItemFunctionIcon;
@@ -29,6 +34,7 @@ public class Menu2Fragment extends BaseFragment<PopupSelectAction2Binding> {
 
     @Override
     public void initView() {
+        loadInterCustom();
         instance = this;
         listDefault = SPUtils.getListDefaultMenu2();
         listCurrent = SPUtils.getList(requireContext(), SPUtils.MENU_FUNCTION_2, listDefault);
@@ -42,42 +48,42 @@ public class Menu2Fragment extends BaseFragment<PopupSelectAction2Binding> {
             EventTracking.logEvent(requireContext(), "custom_menu_item_click");
             intent.putExtra(SPUtils.MENU_FUNCTION, 2);
             intent.putExtra(SPUtils.MENU_POSITION, 0);
-            startArc(intent);
+            showInterCustom(intent);
         });
         binding.llAction2.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
             EventTracking.logEvent(requireContext(), "custom_menu_item_click");
             intent.putExtra(SPUtils.MENU_FUNCTION, 2);
             intent.putExtra(SPUtils.MENU_POSITION, 1);
-            startArc(intent);
+            showInterCustom(intent);
         });
         binding.llAction3.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
             EventTracking.logEvent(requireContext(), "custom_menu_item_click");
             intent.putExtra(SPUtils.MENU_FUNCTION, 2);
             intent.putExtra(SPUtils.MENU_POSITION, 2);
-            startArc(intent);
+            showInterCustom(intent);
         });
         binding.llAction5.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
             EventTracking.logEvent(requireContext(), "custom_menu_item_click");
             intent.putExtra(SPUtils.MENU_FUNCTION, 2);
             intent.putExtra(SPUtils.MENU_POSITION, 3);
-            startArc(intent);
+            showInterCustom(intent);
         });
         binding.llAction6.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
             EventTracking.logEvent(requireContext(), "custom_menu_item_click");
             intent.putExtra(SPUtils.MENU_FUNCTION, 2);
             intent.putExtra(SPUtils.MENU_POSITION, 4);
-            startArc(intent);
+            showInterCustom(intent);
         });
         binding.llAction7.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), FunctionCustomMenuActivity.class);
             EventTracking.logEvent(requireContext(), "custom_menu_item_click");
             intent.putExtra(SPUtils.MENU_FUNCTION, 2);
             intent.putExtra(SPUtils.MENU_POSITION, 5);
-            startArc(intent);
+            showInterCustom(intent);
         });
     }
 
@@ -139,5 +145,46 @@ public class Menu2Fragment extends BaseFragment<PopupSelectAction2Binding> {
         super.onDestroy();
         instance = null;
     }
-    
+    private void loadInterCustom() {
+        if (ConstantIdAds.mInterMenu == null && IsNetWork.haveNetworkConnectionUMP(requireContext()) && !ConstantIdAds.listIDAdsInterMenu.isEmpty() && ConstantRemote.inter_menu  && ConstantRemote.show_ads) {
+            ConstantIdAds.mInterMenu = CommonAd.getInstance().getInterstitialAds(requireContext(), ConstantIdAds.listIDAdsInterMenu);
+        }
+    }
+    private void showInterCustom(Intent intent) {
+        if (IsNetWork.haveNetworkConnectionUMP(requireContext()) && !ConstantIdAds.listIDAdsInterMenu.isEmpty() && ConstantRemote.inter_menu  && ConstantRemote.show_ads) {
+            if (System.currentTimeMillis() - ConstantRemote.interval_interstitial_from_start_old > ConstantRemote.interval_interstitial_from_start * 1000) {
+                if (System.currentTimeMillis() - ConstantRemote.time_interval_old > ConstantRemote.interval_between_interstitial * 1000) {
+                    try {
+                        if (ConstantIdAds.mInterMenu != null) {
+                            CommonAd.getInstance().forceShowInterstitialByTime(requireContext(), ConstantIdAds.mInterMenu, new CommonAdCallback() {
+                                @Override
+                                public void onAdClosed() {
+                                    super.onAdClosed();
+                                    startArc(intent);
+                                }
+
+                                @Override
+                                public void onAdClosedByTime() {
+                                    super.onAdClosedByTime();
+                                    ConstantIdAds.mInterMenu = null;
+                                    ConstantRemote.time_interval_old = System.currentTimeMillis();
+                                    loadInterCustom();
+                                }
+                            }, true);
+                        } else {
+                            loadInterCustom();
+                        }
+                    } catch (Exception e) {
+                        startArc(intent);
+                    }
+                } else {
+                    startArc(intent);
+                }
+            } else {
+                startArc(intent);
+            }
+        } else {
+            startArc(intent);
+        }
+    }
 }

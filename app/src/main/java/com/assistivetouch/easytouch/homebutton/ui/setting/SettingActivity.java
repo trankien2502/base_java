@@ -1,10 +1,29 @@
 package com.assistivetouch.easytouch.homebutton.ui.setting;
 
+import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
+
+import com.ads.sapp.admob.Admob;
+import com.ads.sapp.admob.AppOpenManager;
+import com.ads.sapp.funtion.AdCallback;
+import com.ads.sapp.util.CheckAds;
+import com.assistivetouch.easytouch.homebutton.ads.ConstantIdAds;
+import com.assistivetouch.easytouch.homebutton.ads.ConstantRemote;
+import com.assistivetouch.easytouch.homebutton.ads.IsNetWork;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.nativead.NativeAd;
+import com.google.android.gms.ads.nativead.NativeAdView;
 import com.google.android.gms.tasks.Task;
 import com.google.android.play.core.review.ReviewInfo;
 import com.google.android.play.core.review.ReviewManager;
@@ -21,6 +40,9 @@ import com.assistivetouch.easytouch.homebutton.util.SharePrefUtils;
 
 public class SettingActivity extends BaseActivity<ActivitySettingBinding> {
 
+    RatingDialog ratingDialog;
+    Handler handler = new Handler();
+    Runnable runnableNativeDialogAds;
 
     @Override
     public ActivitySettingBinding getBinding() {
@@ -41,13 +63,13 @@ public class SettingActivity extends BaseActivity<ActivitySettingBinding> {
     public void bindView() {
         binding.clLanguage.setOnClickListener(view -> {
             EventTracking.logEvent(this, "setting_language_click");
-            startNextActivity(LanguageActivity.class, null);
+            resultLauncher.launch(new Intent(this, LanguageActivity.class));
         });
         binding.ivBack.setOnClickListener(view -> onBack());
         binding.clRate.setOnClickListener(view -> onRate());
         binding.clAbout.setOnClickListener(view -> {
             EventTracking.logEvent(this, "setting_about_click");
-            startNextActivity(AboutActivity.class, null);
+            resultLauncher.launch(new Intent(this, AboutActivity.class));
         });
         binding.clShare.setOnClickListener(view -> onShare());
     }
@@ -58,9 +80,16 @@ public class SettingActivity extends BaseActivity<ActivitySettingBinding> {
         finish();
     }
 
+    ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        isResume = false;
+        if (result.getResultCode() == RESULT_OK) {
+            Log.d("activity_check", "home");
+        }
+    });
+
     private void onRate() {
         EventTracking.logEvent(this, "setting_rate_click");
-        RatingDialog ratingDialog = new RatingDialog(SettingActivity.this, true);
+        ratingDialog = new RatingDialog(SettingActivity.this, true);
         ratingDialog.init(new IClickDialogRate() {
             @Override
             public void send() {
@@ -71,10 +100,10 @@ public class SettingActivity extends BaseActivity<ActivitySettingBinding> {
                 Intent sendIntent = new Intent(Intent.ACTION_SENDTO);
                 sendIntent.setData(uri);
                 try {
-                    startActivity(Intent.createChooser(sendIntent, getString(R.string.Send_Email)));
+                    resultLauncher.launch(Intent.createChooser(sendIntent, getString(R.string.Send_Email)));
                     int star = SPUtils.getInt(SettingActivity.this, SPUtils.RATE_STAR, 0);
                     EventTracking.logEvent(SettingActivity.this, "rate_submit", "rate_star" + star, String.valueOf(star));
-                    //AppOpenManager.getInstance().disableAppResumeWithActivity(SettingActivity.class);
+                    AppOpenManager.getInstance().disableAppResumeWithActivity(SettingActivity.class);
                     SharePrefUtils.forceRated(SettingActivity.this);
                 } catch (android.content.ActivityNotFoundException ex) {
                     Toast.makeText(SettingActivity.this, getString(R.string.There_is_no), Toast.LENGTH_SHORT).show();
@@ -111,7 +140,60 @@ public class SettingActivity extends BaseActivity<ActivitySettingBinding> {
 
         });
         ratingDialog.show();
+        loadNativePopupRateAds();
+        ratingDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                handler.removeCallbacks(runnableNativeDialogAds);
+            }
+        });
         EventTracking.logEvent(this, "rate_show");
+    }
+
+    public void loadNativePopupRateAds() {
+        if (ratingDialog != null && ratingDialog.isShowing()) {
+            try {
+                if (IsNetWork.haveNetworkConnectionUMP(this) && !ConstantIdAds.listIDAdsNativePopup.isEmpty() && ConstantRemote.native_popup && ConstantRemote.show_ads) {
+                    handler.removeCallbacks(runnableNativeDialogAds);
+                    runnableNativeDialogAds = new Runnable() {
+                        @Override
+                        public void run() {
+                            loadNativePopupRateAds();
+                        }
+                    };
+                    @SuppressLint("InflateParams") NativeAdView adViewLoad = (NativeAdView) LayoutInflater.from(this).inflate(R.layout.layout_native_load_large_cta_above, null);
+                    ratingDialog.binding.nativePopup.removeAllViews();
+                    ratingDialog.binding.nativePopup.addView(adViewLoad);
+                    ratingDialog.binding.nativePopup.setVisibility(View.VISIBLE);
+                    Admob.getInstance().loadNativeAd(this, ConstantIdAds.listIDAdsNativePopup, new AdCallback() {
+                        @Override
+                        public void onUnifiedNativeAdLoaded(@NonNull NativeAd unifiedNativeAd) {
+                            @SuppressLint("InflateParams") NativeAdView adView = (NativeAdView) LayoutInflater.from(getBaseContext()).inflate(R.layout.layout_native_show_large_cta_above, null);
+                            ratingDialog.binding.nativePopup.removeAllViews();
+                            ratingDialog.binding.nativePopup.addView(adView);
+                            Admob.getInstance().populateUnifiedNativeAdView(unifiedNativeAd, adView);
+                            if (ConstantRemote.time_native_reload != 0)
+                                handler.postDelayed(runnableNativeDialogAds, ConstantRemote.time_native_reload * 1000);
+                            CheckAds.getInstance().checkAds(adView, CheckAds.OT);
+
+                        }
+
+                        @Override
+                        public void onAdFailedToLoad(@org.jetbrains.annotations.Nullable LoadAdError i) {
+                            ratingDialog.binding.nativePopup.setVisibility(View.GONE);
+                        }
+                    });
+
+                } else {
+                    ratingDialog.binding.nativePopup.setVisibility(View.GONE);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                ratingDialog.binding.nativePopup.setVisibility(View.GONE);
+            }
+        }
+
     }
 
     private void onShare() {
@@ -120,8 +202,8 @@ public class SettingActivity extends BaseActivity<ActivitySettingBinding> {
         intentShare.setType("text/plain");
         intentShare.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name));
         intentShare.putExtra(Intent.EXTRA_TEXT, "Download application :" + "https://play.google.com/store/apps/details?id=" + getPackageName());
-        startActivity(Intent.createChooser(intentShare, "Share with"));
-        //AppOpenManager.getInstance().disableAppResumeWithActivity(SettingActivity.class);
+        resultLauncher.launch(Intent.createChooser(intentShare, "Share with"));
+        AppOpenManager.getInstance().disableAppResumeWithActivity(SettingActivity.class);
     }
 
     @Override

@@ -154,4 +154,6 @@
     <string name="allow_assistive_touch_to_lock_screen">Permita que Assistive Touch bloquee la pantalla.</string>
     <string name="no" />
     <string name="this_function_is_only_use_by_system_app">¡Esta función solo la utiliza la aplicación del sistema!</string>
+    <string name="welcome_back">¡Bienvenido de nuevo!</string>
+    <string name="let_s_start">Empecemos</string>
 </resources>

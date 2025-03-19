@@ -80,7 +80,7 @@ public class LanguageStartActivity extends BaseActivity<ActivityLanguageStartBin
     public void loadNativeAds() {
         if (isLoadNative) {
             try {
-                if (IsNetWork.haveNetworkConnectionUMP(this) && !ConstantIdAds.listIDAdsNativeLanguage.isEmpty() && ConstantRemote.native_language) {
+                if (IsNetWork.haveNetworkConnectionUMP(this) && !ConstantIdAds.listIDAdsNativeLanguage.isEmpty() && ConstantRemote.native_language  && ConstantRemote.show_ads) {
                     isLoadNative = false;
                     handler.removeCallbacks(runnableNativeAds);
                     runnableNativeAds = new Runnable() {

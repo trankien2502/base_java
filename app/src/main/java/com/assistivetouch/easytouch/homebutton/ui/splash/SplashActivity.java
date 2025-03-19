@@ -175,7 +175,7 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
     }
 
     private void loadBanner() {
-        if (IsNetWork.haveNetworkConnectionUMP(SplashActivity.this) && !ConstantIdAds.listIDAdsBannerSplash.isEmpty() && ConstantRemote.banner_splash) {
+        if (IsNetWork.haveNetworkConnectionUMP(SplashActivity.this) && !ConstantIdAds.listIDAdsBannerSplash.isEmpty() && ConstantRemote.banner_splash && ConstantRemote.show_ads) {
             binding.rlBanner.setVisibility(View.VISIBLE);
             BannerCallback bannerCallback = new BannerCallback() {
                 @Override
@@ -490,7 +490,7 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
     }
 
     private void showAppOpenSplash() {
-        if (IsNetWork.haveNetworkConnectionUMP(this) && !ConstantIdAds.listIDAdsOpenSplash.isEmpty() && ConstantRemote.open_splash) {
+        if (IsNetWork.haveNetworkConnectionUMP(this) && !ConstantIdAds.listIDAdsOpenSplash.isEmpty() && ConstantRemote.open_splash  && ConstantRemote.show_ads) {
             adCallback = new AdCallback() {
                 @Override
                 public void onNextAction() {
@@ -506,7 +506,7 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
     }
 
     private void showAppInterSplash() {
-        if (IsNetWork.haveNetworkConnectionUMP(this) && !ConstantIdAds.listIDAdsInterSplash.isEmpty() && ConstantRemote.inter_splash) {
+        if (IsNetWork.haveNetworkConnectionUMP(this) && !ConstantIdAds.listIDAdsInterSplash.isEmpty() && ConstantRemote.inter_splash  && ConstantRemote.show_ads) {
             CommonAd.getInstance().loadSplashInterstitialAds(SplashActivity.this, ConstantIdAds.listIDAdsInterSplash, 15000, 3500, new CommonAdCallback() {
                 @Override
                 public void onAdClosed() {
@@ -532,7 +532,7 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
     }
 
     public void startNextActivity() {
-        if (ConstantRemote.resume) {
+        if (ConstantRemote.resume  && ConstantRemote.show_ads) {
             AppOpenManager.getInstance().enableAppResume();
         } else {
             AppOpenManager.getInstance().disableAppResume();

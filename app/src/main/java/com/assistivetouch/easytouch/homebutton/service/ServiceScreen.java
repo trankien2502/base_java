@@ -2209,6 +2209,7 @@ public class ServiceScreen extends Service {
                     PixelFormat.TRANSLUCENT
             );
             popupParams.gravity = Gravity.CENTER;
+            permissionBinding.nativePopup.setVisibility(GONE);
             if (type == 1) {
                 permissionBinding.tvContent.setText(R.string.content_dialog_per_noti);
             } else if (type == 2) {
@@ -2229,7 +2230,6 @@ public class ServiceScreen extends Service {
                 hideDialog(false);
             });
             permissionBinding.tvAgree.setOnClickListener(view -> {
-//            AppOpenManager.getInstance().disableAppResumeWithActivity(HomeActivity.class);
                 if (type == 1 || type == 5 || type == 6) {
                     Intent intent = new Intent();
                     intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);

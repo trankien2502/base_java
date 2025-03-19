@@ -13,6 +13,8 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.ViewCompat;
@@ -20,9 +22,20 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.viewbinding.ViewBinding;
 
+import com.ads.sapp.admob.AppOpenManager;
+import com.ads.sapp.util.CheckAds;
 import com.assistivetouch.easytouch.homebutton.R;
+import com.assistivetouch.easytouch.homebutton.ads.ConstantRemote;
+import com.assistivetouch.easytouch.homebutton.ui.home.AllAppActivity;
+import com.assistivetouch.easytouch.homebutton.ui.home.HomeActivity;
+import com.assistivetouch.easytouch.homebutton.ui.home.ScreenRecorderActivity;
+import com.assistivetouch.easytouch.homebutton.ui.home.ScreenshotActivity;
+import com.assistivetouch.easytouch.homebutton.ui.splash.SplashActivity;
+import com.assistivetouch.easytouch.homebutton.ui.welcome.WelcomeBackActivity;
+import com.assistivetouch.easytouch.homebutton.util.SPUtils;
 import com.assistivetouch.easytouch.homebutton.util.SystemUtil;
 import com.assistivetouch.easytouch.homebutton.ui.intro.IntroActivity;
+import com.facebook.all.All;
 
 import java.util.Objects;
 
@@ -39,6 +52,7 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
     public abstract void onBack();
 
     Animation animation;
+    public boolean isResume = false;
 
 
     @Override
@@ -129,14 +143,36 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
     }
 
     @Override
+    protected void onRestart() {
+        super.onRestart();
+        isResume = true;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-//        if (ConstantRemote.open_resume && CheckAds.getInstance().isShowAds(this)) {
-//            AppOpenManager.getInstance().enableAppResumeWithActivity(getClass());
-//        } else {
-//            AppOpenManager.getInstance().disableAppResumeWithActivity(getClass());
-//        }
+        if (isResume) {
+            if (!(this instanceof SplashActivity) && !(this instanceof ScreenRecorderActivity) && !(this instanceof ScreenshotActivity)) {
+                resumeResultLauncher.launch(new Intent(this, WelcomeBackActivity.class));
+            }
+        }
+        if (ConstantRemote.resume && ConstantRemote.show_ads) {
+            AppOpenManager.getInstance().enableAppResumeWithActivity(getClass());
+        } else {
+            AppOpenManager.getInstance().disableAppResumeWithActivity(getClass());
+        }
+
+
     }
+
+    public ActivityResultLauncher<Intent> resumeResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        isResume = false;
+        if (result.getResultCode() == SPUtils.WELCOME) {
+
+        } else {
+
+        }
+    });
 
     public void finishThisActivity() {
         finish();

@@ -26,7 +26,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
-    <uses-permission android:name="android.permission.CAPTURE_VIDEO_OUTPUT"
+    <uses-permission
+        android:name="android.permission.CAPTURE_VIDEO_OUTPUT"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -62,6 +63,9 @@
         android:theme="@style/Theme.BaseJava"
         tools:targetApi="n">
         <activity
+            android:name=".ui.welcome.WelcomeBackActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.home.volume.IconStyleVolumeActivity"
             android:exported="false"
             android:screenOrientation="portrait"
@@ -80,19 +84,19 @@
             android:name=".ui.home.ScreenshotActivity"
             android:excludeFromRecents="true"
             android:exported="false"
-            android:theme="@style/ThemeWallpaper"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:taskAffinity=""
+            android:theme="@style/ThemeWallpaper"
             tools:ignore="DiscouragedApi,LockedOrientationActivity" />
         <activity
             android:name=".ui.home.ScreenRecorderActivity"
             android:excludeFromRecents="true"
             android:exported="false"
-            android:theme="@style/ThemeWallpaper"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:taskAffinity=""
+            android:theme="@style/ThemeWallpaper"
             tools:ignore="DiscouragedApi,LockedOrientationActivity" />
         <activity
             android:name=".ui.home.AllAppActivity"
@@ -212,8 +216,8 @@
             android:name=".service.ScreenRecordService"
             android:enabled="true"
             android:exported="false"
-            android:stopWithTask="false"
-            android:foregroundServiceType="mediaProjection" />
+            android:foregroundServiceType="mediaProjection"
+            android:stopWithTask="false" />
 
         <receiver
             android:name=".service.StopServiceRecordReceiver"

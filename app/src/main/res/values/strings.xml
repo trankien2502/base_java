@@ -164,6 +164,8 @@
     <string name="allow_assistive_touch_to_lock_screen">Allow Assistive Touch to lock screen.</string>
     <string name="no" />
     <string name="this_function_is_only_use_by_system_app">This function is only use by system app!</string>
+    <string name="welcome_back">Welcome Back!</string>
+    <string name="let_s_start">Let\'s Start</string>
 
 
 </resources>

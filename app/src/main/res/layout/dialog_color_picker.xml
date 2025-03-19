@@ -7,193 +7,230 @@
     android:background="@drawable/bg_dialog"
     android:paddingVertical="24dp">
 
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/instrument_sans"
-        android:gravity="center"
-        android:includeFontPadding="false"
-        android:text="@string/choose_color"
-        android:layout_marginHorizontal="24dp"
-        android:textColor="@color/black"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <com.skydoves.colorpickerview.ColorPickerView
-        android:id="@+id/pk"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="60dp"
-        android:layout_marginTop="24dp"
-        app:actionMode="always"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvTitle"
-        app:palette="@drawable/img_color_picker"
-        app:selector="@drawable/thumb" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cvColor"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="16dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="0dp"
-        android:layout_marginStart="24dp"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/pk">
-
-        <ImageView
-            android:id="@+id/ivColor"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </androidx.cardview.widget.CardView>
-
-    <TextView
-        android:id="@+id/tvColor"
-        android:layout_width="0dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="8dp"
-        android:background="@drawable/bg_color_picker"
-        android:ellipsize="end"
-        android:fontFamily="@font/svn_gilroy"
-        android:gravity="center_vertical"
-        android:layout_marginEnd="24dp"
-        android:lines="1"
-        android:paddingHorizontal="16dp"
-        android:text="#5F3CFF"
-        android:textColor="@color/black"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/cvColor"
-        app:layout_constraintTop_toTopOf="@id/cvColor" />
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cvAlpha"
-        android:layout_marginHorizontal="24dp"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        app:cardCornerRadius="6dp"
-        android:foreground="@drawable/bg_stroke_flash"
-        app:cardElevation="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cvColor">
-
-        <com.skydoves.colorpickerview.sliders.AlphaSlideBar
-            android:id="@+id/alphaSlideBar"
-            android:layout_width="match_parent"
-            android:layout_height="12dp"
-            android:paddingHorizontal="16dp"
-            app:borderColor_AlphaSlideBar="#00000000"
-            app:borderSize_AlphaSlideBar="0" />
-    </androidx.cardview.widget.CardView>
-    <SeekBar
-        android:id="@+id/sbAlpha"
-        android:layout_width="0dp"
-        android:layout_height="24dp"
-        android:background="@drawable/bg_index_home"
-        android:max="255"
-        android:paddingVertical="4dp"
-        android:layout_marginHorizontal="8dp"
-        android:visibility="visible"
-        android:progress="5"
-        android:progressDrawable="@drawable/bg_seekbar_color"
-        android:splitTrack="false"
-        android:thumb="@drawable/knob"
-        app:layout_constraintBottom_toBottomOf="@id/cvAlpha"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/cvAlpha" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/cvBright"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:foreground="@drawable/bg_stroke_flash"
-        app:cardCornerRadius="6dp"
-        android:layout_marginHorizontal="24dp"
-        app:cardElevation="0dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cvAlpha">
-
-        <com.skydoves.colorpickerview.sliders.BrightnessSlideBar
-            android:id="@+id/brightnessSlideBar"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="8dp"
-            android:rotation="180"
-            app:borderColor_BrightnessSlider="#00000000"
-            app:borderSize_BrightnessSlider="0" />
-    </androidx.cardview.widget.CardView>
-    <SeekBar
-        android:id="@+id/sbBright"
-        android:layout_width="0dp"
-        android:layout_height="24dp"
-        android:background="@drawable/bg_index_home"
-        android:max="255"
-        android:paddingVertical="4dp"
-        android:layout_marginHorizontal="8dp"
-        android:visibility="visible"
-        android:progress="5"
-        android:progressDrawable="@drawable/bg_seekbar_color"
-        android:splitTrack="false"
-        android:thumb="@drawable/knob"
-        app:layout_constraintBottom_toBottomOf="@id/cvBright"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/cvBright" />
+            android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginTop="24dp"
-        android:orientation="horizontal"
-        android:gravity="end"
-        android:layout_marginHorizontal="24dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cvBright">
+            <TextView
+                android:id="@+id/tvTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:fontFamily="@font/instrument_sans"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="@string/choose_color"
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/tvCancel"
-            android:layout_width="120dp"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="@dimen/_6sdp"
-            android:ellipsize="end"
-            android:fontFamily="@font/instrument_sans"
-            android:gravity="center"
-            android:includeFontPadding="false"
-            android:maxLines="1"
-            android:paddingHorizontal="@dimen/_12sdp"
-            android:paddingVertical="@dimen/_9sdp"
-            android:text="@string/cancel"
-            android:textColor="#FF1C1C"
-            android:textSize="16sp" />
+            <com.skydoves.colorpickerview.ColorPickerView
+                android:id="@+id/pk"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginHorizontal="60dp"
+                android:layout_marginTop="24dp"
+                app:actionMode="always"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tvTitle"
+                app:palette="@drawable/img_color_picker"
+                app:selector="@drawable/thumb" />
 
-        <TextView
-            android:id="@+id/tvOkay"
-            android:layout_width="120dp"
-            android:layout_height="match_parent"
-            android:layout_marginStart="@dimen/_6sdp"
-            android:background="@drawable/bg_camera_access_allow"
-            android:ellipsize="end"
-            android:fontFamily="@font/instrument_sans"
-            android:gravity="center"
-            android:includeFontPadding="false"
-            android:maxLines="1"
-            android:paddingHorizontal="@dimen/_12sdp"
-            android:text="@string/ok"
-            android:textColor="#ffffff"
-            android:textSize="16sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvColor"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="8dp"
+                app:cardElevation="0dp"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/pk">
+
+                <ImageView
+                    android:id="@+id/ivColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/tvColor"
+                android:layout_width="0dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="24dp"
+                android:background="@drawable/bg_color_picker"
+                android:ellipsize="end"
+                android:fontFamily="@font/svn_gilroy"
+                android:gravity="center_vertical"
+                android:lines="1"
+                android:paddingHorizontal="16dp"
+                android:text="#5F3CFF"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/cvColor"
+                app:layout_constraintTop_toTopOf="@id/cvColor" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvAlpha"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
+                android:foreground="@drawable/bg_stroke_flash"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cvColor">
+
+                <com.skydoves.colorpickerview.sliders.AlphaSlideBar
+                    android:id="@+id/alphaSlideBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="12dp"
+                    android:paddingHorizontal="16dp"
+                    app:borderColor_AlphaSlideBar="#00000000"
+                    app:borderSize_AlphaSlideBar="0" />
+            </androidx.cardview.widget.CardView>
+
+            <SeekBar
+                android:id="@+id/sbAlpha"
+                android:layout_width="0dp"
+                android:layout_height="24dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="@drawable/bg_index_home"
+                android:max="255"
+                android:paddingVertical="4dp"
+                android:progress="5"
+                android:progressDrawable="@drawable/bg_seekbar_color"
+                android:splitTrack="false"
+                android:thumb="@drawable/knob"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@id/cvAlpha"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/cvAlpha" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cvBright"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
+                android:foreground="@drawable/bg_stroke_flash"
+                app:cardCornerRadius="6dp"
+                app:cardElevation="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cvAlpha">
+
+                <com.skydoves.colorpickerview.sliders.BrightnessSlideBar
+                    android:id="@+id/brightnessSlideBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:rotation="180"
+                    app:borderColor_BrightnessSlider="#00000000"
+                    app:borderSize_BrightnessSlider="0" />
+            </androidx.cardview.widget.CardView>
+
+            <SeekBar
+                android:id="@+id/sbBright"
+                android:layout_width="0dp"
+                android:layout_height="24dp"
+                android:layout_marginHorizontal="8dp"
+                android:background="@drawable/bg_index_home"
+                android:max="255"
+                android:paddingVertical="4dp"
+                android:progress="5"
+                android:progressDrawable="@drawable/bg_seekbar_color"
+                android:splitTrack="false"
+                android:thumb="@drawable/knob"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="@id/cvBright"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/cvBright" />
+
+            <LinearLayout
+                android:id="@+id/llok"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
+                android:gravity="end"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/cvBright">
+
+                <TextView
+                    android:id="@+id/tvCancel"
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginEnd="@dimen/_6sdp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/instrument_sans"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:paddingHorizontal="@dimen/_12sdp"
+                    android:paddingVertical="@dimen/_9sdp"
+                    android:text="@string/cancel"
+                    android:textColor="#FF1C1C"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvOkay"
+                    android:layout_width="120dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginStart="@dimen/_6sdp"
+                    android:background="@drawable/bg_camera_access_allow"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/instrument_sans"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:maxLines="1"
+                    android:paddingHorizontal="@dimen/_12sdp"
+                    android:text="@string/ok"
+                    android:textColor="#ffffff"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:id="@+id/nativePopup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:visibility="visible"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/llok">
+
+                <FrameLayout
+                    android:id="@+id/fr_ads_intro"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible">
+
+                    <include layout="@layout/layout_native_load_large_cta_above" />
+                </FrameLayout>
+            </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

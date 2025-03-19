@@ -66,8 +66,24 @@
         android:layout_marginHorizontal="8dp"
         android:layout_marginTop="16dp"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/rlBanner"
         app:layout_constraintTop_toBottomOf="@id/clHeader"
         app:spanCount="4"
         tools:listitem="@layout/item_app_infor" />
+
+    <RelativeLayout
+        android:id="@+id/rlBanner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <include
+            android:id="@+id/banner"
+            layout="@layout/layout_banner_control"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

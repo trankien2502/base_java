@@ -10,14 +10,15 @@
         android:background="@drawable/bg_dialog"
         android:gravity="center"
         android:orientation="vertical"
-        android:paddingHorizontal="@dimen/_12sdp"
         android:paddingTop="@dimen/_20sdp"
+        android:paddingHorizontal="8dp"
         android:paddingBottom="@dimen/_14sdp">
 
         <TextView
             android:id="@+id/tv_title_quit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/_10sdp"
             android:ellipsize="end"
             android:fontFamily="@font/instrument_sans"
             android:textStyle="bold"
@@ -43,6 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
+            android:layout_marginHorizontal="@dimen/_10sdp"
             android:orientation="horizontal"
             android:weightSum="2">
 
@@ -81,6 +83,22 @@
                 android:textStyle="bold" />
 
         </LinearLayout>
+        <RelativeLayout
+            android:id="@+id/nativePopup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:visibility="visible">
+
+            <FrameLayout
+                android:id="@+id/fr_ads_intro"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="visible">
+
+                <include layout="@layout/layout_native_load_large_cta_above" />
+            </FrameLayout>
+        </RelativeLayout>
 
     </LinearLayout>
 

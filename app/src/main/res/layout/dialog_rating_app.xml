@@ -6,7 +6,7 @@
     android:layout_margin="16dp"
     android:background="@drawable/bg_dialog"
     android:orientation="vertical"
-    android:paddingHorizontal="24dp"
+    android:paddingHorizontal="16dp"
     android:paddingVertical="16dp">
 
     <ImageView
@@ -106,5 +106,21 @@
 
         </LinearLayout>
     </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/nativePopup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:visibility="visible">
+
+        <FrameLayout
+            android:id="@+id/fr_ads_intro"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible">
+
+            <include layout="@layout/layout_native_load_large_cta_above" />
+        </FrameLayout>
+    </RelativeLayout>
 
 </LinearLayout>
