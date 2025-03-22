@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="16dp"
-    android:background="@drawable/bg_dialog"
+    android:background="@drawable/bg_dialog_ads"
     android:orientation="vertical"
     android:paddingHorizontal="16dp"
     android:paddingVertical="16dp">
@@ -15,7 +15,7 @@
         android:layout_height="72dp"
         android:layout_gravity="center"
         android:layout_marginTop="16dp"
-        android:background="@drawable/rating_0" />
+        android:background="@drawable/rating_5" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -53,6 +53,7 @@
             android:layout_gravity="center"
             android:layout_marginTop="16dp"
             android:numStars="5"
+            android:rating="5"
             android:progressTint="#FFF732"
             android:secondaryProgressTint="#FFF732"
             android:stepSize="1"

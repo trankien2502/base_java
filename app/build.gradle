@@ -64,7 +64,7 @@ android {
         }
 
         appRelease{
-            manifestPlaceholders = [app_id: "ca-app-pub-6263349256068158~5615734892"]
+            manifestPlaceholders = [app_id: "NUMBER"]
             buildConfigField "String", "resume", "\"NUMBER\""
             buildConfigField "String", "banner_splash", "\"NUMBER\""
             buildConfigField "String", "open_splash", "\"NUMBER\""

@@ -1,6 +1,7 @@
 package com.assistivetouch.easytouch.homebutton.ui.home.touch.custom;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
@@ -24,6 +25,7 @@ import com.assistivetouch.easytouch.homebutton.base.BaseActivity;
 import com.assistivetouch.easytouch.homebutton.databinding.ActivityCustomMenuBinding;
 import com.assistivetouch.easytouch.homebutton.dialog.pick_color.ColorPickerDialog;
 import com.assistivetouch.easytouch.homebutton.dialog.pick_color.ColorSelectCallBack;
+import com.assistivetouch.easytouch.homebutton.service.ServiceScreen;
 import com.assistivetouch.easytouch.homebutton.ui.home.HomeActivity;
 import com.assistivetouch.easytouch.homebutton.util.EventTracking;
 import com.assistivetouch.easytouch.homebutton.util.SPUtils;
@@ -38,6 +40,8 @@ public class CustomMenuActivity extends BaseActivity<ActivityCustomMenuBinding> 
     int currentColor;
     Handler handler = new Handler();
     Runnable runnableNativeAds;
+    Runnable runnableNativeDialogAds;
+    ColorPickerDialog colorDialog;
 
     @Override
     public ActivityCustomMenuBinding getBinding() {
@@ -107,8 +111,8 @@ public class CustomMenuActivity extends BaseActivity<ActivityCustomMenuBinding> 
     }
 
     private void showColorPickerDialog() {
-        ColorPickerDialog dialog = new ColorPickerDialog(this, false, currentColor);
-        dialog.init(new ColorSelectCallBack() {
+        colorDialog = new ColorPickerDialog(this, true, currentColor);
+        colorDialog.init(new ColorSelectCallBack() {
             @Override
             public void select(int color) {
                 currentColor = color;
@@ -116,9 +120,60 @@ public class CustomMenuActivity extends BaseActivity<ActivityCustomMenuBinding> 
                 Menu2Fragment.instance.binding.backgroundMenu.setBgColorLight(color);
             }
         });
-        dialog.show();
+        colorDialog.show();
+        loadNativePopupColorAds();
+        colorDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                handler.removeCallbacks(runnableNativeDialogAds);
+            }
+        });
     }
+    public void loadNativePopupColorAds() {
+        if (colorDialog != null && colorDialog.isShowing()) {
+            try {
+                if (IsNetWork.haveNetworkConnectionUMP(this) && !ConstantIdAds.listIDAdsNativePopup.isEmpty() && ConstantRemote.native_popup && ConstantRemote.show_ads) {
+                    handler.removeCallbacks(runnableNativeDialogAds);
+                    runnableNativeDialogAds = new Runnable() {
+                        @Override
+                        public void run() {
+                            loadNativePopupColorAds();
+                        }
+                    };
+                    @SuppressLint("InflateParams") NativeAdView adViewLoad = (NativeAdView) LayoutInflater.from(this).inflate(R.layout.layout_native_load_large_cta_above, null);
+                    colorDialog.binding.nativePopup.removeAllViews();
+                    colorDialog.binding.nativePopup.addView(adViewLoad);
+                    colorDialog.binding.nativePopup.setVisibility(View.VISIBLE);
+                    Admob.getInstance().loadNativeAd(this, ConstantIdAds.listIDAdsNativePopup, new AdCallback() {
+                        @Override
+                        public void onUnifiedNativeAdLoaded(@NonNull NativeAd unifiedNativeAd) {
+                            @SuppressLint("InflateParams") NativeAdView adView = (NativeAdView) LayoutInflater.from(getBaseContext()).inflate(R.layout.layout_native_show_large_cta_above, null);
+                            colorDialog.binding.nativePopup.removeAllViews();
+                            colorDialog.binding.nativePopup.addView(adView);
+                            Admob.getInstance().populateUnifiedNativeAdView(unifiedNativeAd, adView);
+                            if (ConstantRemote.time_native_reload != 0)
+                                handler.postDelayed(runnableNativeDialogAds, ConstantRemote.time_native_reload * 1000);
+                            CheckAds.getInstance().checkAds(adView, CheckAds.OT);
 
+                        }
+
+                        @Override
+                        public void onAdFailedToLoad(@org.jetbrains.annotations.Nullable LoadAdError i) {
+                            colorDialog.binding.nativePopup.setVisibility(View.GONE);
+                        }
+                    });
+
+                } else {
+                    colorDialog.binding.nativePopup.setVisibility(View.GONE);
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                colorDialog.binding.nativePopup.setVisibility(View.GONE);
+            }
+        }
+
+    }
     ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         isResume = false;
         if (result.getResultCode() == RESULT_OK) {
