@@ -9,7 +9,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/clInrto"
+        app:layout_constraintBottom_toTopOf="@id/clIntro"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -28,7 +28,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/clInrto"
+        android:id="@+id/clIntro"
         app:layout_constraintBottom_toBottomOf="parent">
         <TextView
             android:id="@+id/tvIntro"
@@ -36,13 +36,13 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:ellipsize="end"
-            android:fontFamily="@font/poppins_medium"
+            android:fontFamily="@font/sf_pro_text_medium"
             android:gravity="center"
             android:includeFontPadding="false"
             android:lineSpacingExtra="-1dp"
             android:lines="2"
             android:text="@string/intro_3"
-            android:textColor="#3392FF"
+            android:textColor="#000000"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toTopOf="@id/tvIntroContent"
@@ -55,15 +55,15 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:ellipsize="end"
-            android:fontFamily="@font/be_vietnam_pro"
-            android:gravity="center"
+            android:fontFamily="@font/sf_pro_text_medium"
+            android:gravity="center|top"
             android:includeFontPadding="false"
             android:lineSpacingExtra="0dp"
             android:lines="3"
             android:text="@string/content_intro_1"
-            android:textColor="#e6e6e6"
+            android:textColor="#000000"
             android:textSize="16sp"
-            android:visibility="gone"
+            android:visibility="visible"
             app:layout_constraintBottom_toTopOf="@+id/rl_bottom3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -131,7 +131,7 @@
                 android:minWidth="48dp"
                 android:minHeight="48dp"
                 android:text="@string/next"
-                android:textColor="#3392FF"
+                android:textColor="#0094FD"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:visibility="visible" />
