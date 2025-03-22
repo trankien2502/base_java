@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">Base Java TKT</string>
+    <string name="app_name" translatable="false">Live Soccer Scores: Live Match</string>
 
     <string name="english" translatable="false">English</string>
     <string name="french" translatable="false">French</string>

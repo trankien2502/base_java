@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace 'com.tkt.basejava.basejava1.basejava2'
+    namespace 'com.livescore.soccerscore.matchlive'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.tkt.basejava.basejava1.basejava2"
+        applicationId "com.livescore.soccerscore.matchlive"
         minSdk 21
         targetSdk 34
         versionCode 100
