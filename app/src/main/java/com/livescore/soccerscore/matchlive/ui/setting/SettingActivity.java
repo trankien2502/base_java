@@ -52,11 +52,7 @@ public class SettingActivity extends BaseActivity<ActivitySettingBinding> {
         binding.clShare.setOnClickListener(view -> onShare());
     }
 
-    @Override
-    public void onBack() {
-        setResult(RESULT_OK);
-        finish();
-    }
+
 
     private void onRate() {
         EventTracking.logEvent(this, "setting_rate_us_click");
@@ -123,7 +119,11 @@ public class SettingActivity extends BaseActivity<ActivitySettingBinding> {
         startActivity(Intent.createChooser(intentShare, "Share with"));
         //AppOpenManager.getInstance().disableAppResumeWithActivity(SettingActivity.class);
     }
-
+    @Override
+    public void onBack() {
+        setResult(RESULT_OK);
+        finish();
+    }
     @Override
     protected void onResume() {
         super.onResume();

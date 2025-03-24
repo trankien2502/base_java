@@ -1,5 +1,7 @@
 package com.livescore.soccerscore.matchlive.ui.language;
 
+import static android.view.View.GONE;
+
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,14 +34,19 @@ public class LanguageStartActivity extends BaseActivity<ActivityLanguageStartBin
 
     @Override
     public void initView() {
-        EventTracking.logEvent(this,"language_fo_open");
+        EventTracking.logEvent(this, "language_fo_open");
         initData();
-        binding.tvTitle.setText(getString(R.string.language));
+
+//        binding.view.setOnClickListener(v -> {
+//            binding.view.setVisibility(GONE);
+//            binding.pointer.setVisibility(GONE);
+//        });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         LanguageStartAdapter languageStartAdapter = new LanguageStartAdapter(listLanguage, languageModel -> {
             codeLang = languageModel.getCode();
             nameLang = languageModel.getName();
-            }, this);
+            binding.pointer.setVisibility(GONE);
+        }, this);
         binding.rcvLangStart.setLayoutManager(linearLayoutManager);
         binding.rcvLangStart.setAdapter(languageStartAdapter);
     }
@@ -47,13 +54,13 @@ public class LanguageStartActivity extends BaseActivity<ActivityLanguageStartBin
     @Override
     public void bindView() {
         binding.ivGone.setOnClickListener(view -> {
-            EventTracking.logEvent(this,"language_fo_save_click");
-            if (codeLang==null || codeLang.isEmpty()){
+            EventTracking.logEvent(this, "language_fo_save_click");
+            if (codeLang == null || codeLang.isEmpty()) {
                 Toast.makeText(this, R.string.please_select_a_language, Toast.LENGTH_SHORT).show();
                 return;
             }
             SystemUtil.saveLocale(getBaseContext(), codeLang);
-            SPUtils.setString(this,SPUtils.LANGUAGE,nameLang);
+            SPUtils.setString(this, SPUtils.LANGUAGE, nameLang);
             startNextActivity(IntroActivity.class, null);
             finishAffinity();
         });

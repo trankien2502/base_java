@@ -2,6 +2,7 @@ package com.livescore.soccerscore.matchlive.base;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,12 +16,16 @@ import android.view.animation.AnimationUtils;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import androidx.viewbinding.ViewBinding;
 
 import com.livescore.soccerscore.matchlive.R;
+import com.livescore.soccerscore.matchlive.ads.IsNetWork;
+import com.livescore.soccerscore.matchlive.service.NetworkReceiver;
+import com.livescore.soccerscore.matchlive.ui.home.NoInternetActivity;
 import com.livescore.soccerscore.matchlive.util.SystemUtil;
 import com.livescore.soccerscore.matchlive.ui.intro.IntroActivity;
 
@@ -39,6 +44,7 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
     public abstract void onBack();
 
     Animation animation;
+    NetworkReceiver networkReceiver;
 
 
     @Override
@@ -86,9 +92,11 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
 //                binding.getRoot().getPaddingRight(),
 //                binding.getRoot().getPaddingBottom()
 //        );
+
         hideNavigation();
         initView();
         bindView();
+
     }
 
     public void hideFullNavigation() {
@@ -131,11 +139,31 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
     @Override
     protected void onResume() {
         super.onResume();
+        if (!IsNetWork.haveNetworkConnection(this)) {
+            Intent intent = new Intent(this, NoInternetActivity.class);
+            startActivity(intent);
+        }
+        networkReceiver = new NetworkReceiver();
+        IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
+
+        // Đăng ký với cờ phù hợp
+        ContextCompat.registerReceiver(
+                this,
+                networkReceiver,
+                filter,
+                ContextCompat.RECEIVER_NOT_EXPORTED // Đảm bảo receiver không được export
+        );
 //        if (ConstantRemote.open_resume && CheckAds.getInstance().isShowAds(this)) {
 //            AppOpenManager.getInstance().enableAppResumeWithActivity(getClass());
 //        } else {
 //            AppOpenManager.getInstance().disableAppResumeWithActivity(getClass());
 //        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unregisterReceiver(networkReceiver);
     }
 
     public void finishThisActivity() {

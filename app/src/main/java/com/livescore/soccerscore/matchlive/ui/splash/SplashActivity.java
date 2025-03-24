@@ -2,6 +2,8 @@ package com.livescore.soccerscore.matchlive.ui.splash;
 
 import android.os.Handler;
 
+import com.livescore.soccerscore.matchlive.ads.IsNetWork;
+import com.livescore.soccerscore.matchlive.api_data.CallApiUtils;
 import com.livescore.soccerscore.matchlive.base.BaseActivity;
 import com.livescore.soccerscore.matchlive.ui.language.LanguageStartActivity;
 import com.livescore.soccerscore.matchlive.util.SharePrefUtils;
@@ -19,11 +21,19 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
     @Override
     public void initView() {
         SharePrefUtils.increaseCountOpenApp(this);
-        new Handler().postDelayed(() -> {
-            startNextActivity(LanguageStartActivity.class, null);
-            finishAffinity();
-        }, 3000);
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (IsNetWork.haveNetworkConnection(this)){
+            CallApiUtils.callDataLeague(this);
+            CallApiUtils.callDataTeam(this);
+            new Handler().postDelayed(() -> {
+                startNextActivity(LanguageStartActivity.class, null);
+                finishAffinity();
+            }, 3000);
+        }
     }
 
     @Override

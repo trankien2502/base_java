@@ -22,11 +22,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
-            android:fontFamily="@font/instrument_sans"
+            android:fontFamily="@font/poppins_medium"
             android:includeFontPadding="false"
             android:text="@string/english"
             android:textColor="#000000"
-            android:textSize="16sp"
+            android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/icLang"
             app:layout_constraintTop_toTopOf="parent" />

@@ -57,10 +57,11 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Langug
             case "es":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_es).into(holder.icLang);
                 break;
-            case "zh":
+            case "zh-CN":
+            case "zh-TW":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_zh).into(holder.icLang);
                 break;
-            case "in":
+            case "id":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_in).into(holder.icLang);
                 break;
             case "hi":
@@ -69,11 +70,27 @@ public class LanguageAdapter extends RecyclerView.Adapter<LanguageAdapter.Langug
             case "de":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_ge).into(holder.icLang);
                 break;
-            case "pt":
+            case "pt-BR":
+            case "pt-PT":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_pt).into(holder.icLang);
                 break;
             case "en":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_en).into(holder.icLang);
+                break;
+            case "bn":
+                Glide.with(context).asBitmap().load(R.drawable.ic_lang_bn).into(holder.icLang);
+                break;
+            case "ru":
+                Glide.with(context).asBitmap().load(R.drawable.ic_lang_ru).into(holder.icLang);
+                break;
+            case "ja":
+                Glide.with(context).asBitmap().load(R.drawable.ic_lang_ja).into(holder.icLang);
+                break;
+            case "tr":
+                Glide.with(context).asBitmap().load(R.drawable.ic_lang_tr).into(holder.icLang);
+                break;
+            case "ko":
+                Glide.with(context).asBitmap().load(R.drawable.ic_lang_ko).into(holder.icLang);
                 break;
         }
 

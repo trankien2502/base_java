@@ -28,9 +28,7 @@ import com.livescore.soccerscore.matchlive.util.SystemUtil;
 
 public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> {
 
-    private static final int REQUEST_CODE_CAMERA_PERMISSION = 120;
     private static final int REQUEST_CODE_NOTIFICATION_PERMISSION = 130;
-    private int countCamera = 0;
     private int countNotification = 0;
 
     @Override
@@ -41,7 +39,6 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
     @Override
     public void initView() {
         EventTracking.logEvent(this, "permission_open");
-        countCamera = SPUtils.getInt(this, SPUtils.CAMERA, 0);
         countNotification = SPUtils.getInt(this, SPUtils.NOTIFICATION, 0);
     }
 
@@ -90,25 +87,6 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CODE_CAMERA_PERMISSION) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                checkSwOverlay();
-            }
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                checkSwOverlay();
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    if (!shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-                        countCamera++;
-//                        AppOpenManager.getInstance().disableAppResumeWithActivity(PermissionActivity.class);
-                        SPUtils.setInt(this, SPUtils.CAMERA, countCamera);
-                        if (countCamera > 1) {
-                            showDialogGotoSetting(2);
-                        }
-                    }
-
-                }
-            }
-        }
         if (requestCode == REQUEST_CODE_NOTIFICATION_PERMISSION) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 checkSwNotification();

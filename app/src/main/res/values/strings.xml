@@ -88,6 +88,13 @@
     <string name="none">None</string>
     <string name="long_press">Long Press</string>
     <string name="set_action_successfully">Set action successfully!</string>
+    <string name="languages">Languages</string>
+    <string name="please_select_language_to_continue">Please select language to continue</string>
+    <string name="favourite">Favourite</string>
+    <string name="live_score">Live Score</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="try_again">Try again</string>
 
 
 </resources>
