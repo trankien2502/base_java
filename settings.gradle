@@ -1,2 +1,3 @@
 rootProject.name = "ASY128. Live Score"
 include ':app'
+include ':horizontalcalendar'

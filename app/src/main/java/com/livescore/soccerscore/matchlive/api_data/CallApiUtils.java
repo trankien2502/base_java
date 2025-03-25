@@ -27,10 +27,11 @@ public class CallApiUtils {
                     @Override
                     public void onResponse(@NonNull Call<LeagueResponse> call, @NonNull Response<LeagueResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            List<LeagueModel> leagues = response.body().getData(); // Lấy danh sách từ `data`
+                            ConstantApiData.listLeague.clear();
+                            ConstantApiData.listLeague = response.body().getData(); // Lấy danh sách từ `data`
                             Log.e("call_api_data", "call true:");
-                            if (leagues != null && !leagues.isEmpty()) {
-                                for (LeagueModel leagueModel : leagues) {
+                            if (ConstantApiData.listLeague != null && !ConstantApiData.listLeague.isEmpty()) {
+                                for (LeagueModel leagueModel : ConstantApiData.listLeague) {
                                     Log.e("call_api_data", "data: " + leagueModel.toString());
                                 }
                             }
@@ -52,6 +53,7 @@ public class CallApiUtils {
             Log.e("call_api_data", "No internet to call api");
         }
     }
+
     public static void callDataTeam(Context context) {
         if (IsNetWork.haveNetworkConnection(context)) {
             try {
@@ -60,10 +62,11 @@ public class CallApiUtils {
                     @Override
                     public void onResponse(@NonNull Call<TeamResponse> call, @NonNull Response<TeamResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
-                            List<TeamModel> leagues = response.body().getData(); // Lấy danh sách từ `data`
+                            ConstantApiData.listTeam.clear();
+                            ConstantApiData.listTeam = response.body().getData(); // Lấy danh sách từ `data`
                             Log.e("call_api_data", "call true:");
-                            if (leagues != null && !leagues.isEmpty()) {
-                                for (TeamModel leagueModel : leagues) {
+                            if (ConstantApiData.listTeam != null && !ConstantApiData.listTeam.isEmpty()) {
+                                for (TeamModel leagueModel : ConstantApiData.listTeam) {
                                     Log.e("call_api_data", "data: " + leagueModel.toString());
                                 }
                             }

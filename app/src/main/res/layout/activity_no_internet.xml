@@ -1,21 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
+    android:background="#f2f5f7"
     tools:context=".ui.home.NoInternetActivity">
-    <TextView
-        android:id="@+id/tvTryAgain"
-        android:layout_width="wrap_content"
+
+    <LinearLayout
+        android:layout_width="328dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:text="@string/try_again"
-        android:textSize="40sp"
-        />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:layout_marginTop="96dp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="136dp"
+            android:layout_height="136dp"
+            android:layout_marginBottom="40dp"
+            android:src="@drawable/ic_no_internet" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/sf_pro_text_medium"
+            android:text="@string/no_internet_connection"
+            android:textColor="@color/black"
+            android:textStyle="bold"
+            android:textSize="20sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginBottom="40dp"
+            android:fontFamily="@font/sf_pro_text_medium"
+            android:gravity="center"
+            android:text="@string/the_app_can_t_open_because_you_re_not_connected_to_the_internet_check_your_internet_connection_and_try_again"
+            android:textColor="@color/black"
+            android:textSize="16sp" />
+        <TextView
+            android:id="@+id/tvTryAgain"
+            android:layout_width="240dp"
+            android:layout_height="52dp"
+            android:gravity="center"
+            android:layout_marginBottom="50dp"
+            android:background="@drawable/bg_no_internet"
+            android:fontFamily="@font/svn_gilroy"
+            android:includeFontPadding="false"
+            android:text="@string/go_to_settings"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+</RelativeLayout>

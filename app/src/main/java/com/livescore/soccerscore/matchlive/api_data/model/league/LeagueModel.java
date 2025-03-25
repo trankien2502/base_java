@@ -1,10 +1,14 @@
 package com.livescore.soccerscore.matchlive.api_data.model.league;
 
 import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
+@Entity(tableName = "league")
 public class LeagueModel {
+    @PrimaryKey
     @SerializedName("id")
     int id;
     @SerializedName("sport_id")
@@ -17,9 +21,18 @@ public class LeagueModel {
     boolean active;
     @SerializedName("image_path")
     String image_path;
+    @SerializedName("isFavourite")
     boolean isFavourite;
 
     public LeagueModel() {
+    }
+
+    public boolean isFavourite() {
+        return isFavourite;
+    }
+
+    public void setFavourite(boolean favourite) {
+        isFavourite = favourite;
     }
 
     public int getId() {

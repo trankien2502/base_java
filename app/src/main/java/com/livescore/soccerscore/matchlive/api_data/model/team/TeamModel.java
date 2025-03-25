@@ -1,16 +1,21 @@
 package com.livescore.soccerscore.matchlive.api_data.model.team;
 
 import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
+@Entity(tableName = "team")
 public class TeamModel {
+    @PrimaryKey
     @SerializedName("id")
     int id;
     @SerializedName("name")
     String name;
     @SerializedName("image_path")
     String image_path;
+    @SerializedName("isFavourite")
     boolean isFavourite;
 
     public int getId() {
