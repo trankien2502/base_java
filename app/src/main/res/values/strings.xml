@@ -106,6 +106,7 @@
     <string name="the_app_can_t_open_because_you_re_not_connected_to_the_internet_check_your_internet_connection_and_try_again">The app can\'t open because you\'re not connected to the Internet. Check your Internet connection and try again.</string>
     <string name="go_to_settings">Go to Settings</string>
     <string name="no_results_found">No results found.</string>
+    <string name="all_leagues">All Leagues</string>
 
 
 </resources>

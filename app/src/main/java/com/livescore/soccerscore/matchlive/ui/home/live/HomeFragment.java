@@ -2,6 +2,7 @@ package com.livescore.soccerscore.matchlive.ui.home.live;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,9 @@ import androidx.recyclerview.widget.SnapHelper;
 
 import com.harrywhewell.scrolldatepicker.OnDateSelectedListener;
 import com.livescore.soccerscore.matchlive.R;
+import com.livescore.soccerscore.matchlive.ads.IsNetWork;
+import com.livescore.soccerscore.matchlive.api_data.CallApiUtils;
+import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.databinding.FragmentHomeBinding;
 import com.livescore.soccerscore.matchlive.ui.home.HomeActivity;
@@ -44,6 +48,11 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                 }
             }
         });
+        if (IsNetWork.haveNetworkConnection(requireContext())) {
+            CallApiUtils.fetchFixtureDatePage("2006-03-25",1);
+        } else {
+            Log.e("call_api_data", "No internet to call api");
+        }
     }
 
     @Override
