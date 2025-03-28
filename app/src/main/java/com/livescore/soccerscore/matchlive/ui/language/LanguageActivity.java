@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.base.BaseActivity;
 import com.livescore.soccerscore.matchlive.databinding.ActivityLanguageBinding;
-import com.livescore.soccerscore.matchlive.ui.home.HomeActivity;
+import com.livescore.soccerscore.matchlive.ui.livescores.HomeActivity;
 import com.livescore.soccerscore.matchlive.ui.language.adapter.LanguageAdapter;
 import com.livescore.soccerscore.matchlive.ui.language.model.LanguageModel;
 import com.livescore.soccerscore.matchlive.util.SPUtils;

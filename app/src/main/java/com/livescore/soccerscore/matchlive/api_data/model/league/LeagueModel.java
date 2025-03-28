@@ -5,27 +5,27 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
+import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
+
+import java.util.List;
 
 @Entity(tableName = "league")
 public class LeagueModel {
     @PrimaryKey
     @SerializedName("id")
-    int id;
+    public int id;
     @SerializedName("sport_id")
-    int sport_id;
+    public int sport_id;
     @SerializedName("country_id")
-    int country_id;
+    public int country_id;
     @SerializedName("name")
-    String name;
+    public String name;
     @SerializedName("active")
-    boolean active;
+    public boolean active;
     @SerializedName("image_path")
-    String image_path;
+    public String image_path;
     @SerializedName("isFavourite")
-    boolean isFavourite;
-
-    public LeagueModel() {
-    }
+    public boolean isFavourite;
 
     public boolean isFavourite() {
         return isFavourite;
@@ -35,20 +35,20 @@ public class LeagueModel {
         isFavourite = favourite;
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public int getSport_id() {
         return sport_id;
     }
 
     public void setSport_id(int sport_id) {
         this.sport_id = sport_id;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getCountry_id() {
@@ -83,10 +83,16 @@ public class LeagueModel {
         this.image_path = image_path;
     }
 
-    @NonNull
     @Override
     public String toString() {
-        return "id = " + id + " name = " + name + " active = " + active + " image_path = " + image_path + "\n";
-
+        return "LeagueModel{" +
+                "id=" + id +
+                ", sport_id=" + sport_id +
+                ", country_id=" + country_id +
+                ", name='" + name + '\'' +
+                ", active=" + active +
+                ", image_path='" + image_path + '\'' +
+                ", isFavourite=" + isFavourite +
+                '}';
     }
 }

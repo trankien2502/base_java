@@ -2,14 +2,22 @@ package com.livescore.soccerscore.matchlive.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 public class SPUtils {
     public static final String SHARED_PREFS_NAME = "Live Soccer Scores: Live Match";
-    public static String CAMERA = "CAMERA";
+    public static String LIST_RECENT = "LIST_RECENT";
     public static String NOTIFICATION = "NOTIFICATION";
     public static String LANGUAGE = "LANGUAGE";
     public static String RATE_STAR = "RATE_STAR";
-
+    static Gson gson = new Gson();
 
 
     public static SharedPreferences getPref(Context context) {
@@ -64,5 +72,45 @@ public class SPUtils {
 
     public static boolean getBoolean(Context context, String str, boolean b) {
         return context.getSharedPreferences(SHARED_PREFS_NAME, 0).getBoolean(str, b);
+    }
+
+    public static void setList(Context context, String KEY_LIST, ArrayList<String> list) {
+        String json = gson.toJson(list); // Chuyển ArrayList thành JSON
+        context.getSharedPreferences(SHARED_PREFS_NAME, 0).edit().putString(KEY_LIST, json).apply();
+    }
+
+    // Lấy ArrayList từ SharedPreferences
+    public static ArrayList<String> getList(Context context, String KEY_LIST) {
+        String json = context.getSharedPreferences(SHARED_PREFS_NAME, 0).getString(KEY_LIST, null);
+        if (json == null) return new ArrayList<>();
+        Type type = new TypeToken<ArrayList<String>>() {
+        }.getType();
+        return gson.fromJson(json, type);
+    }
+
+    // Xóa ArrayList khỏi SharedPreferences
+    public static void removeList(Context context, String KEY_LIST) {
+        context.getSharedPreferences(SHARED_PREFS_NAME, 0).edit().remove(KEY_LIST).apply();
+    }
+    public static void showKeyboard(Context context, View view) {
+        if (view == null) return;
+
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        view.requestFocus();
+
+        view.post(() -> {
+            if (imm != null) {
+                imm.showSoftInput(view, InputMethodManager.SHOW_FORCED);
+            }
+        });
+    }
+
+    public static void hideKeyboard(Context context, View view) {
+        if (view == null) return;
+
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

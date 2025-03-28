@@ -1,4 +1,4 @@
-package com.livescore.soccerscore.matchlive.ui.home.notification;
+package com.livescore.soccerscore.matchlive.ui.livescores.notification;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,9 +6,8 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
-import com.livescore.soccerscore.matchlive.databinding.FragmentHomeBinding;
 import com.livescore.soccerscore.matchlive.databinding.FragmentNotificationBinding;
-import com.livescore.soccerscore.matchlive.ui.home.HomeActivity;
+import com.livescore.soccerscore.matchlive.ui.livescores.HomeActivity;
 
 public class NotificationFragment extends BaseFragment<FragmentNotificationBinding> {
 

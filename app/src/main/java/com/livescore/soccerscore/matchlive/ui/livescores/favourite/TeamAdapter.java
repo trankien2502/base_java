@@ -1,5 +1,6 @@
-package com.livescore.soccerscore.matchlive.ui.home.favourite;
+package com.livescore.soccerscore.matchlive.ui.livescores.favourite;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -9,14 +10,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.livescore.soccerscore.matchlive.R;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
+import com.livescore.soccerscore.matchlive.api_data.model.team.TeamModel;
 import com.livescore.soccerscore.matchlive.databinding.ItemTeamBinding;
 
 import java.util.List;
 
-public class LeagueAdapter extends RecyclerView.Adapter<LeagueAdapter.TeamLeagueViewHolder> {
-    LeagueClickCallBack teamClickCallBack;
-    List<LeagueModel> list;
+public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamLeagueViewHolder> {
+    TeamClickCallBack teamClickCallBack;
+    List<TeamModel> list;
     Context context;
 
     @NonNull
@@ -26,15 +27,21 @@ public class LeagueAdapter extends RecyclerView.Adapter<LeagueAdapter.TeamLeague
         return new TeamLeagueViewHolder(binding);
     }
 
-    public LeagueAdapter(Context context, List<LeagueModel> list, LeagueClickCallBack teamClickCallBack) {
+    public TeamAdapter(Context context, List<TeamModel> list, TeamClickCallBack teamClickCallBack) {
         this.teamClickCallBack = teamClickCallBack;
         this.context = context;
         this.list = list;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    public void setList(List<TeamModel> list) {
+        this.list = list;
+        notifyDataSetChanged();
+    }
+
     @Override
     public void onBindViewHolder(@NonNull TeamLeagueViewHolder holder, int position) {
-        LeagueModel teamModel = list.get(position);
+        TeamModel teamModel = list.get(position);
         if (teamModel.isFavourite())
             holder.binding.ivFavourite.setImageResource(R.drawable.favorite_s);
         else holder.binding.ivFavourite.setImageResource(R.drawable.favorite_sn);

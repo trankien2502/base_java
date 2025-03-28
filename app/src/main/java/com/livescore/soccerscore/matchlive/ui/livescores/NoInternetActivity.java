@@ -1,10 +1,6 @@
-package com.livescore.soccerscore.matchlive.ui.home;
-
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+package com.livescore.soccerscore.matchlive.ui.livescores;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -16,7 +12,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.animation.AnimationUtils;
 
 import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AppCompatActivity;
@@ -26,10 +21,8 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 
 import com.livescore.soccerscore.matchlive.R;
-import com.livescore.soccerscore.matchlive.ads.IsNetWork;
 import com.livescore.soccerscore.matchlive.databinding.ActivityNoInternetBinding;
 import com.livescore.soccerscore.matchlive.service.NetworkReceiver;
-import com.livescore.soccerscore.matchlive.ui.intro.IntroActivity;
 import com.livescore.soccerscore.matchlive.util.SystemUtil;
 
 import java.util.Objects;

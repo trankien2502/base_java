@@ -3,12 +3,9 @@ package com.livescore.soccerscore.matchlive.service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 
 import com.livescore.soccerscore.matchlive.ads.IsNetWork;
-import com.livescore.soccerscore.matchlive.ui.home.NoInternetActivity;
-import com.livescore.soccerscore.matchlive.util.SPUtils;
+import com.livescore.soccerscore.matchlive.ui.livescores.NoInternetActivity;
 
 public class NetworkReceiver extends BroadcastReceiver {
     @Override

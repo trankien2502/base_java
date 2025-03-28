@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.home.live.HomeFragment">
+    tools:context=".ui.livescores.home.HomeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/clHeader"
@@ -62,82 +62,95 @@
         android:background="@drawable/bg_main"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@id/clHeader">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/clHeader">
+
             <RelativeLayout
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginHorizontal="16dp"
-                android:layout_marginTop="10dp"
-                android:layout_height="wrap_content">
+                android:layout_marginTop="10dp">
+
                 <TextView
                     android:id="@+id/tvLiveNow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/live_now"
-                    android:minHeight="22dp"
-                    android:gravity="center"
-                    android:fontFamily="@font/svn_gilroy"
-                    android:includeFontPadding="false"
-                    android:textSize="18sp"
-                    android:layout_centerVertical="true"
                     android:layout_alignParentStart="true"
-                    android:textColor="#292d32"/>
+                    android:layout_centerVertical="true"
+                    android:fontFamily="@font/svn_gilroy"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:minHeight="22dp"
+                    android:text="@string/live_now"
+                    android:textColor="#292d32"
+                    android:textSize="18sp" />
+
                 <TextView
                     android:id="@+id/tvSeeMore"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/see_more"
-                    android:fontFamily="@font/svn_gilroy"
-                    android:includeFontPadding="false"
-                    android:textSize="16sp"
-                    android:minHeight="22dp"
-                    android:gravity="center"
-                    android:layout_centerVertical="true"
                     android:layout_alignParentEnd="true"
-                    android:textColor="#0094FD"/>
+                    android:layout_centerVertical="true"
+                    android:fontFamily="@font/svn_gilroy"
+                    android:gravity="center"
+                    android:includeFontPadding="false"
+                    android:minHeight="22dp"
+                    android:text="@string/see_more"
+                    android:textColor="#0094FD"
+                    android:textSize="16sp" />
             </RelativeLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rcvLive"
                 android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="4dp"
                 android:orientation="horizontal"
                 android:paddingStart="8dp"
                 android:paddingEnd="16dp"
-                android:layout_marginVertical="4dp"
-                tools:listitem="@layout/item_live_match"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                android:layout_height="wrap_content"/>
+                tools:listitem="@layout/item_live_match" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_dialog"
                 android:layout_marginHorizontal="16dp"
+                android:background="@drawable/bg_dialog"
+                android:orientation="vertical"
                 android:paddingHorizontal="16dp"
-                android:orientation="vertical">
+                android:paddingBottom="50dp">
+
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
-                    <com.harrywhewell.scrolldatepicker.DayScrollDatePicker
-                        android:id="@+id/datePicker"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"/>
+
+<!--                    <com.harrywhewell.scrolldatepicker.DayScrollDatePicker-->
+<!--                        android:id="@+id/datePicker"-->
+<!--                        android:layout_width="match_parent"-->
+<!--                        android:layout_height="wrap_content" />-->
 
                     <ImageView
                         android:id="@+id/btnChooseDate"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:src="@drawable/calendar"
-                        android:padding="12dp"
+                        android:layout_alignParentEnd="true"
                         android:layout_centerVertical="true"
-                        android:layout_alignParentEnd="true"/>
+                        android:padding="12dp"
+                        android:src="@drawable/calendar" />
                 </RelativeLayout>
+
                 <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rcvLeagueToday"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"/>
+                    android:layout_marginTop="8dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_league_today" />
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

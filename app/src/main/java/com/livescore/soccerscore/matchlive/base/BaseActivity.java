@@ -25,7 +25,7 @@ import androidx.viewbinding.ViewBinding;
 import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.ads.IsNetWork;
 import com.livescore.soccerscore.matchlive.service.NetworkReceiver;
-import com.livescore.soccerscore.matchlive.ui.home.NoInternetActivity;
+import com.livescore.soccerscore.matchlive.ui.livescores.NoInternetActivity;
 import com.livescore.soccerscore.matchlive.util.SystemUtil;
 import com.livescore.soccerscore.matchlive.ui.intro.IntroActivity;
 

@@ -1,4 +1,4 @@
-package com.livescore.soccerscore.matchlive.ui.home.favourite;
+package com.livescore.soccerscore.matchlive.ui.livescores.favourite;
 
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
@@ -19,7 +19,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.livescore.soccerscore.matchlive.R;
-import com.livescore.soccerscore.matchlive.api_data.CallApiUtils;
 import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
 import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
 import com.livescore.soccerscore.matchlive.api_data.model.team.TeamModel;
@@ -27,8 +26,8 @@ import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.database.league.LeagueDatabase;
 import com.livescore.soccerscore.matchlive.database.team.TeamDatabase;
 import com.livescore.soccerscore.matchlive.databinding.FragmentFavouriteBinding;
-import com.livescore.soccerscore.matchlive.databinding.FragmentHomeBinding;
-import com.livescore.soccerscore.matchlive.ui.home.HomeActivity;
+import com.livescore.soccerscore.matchlive.ui.livescores.HomeActivity;
+import com.livescore.soccerscore.matchlive.util.SPUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -251,11 +250,11 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
             binding.clSearch.setVisibility(VISIBLE);
             binding.edtText.setText("");
             binding.edtText.requestFocus();
-            showKeyboard(requireContext(), binding.edtText);
+            SPUtils.showKeyboard(requireContext(), binding.edtText);
         });
         binding.ivExitSearch.setOnClickListener(v -> {
             isSearch = false;
-            hideKeyboard(requireContext(), binding.edtText);
+            SPUtils.hideKeyboard(requireContext(), binding.edtText);
             binding.edtText.clearFocus();
             binding.clHeader.setVisibility(VISIBLE);
             binding.clSearch.setVisibility(GONE);
@@ -315,27 +314,7 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
         });
     }
 
-    public void showKeyboard(Context context, View view) {
-        if (view == null) return;
 
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        view.requestFocus();
-
-        view.post(() -> {
-            if (imm != null) {
-                imm.showSoftInput(view, InputMethodManager.SHOW_FORCED);
-            }
-        });
-    }
-
-    public void hideKeyboard(Context context, View view) {
-        if (view == null) return;
-
-        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
-    }
 
 
     private void resetChange() {

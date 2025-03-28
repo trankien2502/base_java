@@ -18,6 +18,7 @@ public class TeamModel {
     @SerializedName("isFavourite")
     boolean isFavourite;
 
+
     public int getId() {
         return id;
     }
@@ -50,10 +51,24 @@ public class TeamModel {
         isFavourite = favourite;
     }
 
-    @NonNull
+//    public Meta getMeta() {
+//        return meta;
+//    }
+//
+//    public void setMeta(Meta meta) {
+//        this.meta = meta;
+//    }
+
+
     @Override
     public String toString() {
-        return "id = " + id + " name = " + name + " image_path = " + image_path + "\n";
-
+        return "TeamModel{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", image_path='" + image_path + '\'' +
+                ", isFavourite=" + isFavourite +
+                '}';
     }
+
+
 }

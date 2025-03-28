@@ -7,14 +7,15 @@ import java.util.List;
 
 public class TeamResponse {
     @SerializedName("data")
-    public List<TeamModel> data;
-    @SerializedName("subscription")
-    public List<Object> subscription;
+    public List<TeamInMatch> data;
     @SerializedName("pagination")
     public Object pagination;
-    @SerializedName("rate_limit")
-    public Object rate_limit;
-    @SerializedName("timezone")
-    public String timezone;
 
+    @Override
+    public String toString() {
+        return "TeamResponse{" +
+                "data=" + data +
+                ", pagination=" + pagination +
+                '}';
+    }
 }

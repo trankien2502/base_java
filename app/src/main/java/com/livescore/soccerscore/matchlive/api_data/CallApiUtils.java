@@ -8,9 +8,12 @@ import androidx.annotation.NonNull;
 import com.google.gson.Gson;
 import com.livescore.soccerscore.matchlive.ads.IsNetWork;
 import com.livescore.soccerscore.matchlive.api_data.model.PaginationModel;
+import com.livescore.soccerscore.matchlive.api_data.model.ScoreModel;
+import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
 import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureResponse;
 import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
 import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueResponse;
+import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueTodayModel;
 import com.livescore.soccerscore.matchlive.api_data.model.team.TeamModel;
 import com.livescore.soccerscore.matchlive.api_data.model.team.TeamResponse;
 
@@ -118,19 +121,31 @@ public class CallApiUtils {
     public static void fetchFixtureDatePage(String date, int page) {
         try {
             String fixedKey = "ldcyiGDAUEvdBzwVTkbIKcdxDY4Wx8vLYFEBpcksdhDuyA8lMAMkUZIZwEzk";
-            ApiDataService.apiService.callFixtureToday(date, fixedKey, "today.participants;today.scores",page).enqueue(new Callback<FixtureResponse>() {
+            ApiDataService.apiService.callFixtureToday(date, fixedKey, "today.participants;today.scores;today.state", page).enqueue(new Callback<FixtureResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<FixtureResponse> call, @NonNull Response<FixtureResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
                         Log.e("API_RESPONSE", "Raw JSON: " + new Gson().toJson(response.body()));
                         FixtureResponse teamResponse = response.body();
-                        Log.e("API_RESPONSE", "data: " +teamResponse.data);
-                        Log.e("API_RESPONSE", "pagination: " +teamResponse.pagination);
+                        Log.e("API_RESPONSE", "data: " + teamResponse.data);
+                        for (LeagueTodayModel leagueModel : teamResponse.data) {
+                            Log.e("API_RESPONSE", "leagueModel: " + leagueModel);
+                            Log.e("API_RESPONSE", "today: " + leagueModel.today.size());
+                            for (FixtureModel fixtureModel : leagueModel.today) {
+                                Log.e("API_RESPONSE", "fixture: " + fixtureModel.participants);
+                                Log.e("API_RESPONSE", "scores: " + fixtureModel.scores);
+                                for (ScoreModel scoreModel : fixtureModel.scores) {
+                                    Log.e("API_RESPONSE", "score: " + scoreModel);
+                                }
+                                Log.e("API_RESPONSE", "state: " + fixtureModel.getState());
+                            }
+                        }
+                        Log.e("API_RESPONSE", "pagination: " + teamResponse.pagination);
                         Log.e("call_api_data", "call true:");
                         Gson gson = new Gson();
                         PaginationModel pagination = gson.fromJson(new Gson().toJson(teamResponse.pagination), PaginationModel.class);
                         if (pagination.has_more) {
-                            fetchTeamPage(page + 1);
+                            fetchFixtureDatePage(date,page + 1);
                         } else {
                             Log.e("API_RESPONSE", "done ");
                         }

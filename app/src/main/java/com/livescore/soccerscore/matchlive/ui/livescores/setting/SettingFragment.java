@@ -1,4 +1,4 @@
-package com.livescore.soccerscore.matchlive.ui.home.setting;
+package com.livescore.soccerscore.matchlive.ui.livescores.setting;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -15,13 +15,11 @@ import com.google.android.play.core.review.ReviewManagerFactory;
 import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.databinding.FragmentSettingsBinding;
-import com.livescore.soccerscore.matchlive.databinding.FragmentSettingsBinding;
 import com.livescore.soccerscore.matchlive.dialog.rate.IClickDialogRate;
 import com.livescore.soccerscore.matchlive.dialog.rate.RatingDialog;
-import com.livescore.soccerscore.matchlive.ui.home.HomeActivity;
+import com.livescore.soccerscore.matchlive.ui.livescores.HomeActivity;
 import com.livescore.soccerscore.matchlive.ui.language.LanguageActivity;
 import com.livescore.soccerscore.matchlive.ui.setting.AboutActivity;
-import com.livescore.soccerscore.matchlive.ui.setting.SettingActivity;
 import com.livescore.soccerscore.matchlive.util.EventTracking;
 import com.livescore.soccerscore.matchlive.util.SPUtils;
 import com.livescore.soccerscore.matchlive.util.SharePrefUtils;

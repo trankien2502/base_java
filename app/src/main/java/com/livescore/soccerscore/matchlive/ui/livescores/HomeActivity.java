@@ -1,49 +1,27 @@
-package com.livescore.soccerscore.matchlive.ui.home;
+package com.livescore.soccerscore.matchlive.ui.livescores;
 
-import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Color;
-import android.net.Uri;
-import android.os.Build;
-import android.provider.Settings;
 import android.util.Log;
-import android.widget.DatePicker;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.datepicker.MaterialDatePicker;
 import com.livescore.soccerscore.matchlive.base.BaseActivity;
-import com.livescore.soccerscore.matchlive.dialog.GoToSettingDialog;
 import com.livescore.soccerscore.matchlive.dialog.exit.ExitAppDialog;
 import com.livescore.soccerscore.matchlive.dialog.exit.IClickDialogExit;
-import com.livescore.soccerscore.matchlive.dialog.rate.IClickDialogRate;
-import com.livescore.soccerscore.matchlive.dialog.rate.RatingDialog;
-import com.livescore.soccerscore.matchlive.ui.home.favourite.FavouriteFragment;
-import com.livescore.soccerscore.matchlive.ui.home.live.HomeFragment;
-import com.livescore.soccerscore.matchlive.ui.home.notification.NotificationFragment;
-import com.livescore.soccerscore.matchlive.ui.home.setting.SettingFragment;
-import com.livescore.soccerscore.matchlive.ui.setting.SettingActivity;
+import com.livescore.soccerscore.matchlive.ui.livescores.favourite.FavouriteFragment;
+import com.livescore.soccerscore.matchlive.ui.livescores.home.HomeFragment;
+import com.livescore.soccerscore.matchlive.ui.livescores.notification.NotificationFragment;
+import com.livescore.soccerscore.matchlive.ui.livescores.setting.SettingFragment;
 import com.livescore.soccerscore.matchlive.util.EventTracking;
-import com.livescore.soccerscore.matchlive.util.PermissionManager;
-import com.livescore.soccerscore.matchlive.util.SPUtils;
-import com.livescore.soccerscore.matchlive.util.SharePrefUtils;
 import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.databinding.ActivityHomeBinding;
-import com.google.android.gms.tasks.Task;
-import com.google.android.play.core.review.ReviewInfo;
-import com.google.android.play.core.review.ReviewManager;
-import com.google.android.play.core.review.ReviewManagerFactory;
-import com.livescore.soccerscore.matchlive.util.SystemUtil;
 
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
-import java.util.Locale;
 
 public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
 
@@ -74,18 +52,9 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
             changeState();
         });
         binding.llNotification.setOnClickListener(view -> {
-//            state = STATE_NOTIFICATION;
-//            changeState();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                DatePickerDialog dialog = new DatePickerDialog(this);
-                dialog.show();
-                dialog.setOnDateSetListener(new DatePickerDialog.OnDateSetListener() {
-                    @Override
-                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-                        Toast.makeText(getBaseContext(), "Ngày đã chọn: " + year + month + dayOfMonth, Toast.LENGTH_SHORT).show();
-                    }
-                });
-            }
+            state = STATE_NOTIFICATION;
+            changeState();
+
         });
         binding.llFavourite.setOnClickListener(view -> {
             state = STATE_FAVOURITE;
@@ -93,20 +62,9 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
 
         });
         binding.llSetting.setOnClickListener(view -> {
-//            state = STATE_SETTING;
-//            changeState();
-            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
-                    .setTitleText("Chọn ngày")
-                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                    .build();
+            state = STATE_SETTING;
+            changeState();
 
-            datePicker.show(getSupportFragmentManager(), "DATE_PICKER");
-
-            datePicker.addOnPositiveButtonClickListener(selection -> {
-                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-                String selectedDate = sdf.format(new Date(selection));
-                Toast.makeText(this, "Ngày đã chọn: " + selectedDate, Toast.LENGTH_SHORT).show();
-            });
         });
 
     }
