@@ -4,6 +4,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -12,6 +13,9 @@ import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
@@ -28,6 +32,7 @@ import com.livescore.soccerscore.matchlive.ui.livescores.search.team.TeamSearchC
 import com.livescore.soccerscore.matchlive.ui.livescores.search.top_search.TopSearchAdapter;
 import com.livescore.soccerscore.matchlive.ui.livescores.search.top_search.TopSearchClickCallBack;
 import com.livescore.soccerscore.matchlive.ui.livescores.search.top_search.TopSearchModel;
+import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.TeamDetailActivity;
 import com.livescore.soccerscore.matchlive.util.SPUtils;
 
 import java.util.ArrayList;
@@ -202,7 +207,9 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
         teamAdapter = new TeamSearchAdapter(this, listTeamModel, new TeamSearchClickCallBack() {
             @Override
             public void select(TeamModel teamModel) {
-                Toast.makeText(SearchActivity.this, teamModel.getName(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getBaseContext(), TeamDetailActivity.class);
+                intent.putExtra(SPUtils.INTENT_TEAM,teamModel);
+                resultLauncher.launch(intent);
             }
         });
         leagueAdapter = new LeagueSearchAdapter(this, listLeagueModel, new LeagueSearchClickCallBack() {
@@ -242,4 +249,10 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
         binding.rcvRecent.setAdapter(adapter);
         binding.rcvTopSearch.setAdapter(topSearchAdapter);
     }
+    public ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == RESULT_OK) {
+            //ads
+            Log.d("activity_check", "home");
+        }
+    });
 }

@@ -111,6 +111,10 @@
     <string name="recently">Recently</string>
     <string name="delete_all">Delete all</string>
     <string name="top_search">Top search</string>
+    <string name="stats">Stats</string>
+    <string name="fixtures">Fixtures</string>
+    <string name="squad">Squad</string>
+    <string name="error">Error</string>
 
 
 </resources>

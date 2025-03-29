@@ -24,7 +24,7 @@ public interface TeamDAO {
     List<TeamModel> getFavouriteTeam(boolean isFavourite);
 
     @Query("SELECT * FROM team where id = :id")
-    TeamModel getIconById(int id);
+    TeamModel getTeamById(int id);
 
     @Update
     void update(TeamModel teamModel);
