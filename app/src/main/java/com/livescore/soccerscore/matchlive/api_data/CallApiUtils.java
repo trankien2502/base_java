@@ -9,8 +9,10 @@ import com.google.gson.Gson;
 import com.livescore.soccerscore.matchlive.ads.IsNetWork;
 import com.livescore.soccerscore.matchlive.api_data.model.PaginationModel;
 import com.livescore.soccerscore.matchlive.api_data.model.ScoreModel;
+import com.livescore.soccerscore.matchlive.api_data.model.StateResponse;
 import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
 import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureResponse;
+import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueDetail;
 import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
 import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueResponse;
 import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueTodayModel;
@@ -32,10 +34,44 @@ public class CallApiUtils {
         }
     }
 
+    public static void callDataState(Context context) {
+        if (IsNetWork.haveNetworkConnection(context)) {
+            ConstantApiData.listState.clear();
+            try {
+                ApiDataService.apiService.callState(ConstantApiData.KEY).enqueue(new Callback<StateResponse>() {
+                    @Override
+                    public void onResponse(@NonNull Call<StateResponse> call, @NonNull Response<StateResponse> response) {
+                        if (response.isSuccessful() && response.body() != null) {
+                            StateResponse stateResponse = response.body();
+                            ConstantApiData.listState.addAll(stateResponse.states);
+                            Log.e("call_api_data", "call true:");
+                            if (ConstantApiData.listState != null && !ConstantApiData.listState.isEmpty()) {
+                                for (FixtureModel.StateModel leagueModel : ConstantApiData.listState) {
+                                    Log.e("call_api_data", "data: " + leagueModel.toString());
+                                }
+                            }
+                        } else {
+                            Log.e("call_api_data", "call false: Code: " + response.code());
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(@NonNull Call<StateResponse> call, @NonNull Throwable t) {
+                        Log.e("call_api_data", "onfailure" + t);
+                    }
+                });
+
+            } catch (Exception e) {
+                Log.e("call_api_data", "catch: ", e);
+            }
+        } else {
+            Log.e("call_api_data", "No internet to call api");
+        }
+    }
+
     private static void fetchLeaguePage(int page) {
         try {
-            String fixedKey = "ldcyiGDAUEvdBzwVTkbIKcdxDY4Wx8vLYFEBpcksdhDuyA8lMAMkUZIZwEzk";
-            ApiDataService.apiService.callLeague(fixedKey, 1).enqueue(new Callback<LeagueResponse>() {
+            ApiDataService.apiService.callLeague(ConstantApiData.KEY, 1, "country").enqueue(new Callback<LeagueResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<LeagueResponse> call, @NonNull Response<LeagueResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -43,30 +79,30 @@ public class CallApiUtils {
                         ConstantApiData.listLeague.addAll(leagueResponse.data); // Lấy danh sách từ `data`
                         Log.e("call_api_data", "call true:");
                         if (ConstantApiData.listLeague != null && !ConstantApiData.listLeague.isEmpty()) {
-                            for (LeagueModel leagueModel : ConstantApiData.listLeague) {
+                            for (LeagueDetail leagueModel : ConstantApiData.listLeague) {
                                 Log.e("call_api_data", "data: " + leagueModel.toString());
                             }
                         }
                         Gson gson = new Gson();
                         PaginationModel pagination = gson.fromJson(new Gson().toJson(leagueResponse.pagination), PaginationModel.class);
                         if (pagination.has_more) {
-                            fetchTeamPage(page + 1);
+                            fetchLeaguePage(page + 1);
                         } else {
-                            Log.e("call_api_data", "Total team fetched: " + ConstantApiData.listLeague.size());
+                            Log.e("call_api_data_done", "Total team fetched: " + ConstantApiData.listLeague.size());
                         }
                     } else {
-                        Log.e("call_api_data", "call false: Code: " + response.code());
+                        Log.e("call_api_data_failed", "call false: Code: " + response.code());
                     }
                 }
 
                 @Override
                 public void onFailure(@NonNull Call<LeagueResponse> call, @NonNull Throwable t) {
-                    Log.e("call_api_data", "onfailure" + t);
+                    Log.e("call_api_data_failed", "onfailure" + t);
                 }
             });
 
         } catch (Exception e) {
-            Log.e("call_api_data", "catch: ", e);
+            Log.e("call_api_data_catch", "catch: ", e);
         }
     }
 
@@ -81,8 +117,7 @@ public class CallApiUtils {
 
     private static void fetchTeamPage(int page) {
         try {
-            String fixedKey = "ldcyiGDAUEvdBzwVTkbIKcdxDY4Wx8vLYFEBpcksdhDuyA8lMAMkUZIZwEzk";
-            ApiDataService.apiService.callTeam(fixedKey, page).enqueue(new Callback<TeamResponse>() {
+            ApiDataService.apiService.callTeam(ConstantApiData.KEY, page, "country").enqueue(new Callback<TeamResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<TeamResponse> call, @NonNull Response<TeamResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -120,8 +155,7 @@ public class CallApiUtils {
 
     public static void fetchFixtureDatePage(String date, int page) {
         try {
-            String fixedKey = "ldcyiGDAUEvdBzwVTkbIKcdxDY4Wx8vLYFEBpcksdhDuyA8lMAMkUZIZwEzk";
-            ApiDataService.apiService.callFixtureToday(date, fixedKey, "today.participants;today.scores;today.state", page).enqueue(new Callback<FixtureResponse>() {
+            ApiDataService.apiService.callFixtureToday(date, ConstantApiData.KEY, "today.participants;today.scores;today.state", page).enqueue(new Callback<FixtureResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<FixtureResponse> call, @NonNull Response<FixtureResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -145,7 +179,7 @@ public class CallApiUtils {
                         Gson gson = new Gson();
                         PaginationModel pagination = gson.fromJson(new Gson().toJson(teamResponse.pagination), PaginationModel.class);
                         if (pagination.has_more) {
-                            fetchFixtureDatePage(date,page + 1);
+                            fetchFixtureDatePage(date, page + 1);
                         } else {
                             Log.e("API_RESPONSE", "done ");
                         }

@@ -23,6 +23,7 @@ import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
 import com.livescore.soccerscore.matchlive.api_data.model.team.TeamModel;
 import com.livescore.soccerscore.matchlive.base.BaseActivity;
 import com.livescore.soccerscore.matchlive.databinding.ActivitySearchBinding;
+import com.livescore.soccerscore.matchlive.ui.livescores.league_detail.LeagueDetailActivity;
 import com.livescore.soccerscore.matchlive.ui.livescores.search.league.LeagueSearchAdapter;
 import com.livescore.soccerscore.matchlive.ui.livescores.search.league.LeagueSearchClickCallBack;
 import com.livescore.soccerscore.matchlive.ui.livescores.search.recent.ItemRecentClickCallBack;
@@ -153,7 +154,8 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
             listTeamModel.clear();
             Log.e("check_search", "listteam: " + ConstantApiData.listTeam);
             for (TeamModel teamModel : ConstantApiData.listTeam) {
-                if (teamModel.getName().toLowerCase().contains(str.toLowerCase())) listTeamModel.add(teamModel);
+                if (teamModel.getName().toLowerCase().contains(str.toLowerCase()))
+                    listTeamModel.add(teamModel);
             }
             teamAdapter.notifyDataSetChanged();
             binding.rcvResult.setAdapter(teamAdapter);
@@ -163,7 +165,8 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
             listLeagueModel.clear();
             Log.e("check_search", "listteam: " + ConstantApiData.listLeague);
             for (LeagueModel leagueModel : ConstantApiData.listLeague) {
-                if (leagueModel.getName().toLowerCase().contains(str.toLowerCase())) listLeagueModel.add(leagueModel);
+                if (leagueModel.getName().toLowerCase().contains(str.toLowerCase()))
+                    listLeagueModel.add(leagueModel);
             }
             leagueAdapter.notifyDataSetChanged();
             binding.rcvResult.setAdapter(leagueAdapter);
@@ -208,14 +211,16 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
             @Override
             public void select(TeamModel teamModel) {
                 Intent intent = new Intent(getBaseContext(), TeamDetailActivity.class);
-                intent.putExtra(SPUtils.INTENT_TEAM,teamModel);
+                intent.putExtra(SPUtils.INTENT_TEAM, teamModel);
                 resultLauncher.launch(intent);
             }
         });
         leagueAdapter = new LeagueSearchAdapter(this, listLeagueModel, new LeagueSearchClickCallBack() {
             @Override
             public void select(LeagueModel leagueModel) {
-                Toast.makeText(SearchActivity.this, leagueModel.getName(), Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getBaseContext(), LeagueDetailActivity.class);
+                intent.putExtra(SPUtils.INTENT_LEAGUE, leagueModel);
+                resultLauncher.launch(intent);
             }
         });
         topSearchAdapter = new TopSearchAdapter(this, listTopSearch, new TopSearchClickCallBack() {
@@ -249,6 +254,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
         binding.rcvRecent.setAdapter(adapter);
         binding.rcvTopSearch.setAdapter(topSearchAdapter);
     }
+
     public ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == RESULT_OK) {
             //ads

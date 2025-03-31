@@ -13,6 +13,7 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.gson.Gson;
 import com.livescore.soccerscore.matchlive.ads.IsNetWork;
 import com.livescore.soccerscore.matchlive.api_data.ApiDataService;
+import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
 import com.livescore.soccerscore.matchlive.api_data.model.PaginationModel;
 import com.livescore.soccerscore.matchlive.api_data.model.ScoreModel;
 import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
@@ -104,8 +105,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 
     public void fetchFixtureDatePage(String date, int page) {
         try {
-            String fixedKey = "ldcyiGDAUEvdBzwVTkbIKcdxDY4Wx8vLYFEBpcksdhDuyA8lMAMkUZIZwEzk";
-            ApiDataService.apiService.callFixtureToday(date, fixedKey, "today.participants;today.scores;today.state", page).enqueue(new Callback<FixtureResponse>() {
+            ApiDataService.apiService.callFixtureToday(date, ConstantApiData.KEY, "today.participants;today.scores;today.state", page).enqueue(new Callback<FixtureResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<FixtureResponse> call, @NonNull Response<FixtureResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {

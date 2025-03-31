@@ -449,7 +449,7 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:orientation="vertical"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -466,7 +466,7 @@
                         android:layout_marginTop="8dp"
                         android:fontFamily="@font/sf_pro_text_medium"
                         android:includeFontPadding="false"
-                        android:text="@string/no_favourite_team"
+                        android:text="@string/no_favourite_league"
                         android:textColor="#292D32"
                         android:textSize="12sp" />
 

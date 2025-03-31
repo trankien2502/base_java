@@ -1,5 +1,7 @@
 package com.livescore.soccerscore.matchlive.api_data;
 
+import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
+import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueDetail;
 import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
 import com.livescore.soccerscore.matchlive.api_data.model.team.TeamInMatch;
 import com.livescore.soccerscore.matchlive.api_data.model.team.TeamModel;
@@ -11,10 +13,11 @@ public class ConstantApiData {
     public static final String LEAGUE = "leagues";
     public static final String TEAM = "teams";
     public static List<TeamInMatch> listTeam = new ArrayList<>();
-    public static List<LeagueModel> listLeague = new ArrayList<>();
+    public static List<LeagueDetail> listLeague = new ArrayList<>();
+    public static List<FixtureModel.StateModel> listState = new ArrayList<>();
     public static final String FIXTURE = "fixtures";
-    public static final String MILESTONES_DEMO = "milestones_demo";
-    public static final String AI_TREND = "altrend_frame";
+    public static final String STATE = "states";
+    public static final String KEY = "tCaaAbgORG4Czb3byoAN4ywt70oCxMMpfQqVCmRetJp3BYapxRv419koCJQT";
     public static final String AI_TREND_DEMO = "altrend_demo";
     public static final String HOLIDAY_DEMO = "holiday_demo";
     public static final String MILESTONES_STICKER = "milestones_sticker";

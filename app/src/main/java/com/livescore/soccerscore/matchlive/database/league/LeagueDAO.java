@@ -25,7 +25,7 @@ public interface LeagueDAO {
     List<LeagueModel> getFavouriteTeam(boolean isFavourite);
 
     @Query("SELECT * FROM league where id = :id")
-    LeagueModel getIconById(int id);
+    LeagueModel getLeagueById(int id);
 
     @Update
     void update(LeagueModel teamModel);

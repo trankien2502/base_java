@@ -6,7 +6,7 @@ import java.util.List;
 
 public class LeagueResponse {
     @SerializedName("data")
-    public List<LeagueModel> data;
+    public List<LeagueDetail> data;
 
     @SerializedName("pagination")
     public Object pagination;

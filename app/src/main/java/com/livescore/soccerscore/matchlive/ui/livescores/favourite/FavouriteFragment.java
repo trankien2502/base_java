@@ -12,21 +12,28 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
+import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueDetail;
 import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
+import com.livescore.soccerscore.matchlive.api_data.model.team.TeamInMatch;
 import com.livescore.soccerscore.matchlive.api_data.model.team.TeamModel;
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.database.league.LeagueDatabase;
 import com.livescore.soccerscore.matchlive.database.team.TeamDatabase;
 import com.livescore.soccerscore.matchlive.databinding.FragmentFavouriteBinding;
 import com.livescore.soccerscore.matchlive.ui.livescores.HomeActivity;
+import com.livescore.soccerscore.matchlive.ui.livescores.league_detail.LeagueDetailActivity;
+import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.TeamDetailActivity;
 import com.livescore.soccerscore.matchlive.util.SPUtils;
 
 import java.util.ArrayList;
@@ -37,16 +44,19 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
     private int state = 1;
     private final static int TEAM = 1;
     private final static int LEAGUE = 2;
-    List<TeamModel> listTeamFavourite = new ArrayList<>();
-    List<LeagueModel> listLeagueFavourite = new ArrayList<>();
+    List<TeamModel> listTeamFavourite = new ArrayList<>(), listFavouriteTeamSearch = new ArrayList<>();
+    List<LeagueModel> listLeagueFavourite = new ArrayList<>(), listFavouriteLeagueSearch = new ArrayList<>();
 
-    List<TeamModel> listAllTeam = new ArrayList<>();
-    List<LeagueModel> listAllLeague = new ArrayList<>();
+    List<TeamModel> listAllTeam = new ArrayList<>(), listAllTeamSearch = new ArrayList<>();
+    List<LeagueModel> listAllLeague = new ArrayList<>(), listAllLeagueSearch = new ArrayList<>();
+
+
     LeagueClickCallBack leagueClickCallBack;
     LeagueAdapter leagueAdapterFavourite, leagueAdapter;
     TeamClickCallBack teamClickCallBack;
     TeamAdapter teamAdapterFavourite, teamAdapter;
     boolean isSearch = false;
+    String str = "";
 
     @Override
     public FragmentFavouriteBinding setBinding(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState) {
@@ -59,23 +69,40 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
         teamClickCallBack = new TeamClickCallBack() {
             @Override
             public void select(TeamModel teamModel) {
-                Toast.makeText(requireContext(), "" + teamModel.isFavourite(), Toast.LENGTH_SHORT).show();
+                for (TeamInMatch team : ConstantApiData.listTeam) {
+                    if (team.getId() == teamModel.getId()) {
+                        Intent intent = new Intent(requireContext(), TeamDetailActivity.class);
+                        intent.putExtra(SPUtils.INTENT_TEAM, team);
+                        startArc(intent);
+                        break;
+                    }
+                }
+
             }
 
             @Override
             public void follow(TeamModel teamModel) {
                 changeFavouriteListTeam(teamModel);
+                if (isSearch) search();
             }
         };
         leagueClickCallBack = new LeagueClickCallBack() {
             @Override
             public void select(LeagueModel leagueModel) {
-                Toast.makeText(requireContext(), "" + leagueModel.isFavourite(), Toast.LENGTH_SHORT).show();
+                for (LeagueDetail leagueDetail : ConstantApiData.listLeague) {
+                    if (leagueModel.getId() == leagueDetail.getId()) {
+                        Intent intent = new Intent(requireContext(), LeagueDetailActivity.class);
+                        intent.putExtra(SPUtils.INTENT_LEAGUE, leagueDetail);
+                        startArc(intent);
+                        break;
+                    }
+                }
             }
 
             @Override
             public void follow(LeagueModel leagueModel) {
                 changeFavouriteListLeague(leagueModel);
+                if (isSearch) search();
             }
         };
         listAllLeague.addAll(ConstantApiData.listLeague);
@@ -84,6 +111,8 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
         listLeagueFavourite = LeagueDatabase.getInstance(requireContext()).leagueDAO().getAllLeagueFavourite();
         binding.tvFavouriteTeam.setText(getString(R.string.favourite) + " (" + listTeamFavourite.size() + ")");
         binding.tvAllTeam.setText(getString(R.string.all_teams) + " (" + listAllTeam.size() + ")");
+        binding.tvFavouriteLeague.setText(getString(R.string.favourite) + " (" + listLeagueFavourite.size() + ")");
+        binding.tvAllLeague.setText(getString(R.string.all_leagues) + " (" + listAllLeague.size() + ")");
         if (!listTeamFavourite.isEmpty()) {
             for (TeamModel teamModel : listAllTeam) {
                 for (TeamModel teamModel1 : listTeamFavourite) {
@@ -105,8 +134,8 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
                 }
             }
         }
-        checkEmptyTeam();
-        checkEmptyLeague();
+        checkEmptyTeam(listTeamFavourite, listAllTeam);
+        checkEmptyLeague(listLeagueFavourite, listAllLeague);
         teamAdapterFavourite = new TeamAdapter(requireContext(), listTeamFavourite, teamClickCallBack);
         teamAdapter = new TeamAdapter(requireContext(), listAllTeam, teamClickCallBack);
         binding.rcvTeamFavourite.setAdapter(teamAdapterFavourite);
@@ -147,7 +176,7 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
                 }
             teamAdapter.notifyDataSetChanged();
         }
-        checkEmptyTeam();
+        checkEmptyTeam(listTeamFavourite, listAllTeam);
         binding.tvFavouriteTeam.setText(getString(R.string.favourite) + " (" + listTeamFavourite.size() + ")");
     }
 
@@ -180,15 +209,25 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
                 }
             leagueAdapter.notifyDataSetChanged();
         }
-        checkEmptyLeague();
+        checkEmptyLeague(listLeagueFavourite, listAllLeague);
         binding.tvFavouriteLeague.setText(getString(R.string.favourite) + " (" + listLeagueFavourite.size() + ")");
     }
 
-    private void checkEmptyTeam() {
-        if (listTeamFavourite.isEmpty()) binding.noFavouriteTeam.setVisibility(VISIBLE);
-        else binding.noFavouriteTeam.setVisibility(GONE);
+    private void checkEmptyTeam(List<TeamModel> listFavourite, List<TeamModel> listAll) {
+        if (listFavourite.isEmpty()) {
+            if (isSearch) {
+                binding.noFavouriteTeam.setVisibility(GONE);
+                binding.noResultFavouriteTeam.setVisibility(VISIBLE);
+            } else {
+                binding.noFavouriteTeam.setVisibility(VISIBLE);
+                binding.noResultFavouriteTeam.setVisibility(GONE);
+            }
+        } else {
+            binding.noFavouriteTeam.setVisibility(GONE);
+            binding.noResultFavouriteTeam.setVisibility(GONE);
+        }
 
-        if (listAllTeam.isEmpty()) {
+        if (listAll.isEmpty()) {
             binding.noResultTeam.setVisibility(VISIBLE);
             int heightInDp = 136;
             int heightInPx = (int) TypedValue.applyDimension(
@@ -209,11 +248,21 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
         }
     }
 
-    private void checkEmptyLeague() {
-        if (listLeagueFavourite.isEmpty()) binding.noFavouriteLeague.setVisibility(VISIBLE);
-        else binding.noFavouriteLeague.setVisibility(GONE);
+    private void checkEmptyLeague(List<LeagueModel> listFavourite, List<LeagueModel> listAll) {
+        if (listFavourite.isEmpty()) {
+            if (isSearch) {
+                binding.noResultFavouriteLeague.setVisibility(VISIBLE);
+                binding.noFavouriteLeague.setVisibility(GONE);
+            } else {
+                binding.noResultFavouriteLeague.setVisibility(GONE);
+                binding.noFavouriteLeague.setVisibility(VISIBLE);
+            }
+        } else {
+            binding.noResultFavouriteLeague.setVisibility(GONE);
+            binding.noFavouriteLeague.setVisibility(GONE);
+        }
 
-        if (listAllLeague.isEmpty()) {
+        if (listAll.isEmpty()) {
             binding.noResultLeague.setVisibility(VISIBLE);
             int heightInDp = 136;
             int heightInPx = (int) TypedValue.applyDimension(
@@ -253,12 +302,13 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
             SPUtils.showKeyboard(requireContext(), binding.edtText);
         });
         binding.ivExitSearch.setOnClickListener(v -> {
+            str = "";
             isSearch = false;
             SPUtils.hideKeyboard(requireContext(), binding.edtText);
             binding.edtText.clearFocus();
             binding.clHeader.setVisibility(VISIBLE);
             binding.clSearch.setVisibility(GONE);
-
+            search();
         });
         binding.ivHideFavouriteLeague.setOnClickListener(v -> {
             if (binding.clFavouriteLeague.getVisibility() == VISIBLE) {
@@ -309,13 +359,53 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
 
             @Override
             public void afterTextChanged(Editable s) {
-
+                str = s.toString().trim();
+                search();
             }
+        });
+        binding.edtText.setOnClickListener(v -> {
+            SPUtils.showKeyboard(requireContext(), binding.edtText);
         });
     }
 
+    private void search() {
+        listAllTeamSearch.clear();
+        listFavouriteTeamSearch.clear();
+        listAllLeagueSearch.clear();
+        listFavouriteLeagueSearch.clear();
+        if (str.isEmpty()) {
+            teamAdapter.setList(listAllTeam);
+            teamAdapterFavourite.setList(listTeamFavourite);
+            checkEmptyTeam(listTeamFavourite, listAllTeam);
+            leagueAdapter.setList(listAllLeague);
+            leagueAdapterFavourite.setList(listLeagueFavourite);
+            checkEmptyLeague(listLeagueFavourite, listAllLeague);
+        } else {
+            for (TeamModel teamModel : listAllTeam) {
+                if (teamModel.getName().toLowerCase().contains(str.toLowerCase()))
+                    listAllTeamSearch.add(teamModel);
+            }
+            for (TeamModel teamModel : listTeamFavourite) {
+                if (teamModel.getName().toLowerCase().contains(str.toLowerCase()))
+                    listFavouriteTeamSearch.add(teamModel);
+            }
+            teamAdapter.setList(listAllTeamSearch);
+            teamAdapterFavourite.setList(listFavouriteTeamSearch);
+            checkEmptyTeam(listFavouriteTeamSearch, listAllTeamSearch);
 
-
+            for (LeagueModel leagueModel : listAllLeague) {
+                if (leagueModel.getName().toLowerCase().contains(str.toLowerCase()))
+                    listAllLeagueSearch.add(leagueModel);
+            }
+            for (LeagueModel leagueModel : listLeagueFavourite) {
+                if (leagueModel.getName().toLowerCase().contains(str.toLowerCase()))
+                    listFavouriteLeagueSearch.add(leagueModel);
+            }
+            leagueAdapter.setList(listAllLeagueSearch);
+            leagueAdapterFavourite.setList(listFavouriteLeagueSearch);
+            checkEmptyLeague(listFavouriteLeagueSearch, listAllLeagueSearch);
+        }
+    }
 
     private void resetChange() {
         binding.tvLeague.setBackgroundResource(0);

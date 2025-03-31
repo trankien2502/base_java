@@ -8,7 +8,7 @@ public class PaginationModel {
     @SerializedName("next_page")
     public String next_page;
     @SerializedName("has_more")
-    public boolean has_more;
+    public boolean has_more = false;
 
     @Override
     public String toString() {

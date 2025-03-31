@@ -8,6 +8,8 @@ public class FixtureBase {
     public int id;
     @SerializedName("league_id")
     public int league_id;
+    @SerializedName("state_id")
+    public int state_id;
     @SerializedName("name")
     public String name;
     @SerializedName("starting_at")
@@ -23,6 +25,7 @@ public class FixtureBase {
     public String toString() {
         return "FixtureBase{" +
                 "id=" + id +
+                "state_id=" + state_id +
                 ", league_id=" + league_id +
                 ", name='" + name + '\'' +
                 ", starting_at='" + starting_at + '\'' +

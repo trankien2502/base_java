@@ -15,6 +15,7 @@ public class SPUtils {
     public static final String SHARED_PREFS_NAME = "Live Soccer Scores: Live Match";
     public static String LIST_RECENT = "LIST_RECENT";
     public static String INTENT_TEAM = "INTENT_TEAM";
+    public static String INTENT_LEAGUE = "INTENT_LEAGUE";
     public static String NOTIFICATION = "NOTIFICATION";
     public static String LANGUAGE = "LANGUAGE";
     public static String RATE_STAR = "RATE_STAR";

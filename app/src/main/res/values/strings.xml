@@ -101,6 +101,7 @@
     <string name="team">Team</string>
     <string name="league">League</string>
     <string name="no_favourite_team">No favourite team</string>
+    <string name="no_favourite_league">No favourite league</string>
     <string name="all_teams">All teams</string>
     <string name="search">Search...</string>
     <string name="the_app_can_t_open_because_you_re_not_connected_to_the_internet_check_your_internet_connection_and_try_again">The app can\'t open because you\'re not connected to the Internet. Check your Internet connection and try again.</string>
@@ -115,6 +116,7 @@
     <string name="fixtures">Fixtures</string>
     <string name="squad">Squad</string>
     <string name="error">Error</string>
+    <string name="table">Table</string>
 
 
 </resources>

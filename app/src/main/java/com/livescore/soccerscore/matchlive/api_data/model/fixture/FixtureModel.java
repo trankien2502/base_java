@@ -8,7 +8,7 @@ import com.livescore.soccerscore.matchlive.api_data.model.team.TeamModel;
 
 import java.util.List;
 
-public class FixtureModel extends FixtureBase{
+public class FixtureModel extends FixtureBase {
     @SerializedName("participants")
     public List<TeamInMatch> participants;
     @SerializedName("scores")
@@ -16,9 +16,17 @@ public class FixtureModel extends FixtureBase{
     @SerializedName("state")
     public Object state;
 
+
     public StateModel getState() {
         Gson gson = new Gson();
-        return gson.fromJson(new Gson().toJson(state), StateModel.class);
+        if (state != null) {
+            return gson.fromJson(new Gson().toJson(state), StateModel.class);
+        } else return new StateModel();
+
+    }
+
+    public void setState(StateModel stateModel) {
+        this.state = stateModel;
     }
 
 
@@ -26,6 +34,7 @@ public class FixtureModel extends FixtureBase{
     public String toString() {
         return "FixtureModel{" +
                 "id=" + id +
+                "state_id=" + state_id +
                 ", league_id=" + league_id +
                 ", name='" + name + '\'' +
                 ", starting_at='" + starting_at + '\'' +
@@ -36,6 +45,7 @@ public class FixtureModel extends FixtureBase{
                 ", state=" + getState() +
                 '}';
     }
+
     public static class StateModel {
         @SerializedName("id")
         public int id;
@@ -53,4 +63,6 @@ public class FixtureModel extends FixtureBase{
                     '}';
         }
     }
+
+
 }

@@ -28,13 +28,9 @@ public class SplashActivity extends BaseActivity<ActivitySplashBinding> {
     protected void onResume() {
         super.onResume();
         if (IsNetWork.haveNetworkConnection(this)) {
-            CallApiUtils.fetchFixtureDatePage("2005-11-27",1);
-        } else {
-            Log.e("call_api_data", "No internet to call api");
-        }
-        if (IsNetWork.haveNetworkConnection(this)){
-            CallApiUtils.callDataLeague(this);
-            CallApiUtils.callDataTeam(this);
+//            CallApiUtils.callDataLeague(this);
+//            CallApiUtils.callDataTeam(this);
+//            CallApiUtils.callDataState(this);
             new Handler().postDelayed(() -> {
                 startNextActivity(LanguageStartActivity.class, null);
                 finishAffinity();

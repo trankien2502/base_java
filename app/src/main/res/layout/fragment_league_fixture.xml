@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.livescores.team_detail.TeamStatsFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.livescores.league_detail.league_fixture.LeagueFixtureFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcvSquad"
+        android:id="@+id/rcvFixture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="20dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_squad" />
+        tools:listitem="@layout/item_fixture_home" />
+
 </FrameLayout>

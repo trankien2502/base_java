@@ -7,10 +7,11 @@ import androidx.room.PrimaryKey;
 import com.google.gson.annotations.SerializedName;
 import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Entity(tableName = "league")
-public class LeagueModel {
+public class LeagueModel implements Serializable {
     @PrimaryKey
     @SerializedName("id")
     public int id;

@@ -1,5 +1,6 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.favourite;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -24,6 +25,12 @@ public class LeagueAdapter extends RecyclerView.Adapter<LeagueAdapter.TeamLeague
     public TeamLeagueViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         ItemTeamBinding binding = ItemTeamBinding.inflate(LayoutInflater.from(parent.getContext()), parent, false);
         return new TeamLeagueViewHolder(binding);
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    public void setList(List<LeagueModel> list) {
+        this.list = list;
+        notifyDataSetChanged();
     }
 
     public LeagueAdapter(Context context, List<LeagueModel> list, LeagueClickCallBack teamClickCallBack) {
