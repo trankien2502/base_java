@@ -4,5 +4,6 @@ import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueTodayMode
 
 public interface LeagueHomeClickCallBack {
     void select(LeagueTodayModel leagueTodayModel);
+    void load();
 
 }

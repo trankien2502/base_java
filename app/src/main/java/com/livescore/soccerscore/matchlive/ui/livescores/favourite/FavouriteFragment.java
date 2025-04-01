@@ -9,8 +9,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,16 +23,25 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
+import com.google.gson.Gson;
 import com.livescore.soccerscore.matchlive.R;
+import com.livescore.soccerscore.matchlive.ads.IsNetWork;
+import com.livescore.soccerscore.matchlive.api_data.ApiDataService;
 import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
+import com.livescore.soccerscore.matchlive.api_data.model.PaginationModel;
 import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueDetail;
 import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
+import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueResponse;
 import com.livescore.soccerscore.matchlive.api_data.model.team.TeamInMatch;
 import com.livescore.soccerscore.matchlive.api_data.model.team.TeamModel;
+import com.livescore.soccerscore.matchlive.api_data.model.team.TeamResponse;
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.database.league.LeagueDatabase;
 import com.livescore.soccerscore.matchlive.database.team.TeamDatabase;
 import com.livescore.soccerscore.matchlive.databinding.FragmentFavouriteBinding;
+import com.livescore.soccerscore.matchlive.dialog.LoadingDialog;
 import com.livescore.soccerscore.matchlive.ui.livescores.HomeActivity;
 import com.livescore.soccerscore.matchlive.ui.livescores.league_detail.LeagueDetailActivity;
 import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.TeamDetailActivity;
@@ -39,16 +50,21 @@ import com.livescore.soccerscore.matchlive.util.SPUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
 
     private int state = 1;
     private final static int TEAM = 1;
     private final static int LEAGUE = 2;
-    List<TeamModel> listTeamFavourite = new ArrayList<>(), listFavouriteTeamSearch = new ArrayList<>();
-    List<LeagueModel> listLeagueFavourite = new ArrayList<>(), listFavouriteLeagueSearch = new ArrayList<>();
+    LoadingDialog loadingDialog;
+    List<TeamModel> listTeamFavourite = new ArrayList<>();
+    List<LeagueModel> listLeagueFavourite = new ArrayList<>();
 
-    List<TeamModel> listAllTeam = new ArrayList<>(), listAllTeamSearch = new ArrayList<>();
-    List<LeagueModel> listAllLeague = new ArrayList<>(), listAllLeagueSearch = new ArrayList<>();
+    List<TeamModel> listAllTeam = new ArrayList<>();
+    List<LeagueModel> listAllLeague = new ArrayList<>();
 
 
     LeagueClickCallBack leagueClickCallBack;
@@ -57,98 +73,58 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
     TeamAdapter teamAdapterFavourite, teamAdapter;
     boolean isSearch = false;
     String str = "";
+    private boolean isHasMoreTeam = true;
+    private boolean isHasMoreLeague = true;
+    int currentPageTeam = 1;
+    int currentPageLeague = 1;
 
     @Override
     public FragmentFavouriteBinding setBinding(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState) {
         return FragmentFavouriteBinding.inflate(getLayoutInflater());
     }
 
-    @SuppressLint("SetTextI18n")
+
     @Override
     public void initView() {
-        teamClickCallBack = new TeamClickCallBack() {
-            @Override
-            public void select(TeamModel teamModel) {
-                for (TeamInMatch team : ConstantApiData.listTeam) {
-                    if (team.getId() == teamModel.getId()) {
-                        Intent intent = new Intent(requireContext(), TeamDetailActivity.class);
-                        intent.putExtra(SPUtils.INTENT_TEAM, team);
-                        startArc(intent);
-                        break;
-                    }
-                }
-
-            }
-
-            @Override
-            public void follow(TeamModel teamModel) {
-                changeFavouriteListTeam(teamModel);
-                if (isSearch) search();
-            }
-        };
-        leagueClickCallBack = new LeagueClickCallBack() {
-            @Override
-            public void select(LeagueModel leagueModel) {
-                for (LeagueDetail leagueDetail : ConstantApiData.listLeague) {
-                    if (leagueModel.getId() == leagueDetail.getId()) {
-                        Intent intent = new Intent(requireContext(), LeagueDetailActivity.class);
-                        intent.putExtra(SPUtils.INTENT_LEAGUE, leagueDetail);
-                        startArc(intent);
-                        break;
-                    }
-                }
-            }
-
-            @Override
-            public void follow(LeagueModel leagueModel) {
-                changeFavouriteListLeague(leagueModel);
-                if (isSearch) search();
-            }
-        };
-        listAllLeague.addAll(ConstantApiData.listLeague);
-        listAllTeam.addAll(ConstantApiData.listTeam);
+        loadingDialog = new LoadingDialog(requireContext(), false);
         listTeamFavourite = TeamDatabase.getInstance(requireContext()).teamDAO().getAllTeamFavourite();
         listLeagueFavourite = LeagueDatabase.getInstance(requireContext()).leagueDAO().getAllLeagueFavourite();
-        binding.tvFavouriteTeam.setText(getString(R.string.favourite) + " (" + listTeamFavourite.size() + ")");
-        binding.tvAllTeam.setText(getString(R.string.all_teams) + " (" + listAllTeam.size() + ")");
-        binding.tvFavouriteLeague.setText(getString(R.string.favourite) + " (" + listLeagueFavourite.size() + ")");
-        binding.tvAllLeague.setText(getString(R.string.all_leagues) + " (" + listAllLeague.size() + ")");
-        if (!listTeamFavourite.isEmpty()) {
-            for (TeamModel teamModel : listAllTeam) {
-                for (TeamModel teamModel1 : listTeamFavourite) {
-                    if (teamModel1.getId() == teamModel.getId()) {
-                        teamModel.setFavourite(true);
-                        break;
-                    }
-                }
-            }
-
-        }
-        if (!listLeagueFavourite.isEmpty()) {
-            for (LeagueModel leagueModel : listAllLeague) {
-                for (LeagueModel leagueModel1 : listLeagueFavourite) {
-                    if (leagueModel1.getId() == leagueModel.getId()) {
-                        leagueModel.setFavourite(true);
-                        break;
-                    }
-                }
-            }
-        }
-        checkEmptyTeam(listTeamFavourite, listAllTeam);
-        checkEmptyLeague(listLeagueFavourite, listAllLeague);
-        teamAdapterFavourite = new TeamAdapter(requireContext(), listTeamFavourite, teamClickCallBack);
-        teamAdapter = new TeamAdapter(requireContext(), listAllTeam, teamClickCallBack);
-        binding.rcvTeamFavourite.setAdapter(teamAdapterFavourite);
-        binding.rcvTeamAll.setAdapter(teamAdapter);
-        leagueAdapterFavourite = new LeagueAdapter(requireContext(), listLeagueFavourite, leagueClickCallBack);
-        leagueAdapter = new LeagueAdapter(requireContext(), listAllLeague, leagueClickCallBack);
-        binding.rcvLeagueAll.setAdapter(leagueAdapter);
-        binding.rcvLeagueFavourite.setAdapter(leagueAdapterFavourite);
+        initAdapter();
         changeState();
     }
 
+
+    private void setFavouriteTeamLoad() {
+        if (!listTeamFavourite.isEmpty() && !listAllTeam.isEmpty()) {
+            for (int i = 0; i < listAllTeam.size(); i++) {
+                for (TeamModel teamModel1 : listTeamFavourite) {
+                    if (teamModel1.getId() == listAllTeam.get(i).getId()) {
+                        listAllTeam.get(i).setFavourite(true);
+                        teamAdapter.notifyItemChanged(i);
+                        break;
+                    }
+                }
+            }
+
+        }
+    }
+
+    private void setFavouriteLeagueLoad() {
+        if (!listLeagueFavourite.isEmpty() && !listAllLeague.isEmpty()) {
+            for (int i = 0; i < listAllLeague.size(); i++) {
+                for (LeagueModel leagueModel1 : listLeagueFavourite) {
+                    if (leagueModel1.getId() == listAllLeague.get(i).getId()) {
+                        listAllLeague.get(i).setFavourite(true);
+                        leagueAdapter.notifyItemChanged(i);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
     @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
-    private void changeFavouriteListTeam(TeamModel teamModel) {
+    private void changeFavouriteListTeam(int position, TeamModel teamModel) {
         if (teamModel.isFavourite()) {
             for (TeamModel teamModel1 : listTeamFavourite)
                 if (teamModel1.getId() == teamModel.getId()) {
@@ -157,31 +133,32 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
                 }
             listTeamFavourite.remove(teamModel);
             TeamDatabase.getInstance(requireContext()).teamDAO().delete(teamModel.getId());
-            teamAdapterFavourite.notifyDataSetChanged();
-            for (TeamModel teamModel1 : listAllTeam)
-                if (teamModel1.getId() == teamModel.getId()) {
-                    teamModel1.setFavourite(false);
+            teamAdapterFavourite.notifyItemRemoved(position);
+            for (int i = 0; i < listAllTeam.size(); i++)
+                if (listAllTeam.get(i).getId() == teamModel.getId()) {
+                    listAllTeam.get(i).setFavourite(false);
+                    teamAdapter.notifyItemChanged(i);
                     break;
                 }
-            teamAdapter.notifyDataSetChanged();
+
         } else {
             teamModel.setFavourite(true);
             TeamDatabase.getInstance(requireContext()).teamDAO().insert(teamModel);
             listTeamFavourite.add(teamModel);
             teamAdapterFavourite.notifyDataSetChanged();
-            for (TeamModel teamModel1 : listAllTeam)
-                if (teamModel1.getId() == teamModel.getId()) {
-                    teamModel1.setFavourite(true);
+            for (int i = 0; i < listAllTeam.size(); i++)
+                if (listAllTeam.get(i).getId() == teamModel.getId()) {
+                    listAllTeam.get(i).setFavourite(true);
+                    teamAdapter.notifyItemChanged(i);
                     break;
                 }
-            teamAdapter.notifyDataSetChanged();
         }
-        checkEmptyTeam(listTeamFavourite, listAllTeam);
+        checkEmptyTeam();
         binding.tvFavouriteTeam.setText(getString(R.string.favourite) + " (" + listTeamFavourite.size() + ")");
     }
 
     @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
-    private void changeFavouriteListLeague(LeagueModel leagueModel) {
+    private void changeFavouriteListLeague(int position, LeagueModel leagueModel) {
         if (leagueModel.isFavourite()) {
             for (LeagueModel leagueModel1 : listLeagueFavourite)
                 if (leagueModel1.getId() == leagueModel.getId()) {
@@ -190,31 +167,32 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
                 }
             listLeagueFavourite.remove(leagueModel);
             LeagueDatabase.getInstance(requireContext()).leagueDAO().delete(leagueModel.getId());
-            leagueAdapterFavourite.notifyDataSetChanged();
-            for (LeagueModel leagueModel1 : listAllLeague)
-                if (leagueModel1.getId() == leagueModel.getId()) {
-                    leagueModel1.setFavourite(false);
+            leagueAdapterFavourite.notifyItemRemoved(position);
+            for (int i = 0; i < listAllLeague.size(); i++)
+                if (listAllLeague.get(i).getId() == leagueModel.getId()) {
+                    listAllLeague.get(i).setFavourite(false);
+                    leagueAdapter.notifyItemChanged(i);
                     break;
                 }
-            leagueAdapter.notifyDataSetChanged();
+
         } else {
             leagueModel.setFavourite(true);
             LeagueDatabase.getInstance(requireContext()).leagueDAO().insert(leagueModel);
             listLeagueFavourite.add(leagueModel);
             leagueAdapterFavourite.notifyDataSetChanged();
-            for (LeagueModel leagueModel1 : listAllLeague)
-                if (leagueModel1.getId() == leagueModel.getId()) {
-                    leagueModel1.setFavourite(true);
+            for (int i = 0; i < listAllLeague.size(); i++)
+                if (listAllLeague.get(i).getId() == leagueModel.getId()) {
+                    listAllLeague.get(i).setFavourite(true);
+                    leagueAdapter.notifyItemChanged(i);
                     break;
                 }
-            leagueAdapter.notifyDataSetChanged();
         }
-        checkEmptyLeague(listLeagueFavourite, listAllLeague);
+        checkEmptyLeague();
         binding.tvFavouriteLeague.setText(getString(R.string.favourite) + " (" + listLeagueFavourite.size() + ")");
     }
 
-    private void checkEmptyTeam(List<TeamModel> listFavourite, List<TeamModel> listAll) {
-        if (listFavourite.isEmpty()) {
+    private void checkEmptyTeam() {
+        if (listTeamFavourite.isEmpty()) {
             if (isSearch) {
                 binding.noFavouriteTeam.setVisibility(GONE);
                 binding.noResultFavouriteTeam.setVisibility(VISIBLE);
@@ -227,7 +205,7 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
             binding.noResultFavouriteTeam.setVisibility(GONE);
         }
 
-        if (listAll.isEmpty()) {
+        if (listAllTeam.isEmpty()) {
             binding.noResultTeam.setVisibility(VISIBLE);
             int heightInDp = 136;
             int heightInPx = (int) TypedValue.applyDimension(
@@ -248,8 +226,8 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
         }
     }
 
-    private void checkEmptyLeague(List<LeagueModel> listFavourite, List<LeagueModel> listAll) {
-        if (listFavourite.isEmpty()) {
+    private void checkEmptyLeague() {
+        if (listLeagueFavourite.isEmpty()) {
             if (isSearch) {
                 binding.noResultFavouriteLeague.setVisibility(VISIBLE);
                 binding.noFavouriteLeague.setVisibility(GONE);
@@ -262,7 +240,7 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
             binding.noFavouriteLeague.setVisibility(GONE);
         }
 
-        if (listAll.isEmpty()) {
+        if (listAllLeague.isEmpty()) {
             binding.noResultLeague.setVisibility(VISIBLE);
             int heightInDp = 136;
             int heightInPx = (int) TypedValue.applyDimension(
@@ -309,6 +287,23 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
             binding.clHeader.setVisibility(VISIBLE);
             binding.clSearch.setVisibility(GONE);
             search();
+        });
+        binding.edtText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE ||
+                        (event != null && event.getKeyCode() == KeyEvent.KEYCODE_ENTER && event.getAction() == KeyEvent.ACTION_DOWN)) {
+                    String text = binding.edtText.getText().toString().trim();
+                    if (!text.isEmpty()) {
+                        search();
+
+                    }
+                    binding.edtText.clearFocus();
+                    SPUtils.hideKeyboard(requireContext(), binding.edtText);
+                    return true;
+                }
+                return false;
+            }
         });
         binding.ivHideFavouriteLeague.setOnClickListener(v -> {
             if (binding.clFavouriteLeague.getVisibility() == VISIBLE) {
@@ -360,7 +355,6 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
             @Override
             public void afterTextChanged(Editable s) {
                 str = s.toString().trim();
-                search();
             }
         });
         binding.edtText.setOnClickListener(v -> {
@@ -369,41 +363,258 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
     }
 
     private void search() {
-        listAllTeamSearch.clear();
-        listFavouriteTeamSearch.clear();
-        listAllLeagueSearch.clear();
-        listFavouriteLeagueSearch.clear();
         if (str.isEmpty()) {
-            teamAdapter.setList(listAllTeam);
-            teamAdapterFavourite.setList(listTeamFavourite);
-            checkEmptyTeam(listTeamFavourite, listAllTeam);
-            leagueAdapter.setList(listAllLeague);
-            leagueAdapterFavourite.setList(listLeagueFavourite);
-            checkEmptyLeague(listLeagueFavourite, listAllLeague);
+            if (state == TEAM) {
+                listAllTeam.clear();
+                currentPageTeam = 1;
+                loadingDialog.show();
+                fetchTeamPage(currentPageTeam);
+            } else {
+                listAllLeague.clear();
+                currentPageLeague = 1;
+                loadingDialog.show();
+                fetchLeaguePage(currentPageLeague);
+            }
         } else {
-            for (TeamModel teamModel : listAllTeam) {
-                if (teamModel.getName().toLowerCase().contains(str.toLowerCase()))
-                    listAllTeamSearch.add(teamModel);
+            if (state == TEAM) {
+                listAllTeam.clear();
+                currentPageTeam = 1;
+                loadingDialog.show();
+                fetchTeamPageSearch(str, currentPageTeam);
+            } else {
+                listAllLeague.clear();
+                currentPageLeague = 1;
+                loadingDialog.show();
+                fetchLeaguePageSearch(str, currentPageLeague);
             }
-            for (TeamModel teamModel : listTeamFavourite) {
-                if (teamModel.getName().toLowerCase().contains(str.toLowerCase()))
-                    listFavouriteTeamSearch.add(teamModel);
-            }
-            teamAdapter.setList(listAllTeamSearch);
-            teamAdapterFavourite.setList(listFavouriteTeamSearch);
-            checkEmptyTeam(listFavouriteTeamSearch, listAllTeamSearch);
+        }
+    }
 
-            for (LeagueModel leagueModel : listAllLeague) {
-                if (leagueModel.getName().toLowerCase().contains(str.toLowerCase()))
-                    listAllLeagueSearch.add(leagueModel);
-            }
-            for (LeagueModel leagueModel : listLeagueFavourite) {
-                if (leagueModel.getName().toLowerCase().contains(str.toLowerCase()))
-                    listFavouriteLeagueSearch.add(leagueModel);
-            }
-            leagueAdapter.setList(listAllLeagueSearch);
-            leagueAdapterFavourite.setList(listFavouriteLeagueSearch);
-            checkEmptyLeague(listFavouriteLeagueSearch, listAllLeagueSearch);
+    private void fetchTeamPageSearch(String str, int page) {
+        try {
+            ApiDataService.apiService.callTeamSearch(str, ConstantApiData.KEY, page, "country").enqueue(new Callback<TeamResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<TeamResponse> call, @NonNull Response<TeamResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        Log.e("API_RESPONSE", "Raw JSON: " + new Gson().toJson(response.body()));
+                        Log.e("API_RESPONSE", "page: " + page);
+                        TeamResponse teamResponse = response.body();
+                        if (teamResponse.data != null) {
+                            int oldPos = listAllTeam.size();
+                            listAllTeam.addAll(teamResponse.data);
+                            Log.e("call_api_data", "call true:");
+                            Gson gson = new Gson();
+                            PaginationModel pagination = gson.fromJson(new Gson().toJson(teamResponse.pagination), PaginationModel.class);
+                            if (pagination == null) {
+                                isHasMoreTeam = false;
+                            } else isHasMoreTeam = pagination.has_more;
+                            setFavouriteTeamLoad();
+                            if (oldPos != 0) teamAdapter.notifyItemChanged(oldPos - 1);
+                            teamAdapter.notifyItemRangeChanged(oldPos, teamResponse.data.size());
+                            binding.rcvTeamAll.post(() -> {
+                                loadingDialog.dismiss();
+                                checkEmptyTeam();
+                            });
+                        } else {
+                            Log.e("call_api_data", "call false: Code: " + response.code());
+                            loadingDialog.dismiss();
+                            setFavouriteTeamLoad();
+                            checkEmptyTeam();
+                        }
+
+                    } else {
+                        Log.e("call_api_data", "call false: Code: " + response.code());
+                        loadingDialog.dismiss();
+                        setFavouriteTeamLoad();
+                        checkEmptyTeam();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<TeamResponse> call, @NonNull Throwable t) {
+                    Log.e("call_api_data", "onfailure" + t);
+                    loadingDialog.dismiss();
+                    setFavouriteTeamLoad();
+                    checkEmptyTeam();
+                }
+            });
+
+        } catch (Exception e) {
+            Log.e("call_api_data", "catch: ", e);
+            loadingDialog.dismiss();
+            setFavouriteTeamLoad();
+            checkEmptyTeam();
+        }
+    }
+
+    private void fetchTeamPage(int page) {
+        try {
+            ApiDataService.apiService.callTeam(ConstantApiData.KEY, page, "country").enqueue(new Callback<TeamResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<TeamResponse> call, @NonNull Response<TeamResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        Log.e("API_RESPONSE", "Raw JSON: " + new Gson().toJson(response.body()));
+                        Log.e("API_RESPONSE", "page: " + page);
+                        TeamResponse teamResponse = response.body();
+                        if (teamResponse.data != null) {
+                            int oldPos = listAllTeam.size();
+                            listAllTeam.addAll(teamResponse.data);
+                            Log.e("call_api_data", "call true:");
+                            Gson gson = new Gson();
+                            PaginationModel pagination = gson.fromJson(new Gson().toJson(teamResponse.pagination), PaginationModel.class);
+                            if (pagination == null) {
+                                isHasMoreTeam = false;
+                            } else isHasMoreTeam = pagination.has_more;
+                            setFavouriteTeamLoad();
+                            if (oldPos != 0) teamAdapter.notifyItemChanged(oldPos - 1);
+                            teamAdapter.notifyItemRangeChanged(oldPos, teamResponse.data.size());
+                            binding.rcvTeamAll.post(() -> {
+                                loadingDialog.dismiss();
+                                checkEmptyTeam();
+                            });
+                        } else {
+                            Log.e("call_api_data", "call false: Code: " + response.code());
+                            loadingDialog.dismiss();
+                            setFavouriteTeamLoad();
+                            checkEmptyTeam();
+                        }
+
+                    } else {
+                        Log.e("call_api_data", "call false: Code: " + response.code());
+                        loadingDialog.dismiss();
+                        setFavouriteTeamLoad();
+                        checkEmptyTeam();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<TeamResponse> call, @NonNull Throwable t) {
+                    Log.e("call_api_data", "onfailure" + t);
+                    loadingDialog.dismiss();
+                    setFavouriteTeamLoad();
+                    checkEmptyTeam();
+                }
+            });
+
+        } catch (Exception e) {
+            Log.e("call_api_data", "catch: ", e);
+            loadingDialog.dismiss();
+            setFavouriteTeamLoad();
+            checkEmptyTeam();
+        }
+    }
+
+    private void fetchLeaguePageSearch(String str, int page) {
+        try {
+            ApiDataService.apiService.callLeagueSearch(str, ConstantApiData.KEY, page, "country").enqueue(new Callback<LeagueResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<LeagueResponse> call, @NonNull Response<LeagueResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        Log.e("API_RESPONSE", "Raw JSON: " + new Gson().toJson(response.body()));
+                        Log.e("API_RESPONSE", "page: " + page);
+                        LeagueResponse leagueResponse = response.body();
+                        if (leagueResponse.data != null) {
+                            int oldPos = listAllLeague.size();
+                            listAllLeague.addAll(leagueResponse.data);
+                            Log.e("call_api_data", "call true:");
+                            Gson gson = new Gson();
+                            PaginationModel pagination = gson.fromJson(new Gson().toJson(leagueResponse.pagination), PaginationModel.class);
+                            if (pagination == null) {
+                                isHasMoreLeague = false;
+                            } else isHasMoreLeague = pagination.has_more;
+                            setFavouriteLeagueLoad();
+                            if (oldPos != 0) leagueAdapter.notifyItemChanged(oldPos - 1);
+                            leagueAdapter.notifyItemRangeChanged(oldPos, leagueResponse.data.size());
+                            binding.rcvLeagueAll.post(() -> {
+                                loadingDialog.dismiss();
+                                checkEmptyLeague();
+                            });
+                        } else {
+                            Log.e("call_api_data", "call false: Code: " + response.code());
+                            loadingDialog.dismiss();
+                            setFavouriteLeagueLoad();
+                            checkEmptyLeague();
+                        }
+
+                    } else {
+                        Log.e("call_api_data", "call false: Code: " + response.code());
+                        loadingDialog.dismiss();
+                        setFavouriteLeagueLoad();
+                        checkEmptyLeague();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<LeagueResponse> call, @NonNull Throwable t) {
+                    Log.e("call_api_data", "onfailure" + t);
+                    loadingDialog.dismiss();
+                    setFavouriteLeagueLoad();
+                    checkEmptyLeague();
+                }
+            });
+
+        } catch (Exception e) {
+            Log.e("call_api_data", "catch: ", e);
+            loadingDialog.dismiss();
+            setFavouriteLeagueLoad();
+            checkEmptyLeague();
+        }
+    }
+
+    private void fetchLeaguePage(int page) {
+        try {
+            ApiDataService.apiService.callLeague(ConstantApiData.KEY, page, "country").enqueue(new Callback<LeagueResponse>() {
+                @Override
+                public void onResponse(@NonNull Call<LeagueResponse> call, @NonNull Response<LeagueResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        Log.e("API_RESPONSE", "Raw JSON: " + new Gson().toJson(response.body()));
+                        Log.e("API_RESPONSE", "page: " + page);
+                        LeagueResponse leagueResponse = response.body();
+                        if (leagueResponse.data != null) {
+                            int oldPos = listAllLeague.size();
+                            listAllLeague.addAll(leagueResponse.data);
+                            Log.e("call_api_data", "call true:");
+                            Gson gson = new Gson();
+                            PaginationModel pagination = gson.fromJson(new Gson().toJson(leagueResponse.pagination), PaginationModel.class);
+                            if (pagination == null) {
+                                isHasMoreLeague = false;
+                            } else isHasMoreLeague = pagination.has_more;
+                            if (oldPos != 0) leagueAdapter.notifyItemChanged(oldPos - 1);
+                            setFavouriteLeagueLoad();
+                            leagueAdapter.notifyItemRangeChanged(oldPos, leagueResponse.data.size());
+                            binding.rcvLeagueAll.post(() -> {
+                                loadingDialog.dismiss();
+                                checkEmptyLeague();
+                            });
+                        } else {
+                            Log.e("call_api_data", "call false: Code: " + response.code());
+                            loadingDialog.dismiss();
+                            setFavouriteLeagueLoad();
+                            checkEmptyLeague();
+                        }
+
+                    } else {
+                        Log.e("call_api_data", "call false: Code: " + response.code());
+                        loadingDialog.dismiss();
+                        checkEmptyLeague();
+                        setFavouriteLeagueLoad();
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<LeagueResponse> call, @NonNull Throwable t) {
+                    Log.e("call_api_data", "onfailure" + t);
+                    loadingDialog.dismiss();
+                    setFavouriteLeagueLoad();
+                    checkEmptyLeague();
+                }
+            });
+
+        } catch (Exception e) {
+            Log.e("call_api_data", "catch: ", e);
+            loadingDialog.dismiss();
+            setFavouriteLeagueLoad();
+            checkEmptyLeague();
         }
     }
 
@@ -422,10 +633,30 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
             binding.tvLeague.setBackgroundResource(R.drawable.bg_select_favourite_item);
             binding.tvLeague.setTextColor(Color.parseColor("#0094FD"));
             binding.clLeague.setVisibility(VISIBLE);
+            loadingDialog.show();
+            if (IsNetWork.haveNetworkConnection(requireContext())) {
+                currentPageLeague = 1;
+                if (isSearch)
+                    fetchLeaguePageSearch(str, currentPageLeague);
+                else fetchLeaguePage(currentPageLeague);
+            } else {
+                Log.e("call_api_data", "No internet to call api");
+                new Handler().postDelayed(() -> loadingDialog.dismiss(), 500);
+            }
         } else if (state == TEAM) {
             binding.tvTeam.setBackgroundResource(R.drawable.bg_select_favourite_item);
             binding.tvTeam.setTextColor(Color.parseColor("#0094FD"));
             binding.clTeam.setVisibility(VISIBLE);
+            loadingDialog.show();
+            if (IsNetWork.haveNetworkConnection(requireContext())) {
+                currentPageTeam = 1;
+                if (isSearch)
+                    fetchTeamPageSearch(str, currentPageTeam);
+                else fetchTeamPage(currentPageTeam);
+            } else {
+                Log.e("call_api_data", "No internet to call api");
+                new Handler().postDelayed(() -> loadingDialog.dismiss(), 500);
+            }
         }
     }
 
@@ -434,6 +665,95 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
             HomeActivity main = (HomeActivity) getContext();
             main.resultLauncher.launch(intent);
         }
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void initAdapter() {
+        teamClickCallBack = new TeamClickCallBack() {
+            @Override
+            public void select(TeamModel teamModel) {
+                for (TeamModel team : listAllTeam) {
+                    if (team.getId() == teamModel.getId()) {
+                        Intent intent = new Intent(requireContext(), TeamDetailActivity.class);
+                        intent.putExtra(SPUtils.INTENT_TEAM, team);
+                        startArc(intent);
+                        break;
+                    }
+                }
+
+            }
+
+            @Override
+            public void follow(int position, TeamModel teamModel) {
+                changeFavouriteListTeam(position, teamModel);
+            }
+
+            @Override
+            public void load() {
+                loadingDialog.show();
+                if (isHasMoreTeam) {
+                    if (IsNetWork.haveNetworkConnection(requireContext())) {
+                        currentPageTeam++;
+                        if (isSearch)
+                            fetchTeamPageSearch(str, currentPageTeam);
+                        else fetchTeamPage(currentPageTeam);
+                    } else {
+                        Log.e("call_api_data", "No internet to call api");
+                        new Handler().postDelayed(() -> loadingDialog.dismiss(), 500);
+                    }
+                } else {
+                    new Handler().postDelayed(() -> loadingDialog.dismiss(), 500);
+                }
+            }
+        };
+        leagueClickCallBack = new LeagueClickCallBack() {
+            @Override
+            public void select(LeagueModel leagueModel) {
+                for (LeagueModel leagueDetail : listAllLeague) {
+                    if (leagueModel.getId() == leagueDetail.getId()) {
+                        Intent intent = new Intent(requireContext(), LeagueDetailActivity.class);
+                        intent.putExtra(SPUtils.INTENT_LEAGUE, leagueDetail);
+                        startArc(intent);
+                        break;
+                    }
+                }
+            }
+
+            @Override
+            public void follow(int position, LeagueModel leagueModel) {
+                changeFavouriteListLeague(position, leagueModel);
+            }
+
+            @Override
+            public void load() {
+                loadingDialog.show();
+                if (isHasMoreLeague) {
+                    if (IsNetWork.haveNetworkConnection(requireContext())) {
+                        currentPageLeague++;
+                        if (isSearch)
+                            fetchLeaguePageSearch(str, currentPageLeague);
+                        else fetchLeaguePage(currentPageLeague);
+                    } else {
+                        Log.e("call_api_data", "No internet to call api");
+                        new Handler().postDelayed(() -> loadingDialog.dismiss(), 500);
+                    }
+                } else {
+                    new Handler().postDelayed(() -> loadingDialog.dismiss(), 500);
+                }
+            }
+        };
+        binding.tvFavouriteTeam.setText(getString(R.string.favourite) + " (" + listTeamFavourite.size() + ")");
+        binding.tvAllTeam.setText(getString(R.string.all_teams) + " (" + 58875 + ")");
+        binding.tvFavouriteLeague.setText(getString(R.string.favourite) + " (" + listLeagueFavourite.size() + ")");
+        binding.tvAllLeague.setText(getString(R.string.all_leagues) + " (" + 2275 + ")");
+        teamAdapterFavourite = new TeamAdapter(requireContext(), listTeamFavourite, true, teamClickCallBack);
+        teamAdapter = new TeamAdapter(requireContext(), listAllTeam, false, teamClickCallBack);
+        binding.rcvTeamFavourite.setAdapter(teamAdapterFavourite);
+        binding.rcvTeamAll.setAdapter(teamAdapter);
+        leagueAdapterFavourite = new LeagueAdapter(requireContext(), listLeagueFavourite, true, leagueClickCallBack);
+        leagueAdapter = new LeagueAdapter(requireContext(), listAllLeague, false, leagueClickCallBack);
+        binding.rcvLeagueAll.setAdapter(leagueAdapter);
+        binding.rcvLeagueFavourite.setAdapter(leagueAdapterFavourite);
     }
 
 }

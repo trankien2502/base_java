@@ -4,5 +4,8 @@ import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
 
 public interface LeagueClickCallBack {
     void select(LeagueModel leagueModel);
-    void follow(LeagueModel leagueModel);
+
+    void follow(int position, LeagueModel leagueModel);
+
+    void load();
 }

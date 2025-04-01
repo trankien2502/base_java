@@ -53,12 +53,15 @@ public class FixtureModel extends FixtureBase {
         public String name;
         @SerializedName("state")
         public String state;
+        @SerializedName("short_name")
+        public String short_name;
 
         @Override
         public String toString() {
             return "StateModel{" +
                     "id=" + id +
                     ", name='" + name + '\'' +
+                    ", short_name='" + short_name + '\'' +
                     ", state='" + state + '\'' +
                     '}';
         }

@@ -117,6 +117,8 @@
     <string name="squad">Squad</string>
     <string name="error">Error</string>
     <string name="table">Table</string>
+    <string name="load_more">Load More</string>
+    <string name="club">Club</string>
 
 
 </resources>

@@ -1,5 +1,8 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.favourite;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -19,6 +22,7 @@ public class LeagueAdapter extends RecyclerView.Adapter<LeagueAdapter.TeamLeague
     LeagueClickCallBack teamClickCallBack;
     List<LeagueModel> list;
     Context context;
+    boolean isFavourite;
 
     @NonNull
     @Override
@@ -33,10 +37,11 @@ public class LeagueAdapter extends RecyclerView.Adapter<LeagueAdapter.TeamLeague
         notifyDataSetChanged();
     }
 
-    public LeagueAdapter(Context context, List<LeagueModel> list, LeagueClickCallBack teamClickCallBack) {
+    public LeagueAdapter(Context context, List<LeagueModel> list, boolean isFavourite, LeagueClickCallBack teamClickCallBack) {
         this.teamClickCallBack = teamClickCallBack;
         this.context = context;
         this.list = list;
+        this.isFavourite = isFavourite;
     }
 
     @Override
@@ -48,7 +53,17 @@ public class LeagueAdapter extends RecyclerView.Adapter<LeagueAdapter.TeamLeague
         holder.binding.tvName.setText(teamModel.getName());
         Glide.with(context).load(teamModel.getImage_path()).error(R.drawable.img_logo).into(holder.binding.ivPic);
         holder.binding.layoutItem.setOnClickListener(v -> teamClickCallBack.select(teamModel));
-        holder.binding.ivFavourite.setOnClickListener(v -> teamClickCallBack.follow(teamModel));
+        holder.binding.ivFavourite.setOnClickListener(v -> teamClickCallBack.follow(position, teamModel));
+        if (isFavourite) {
+            holder.binding.tvLoadMore.setVisibility(GONE);
+        } else {
+            if (position == list.size() - 1) {
+                holder.binding.tvLoadMore.setVisibility(VISIBLE);
+            } else {
+                holder.binding.tvLoadMore.setVisibility(GONE);
+            }
+            holder.binding.tvLoadMore.setOnClickListener(v -> teamClickCallBack.load());
+        }
     }
 
     @Override

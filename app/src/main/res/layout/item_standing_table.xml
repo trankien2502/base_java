@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="40dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvRank"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/sf_pro_text_medium"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="#"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/tvClub"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="8dp"
+            android:ellipsize="marquee"
+            android:fontFamily="@font/sf_pro_text_medium"
+            android:gravity="center_vertical"
+            android:includeFontPadding="false"
+            android:singleLine="true"
+            android:text="@string/club"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/tvMP"
+            app:layout_constraintStart_toEndOf="@id/tvRank"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/tvMP"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/sf_pro_text_medium"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="MP"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/tvGF"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/tvGF"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/sf_pro_text_medium"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="GF"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/tvGA"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/tvGA"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/sf_pro_text_medium"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="GA"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/tvGD"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/tvGD"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/sf_pro_text_medium"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="GD"
+            android:textColor="#333333"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toStartOf="@id/tvPoint"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
+
+        <TextView
+            android:id="@+id/tvPoint"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:fontFamily="@font/sf_pro_text_medium"
+            android:gravity="center"
+            android:includeFontPadding="false"
+            android:text="PTS"
+            android:textColor="#0094FD"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

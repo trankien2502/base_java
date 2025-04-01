@@ -38,6 +38,12 @@ public class LeagueTodayAdapter extends RecyclerView.Adapter<LeagueTodayAdapter.
         return new LeaguaTodayViewHolder(binding);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    public void setList(List<LeagueTodayModel> list) {
+        this.list = list;
+        notifyDataSetChanged();
+    }
+
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(@NonNull LeaguaTodayViewHolder holder, int position) {
@@ -73,6 +79,14 @@ public class LeagueTodayAdapter extends RecyclerView.Adapter<LeagueTodayAdapter.
             }
         });
         holder.binding.layoutItem.setOnClickListener(v -> callBack.select(leagueTodayModel));
+        if (position == list.size() - 1) {
+            holder.binding.tvLoadMore.setVisibility(VISIBLE);
+        } else {
+            holder.binding.tvLoadMore.setVisibility(GONE);
+        }
+        holder.binding.tvLoadMore.setOnClickListener(v -> {
+            callBack.load();
+        });
     }
 
     @Override

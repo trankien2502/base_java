@@ -1,14 +1,133 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.livescores.league_detail.league_fixture.LeagueFixtureFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginVertical="16dp"
+        android:background="@drawable/bg_dialog"
+        android:padding="16dp">
 
-</FrameLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clHeader"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:background="@drawable/bg_table_header"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tvRank"
+                android:layout_width="20dp"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/sf_pro_text_medium"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="#"
+                android:textColor="#808080"
+                android:textSize="12sp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/tvClub"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginHorizontal="8dp"
+                android:fontFamily="@font/sf_pro_text_medium"
+                android:gravity="center_vertical"
+                android:includeFontPadding="false"
+                android:text="@string/club"
+                android:textColor="#808080"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toStartOf="@id/tvMP"
+                app:layout_constraintStart_toEndOf="@id/tvRank"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/tvMP"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/sf_pro_text_medium"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="MP"
+                android:textColor="#808080"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toStartOf="@id/tvGF"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/tvGF"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/sf_pro_text_medium"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="GF"
+                android:textColor="#808080"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toStartOf="@id/tvGA"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/tvGA"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/sf_pro_text_medium"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="GA"
+                android:textColor="#808080"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toStartOf="@id/tvGD"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/tvGD"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/sf_pro_text_medium"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="GD"
+                android:textColor="#808080"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toStartOf="@id/tvPoint"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="HardcodedText" />
+
+            <TextView
+                android:id="@+id/tvPoint"
+                android:layout_width="40dp"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/sf_pro_text_medium"
+                android:gravity="center"
+                android:includeFontPadding="false"
+                android:text="PTS"
+                android:textColor="#808080"
+                android:textSize="12sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="HardcodedText" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcvStanding"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@id/clHeader"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/item_standing_table"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

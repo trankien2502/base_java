@@ -8,6 +8,8 @@ import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureRespons
 import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueResponse;
 import com.livescore.soccerscore.matchlive.api_data.model.team.TeamResponse;
 import com.livescore.soccerscore.matchlive.ui.livescores.league_detail.league_fixture.LeagueFixtureResponse;
+import com.livescore.soccerscore.matchlive.ui.livescores.league_detail.league_table.StandingResponse;
+import com.livescore.soccerscore.matchlive.ui.livescores.live.LiveResponse;
 import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.fixture.SeasonResponse;
 import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.fixture.TeamFixtureDetail;
 import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.fixture.TeamFixtureResponse;
@@ -52,6 +54,10 @@ public interface ApiDataService {
     Call<StateResponse> callState(@Query("api_token") String token);
 
 
+    @GET("teams/search/{search}")
+    Call<TeamResponse> callTeamSearch(@Path("search") String search,@Query("api_token") String token, @Query("page") int page, @Query("include") String include);
+    @GET("leagues/search/{search}")
+    Call<LeagueResponse> callLeagueSearch(@Path("search") String search,@Query("api_token") String token, @Query("page") int page, @Query("include") String include);
     @GET(ConstantApiData.TEAM)
     Call<TeamResponse> callTeam(@Query("api_token") String token, @Query("page") int page, @Query("include") String include);
 
@@ -67,5 +73,9 @@ public interface ApiDataService {
     Call<TeamFixtureResponse> callTeamFixture(@Path("team") int team, @Query("api_token") String token, @Query("include") String include);
     @GET("leagues/{league}")
     Call<LeagueFixtureResponse> callLeagueFixture(@Path("league") int league, @Query("api_token") String token, @Query("include") String include);
+    @GET("livescores")
+    Call<LiveResponse> callLiveMatch(@Query("api_token") String token, @Query("include") String include);
+    @GET("standings/live/leagues/{league}")
+    Call<StandingResponse> callStandingLeague(@Path("league") int league, @Query("api_token") String token, @Query("include") String include);
 
 }

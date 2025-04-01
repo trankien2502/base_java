@@ -1,10 +1,38 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.live;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
+import android.annotation.SuppressLint;
+import android.util.Log;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
+import com.google.gson.Gson;
+import com.livescore.soccerscore.matchlive.R;
+import com.livescore.soccerscore.matchlive.ads.IsNetWork;
+import com.livescore.soccerscore.matchlive.api_data.ApiDataService;
+import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
+import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
 import com.livescore.soccerscore.matchlive.base.BaseActivity;
 import com.livescore.soccerscore.matchlive.databinding.ActivityLiveScoreBinding;
+import com.livescore.soccerscore.matchlive.dialog.LoadingDialog;
+import com.livescore.soccerscore.matchlive.ui.livescores.home.LeagueTodayAdapter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LiveScoreActivity extends BaseActivity<ActivityLiveScoreBinding> {
 
+
+    LoadingDialog loadingDialog;
+    List<FixtureLiveModel> listLive = new ArrayList<>();
+    LiveMatchActivityAdapter liveMatchAdapter;
 
     @Override
     public ActivityLiveScoreBinding getBinding() {
@@ -13,12 +41,79 @@ public class LiveScoreActivity extends BaseActivity<ActivityLiveScoreBinding> {
 
     @Override
     public void initView() {
-
+        liveMatchAdapter = new LiveMatchActivityAdapter(this, listLive, new LiveMatchClickCallBack() {
+            @Override
+            public void detail(FixtureLiveModel fixtureModel) {
+                Toast.makeText(LiveScoreActivity.this, fixtureModel.name, Toast.LENGTH_SHORT).show();
+            }
+        });
+        binding.rcvLive.setAdapter(liveMatchAdapter);
+        if (IsNetWork.haveNetworkConnection(this)) {
+            listLive.clear();
+            loadingDialog = new LoadingDialog(this, false);
+            loadingDialog.show();
+            fetchLiveMatch();
+        } else {
+            Log.e("call_api_data", "No internet to call api");
+        }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void bindView() {
+        binding.ivGone.setOnClickListener(v -> {
+            if (IsNetWork.haveNetworkConnection(this)) {
+                listLive.clear();
+                liveMatchAdapter.notifyDataSetChanged();
+                loadingDialog = new LoadingDialog(this, false);
+                loadingDialog.show();
+                fetchLiveMatch();
+            } else {
+                Log.e("call_api_data", "No internet to call api");
+            }
+        });
+    }
 
+    public void fetchLiveMatch() {
+        try {
+            ApiDataService.apiService.callLiveMatch(ConstantApiData.KEY, "participants;scores;state;periods").enqueue(new Callback<LiveResponse>() {
+                @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
+                @Override
+                public void onResponse(@NonNull Call<LiveResponse> call, @NonNull Response<LiveResponse> response) {
+                    if (response.isSuccessful() && response.body() != null) {
+                        Log.e("API_RESPONSE", "Raw JSON: " + new Gson().toJson(response.body()));
+                        LiveResponse teamResponse = response.body();
+                        if (teamResponse.data != null) {
+                            listLive.addAll(teamResponse.data);
+                            Log.e("API_RESPONSE", "data: " + teamResponse.data);
+                            Log.e("call_api_data", "call true:");
+                            for (FixtureLiveModel liveModel : listLive) {
+                                Log.e("API_RESPONSE", "livemodel: " + liveModel.toString());
+                            }
+                            liveMatchAdapter.notifyDataSetChanged();
+                            binding.rcvLive.post(() -> {
+                                loadingDialog.dismiss();
+                            });
+                        } else {
+                            loadingDialog.dismiss();
+                        }
+                    } else {
+                        loadingDialog.dismiss();
+                        Log.e("call_api_data", "call false: Code: " + response.code());
+                    }
+                }
+
+                @Override
+                public void onFailure(@NonNull Call<LiveResponse> call, @NonNull Throwable t) {
+                    loadingDialog.dismiss();
+                    Log.e("call_api_data", "onfailure" + t);
+                }
+            });
+
+        } catch (Exception e) {
+            loadingDialog.dismiss();
+            Log.e("call_api_data", "catch: ", e);
+        }
     }
 
     @Override

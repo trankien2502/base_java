@@ -1,5 +1,8 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.favourite;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -19,6 +22,7 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamLeagueView
     TeamClickCallBack teamClickCallBack;
     List<TeamModel> list;
     Context context;
+    boolean isFavourite;
 
     @NonNull
     @Override
@@ -27,10 +31,11 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamLeagueView
         return new TeamLeagueViewHolder(binding);
     }
 
-    public TeamAdapter(Context context, List<TeamModel> list, TeamClickCallBack teamClickCallBack) {
+    public TeamAdapter(Context context, List<TeamModel> list, boolean isFavourite, TeamClickCallBack teamClickCallBack) {
         this.teamClickCallBack = teamClickCallBack;
         this.context = context;
         this.list = list;
+        this.isFavourite = isFavourite;
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -48,7 +53,17 @@ public class TeamAdapter extends RecyclerView.Adapter<TeamAdapter.TeamLeagueView
         holder.binding.tvName.setText(teamModel.getName());
         Glide.with(context).load(teamModel.getImage_path()).error(R.drawable.img_logo).into(holder.binding.ivPic);
         holder.binding.layoutItem.setOnClickListener(v -> teamClickCallBack.select(teamModel));
-        holder.binding.ivFavourite.setOnClickListener(v -> teamClickCallBack.follow(teamModel));
+        holder.binding.ivFavourite.setOnClickListener(v -> teamClickCallBack.follow(position, teamModel));
+        if (isFavourite) {
+            holder.binding.tvLoadMore.setVisibility(GONE);
+        } else {
+            if (position == list.size() - 1) {
+                holder.binding.tvLoadMore.setVisibility(VISIBLE);
+            } else {
+                holder.binding.tvLoadMore.setVisibility(GONE);
+            }
+            holder.binding.tvLoadMore.setOnClickListener(v -> teamClickCallBack.load());
+        }
     }
 
     @Override

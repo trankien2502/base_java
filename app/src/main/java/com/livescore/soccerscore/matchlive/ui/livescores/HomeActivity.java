@@ -30,6 +30,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     private static final int STATE_NOTIFICATION = 3;
     private static final int STATE_SETTING = 4;
     private int state = 1;
+    HomeAdapter adapter;
 
     ArrayList<String> exitRate = new ArrayList<String>(Arrays.asList("2", "4", "6", "8", "10"));
 
@@ -41,7 +42,10 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
 
     @Override
     public void initView() {
+        adapter = new HomeAdapter(this);
         EventTracking.logEvent(this, "home_view");
+        binding.frContentHome.setAdapter(adapter);
+        binding.frContentHome.setUserInputEnabled(false);
         changeState();
     }
 
@@ -96,22 +100,26 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         resetChange();
         switch (state) {
             case STATE_HOME:
-                replaceFragment(new HomeFragment());
+//                replaceFragment(new HomeFragment());
+                binding.frContentHome.setCurrentItem(0);
                 binding.ivHome.setImageResource(R.drawable.live_s);
                 binding.tvHome.setTextColor(Color.parseColor("#0094FD"));
                 break;
             case STATE_FAVOURITE:
-                replaceFragment(new FavouriteFragment());
+                binding.frContentHome.setCurrentItem(1);
+//                replaceFragment(new FavouriteFragment());
                 binding.ivFavourite.setImageResource(R.drawable.star_s);
                 binding.tvFavourite.setTextColor(Color.parseColor("#0094FD"));
                 break;
             case STATE_NOTIFICATION:
-                replaceFragment(new NotificationFragment());
+                binding.frContentHome.setCurrentItem(2);
+//                replaceFragment(new NotificationFragment());
                 binding.ivNotification.setImageResource(R.drawable.clock_s);
                 binding.tvNotification.setTextColor(Color.parseColor("#0094FD"));
                 break;
             case STATE_SETTING:
-                replaceFragment(new SettingFragment());
+                binding.frContentHome.setCurrentItem(3);
+//                replaceFragment(new SettingFragment());
                 binding.ivSetting.setImageResource(R.drawable.setting_s);
                 binding.tvSetting.setTextColor(Color.parseColor("#0094FD"));
                 break;

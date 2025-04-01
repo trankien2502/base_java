@@ -1,5 +1,7 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.search.top_search;
 
+import static android.view.View.GONE;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -34,6 +36,7 @@ public class TopSearchAdapter extends RecyclerView.Adapter<TopSearchAdapter.TopS
         holder.binding.ivPic.setImageResource(topSearchModel.image);
         holder.binding.tvName.setText(topSearchModel.name);
         holder.binding.layoutItem.setOnClickListener(v -> callBack.select(topSearchModel));
+        holder.binding.tvLoadMore.setVisibility(GONE);
     }
 
     @Override

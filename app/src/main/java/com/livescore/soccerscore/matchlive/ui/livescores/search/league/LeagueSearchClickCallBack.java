@@ -5,4 +5,5 @@ import com.livescore.soccerscore.matchlive.api_data.model.team.TeamModel;
 
 public interface LeagueSearchClickCallBack {
     void select(LeagueModel leagueModel);
+    void load();
 }
