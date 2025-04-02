@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class FixtureBase {
     @SerializedName("id")
-    public int id;
+    public long id;
     @SerializedName("league_id")
     public int league_id;
     @SerializedName("state_id")

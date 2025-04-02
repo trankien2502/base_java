@@ -1,5 +1,6 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.league_detail.league_fixture;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,10 +17,13 @@ import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.databinding.FragmentLeagueFixtureBinding;
 import com.livescore.soccerscore.matchlive.dialog.LoadingDialog;
+import com.livescore.soccerscore.matchlive.ui.livescores.HomeActivity;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.MatchDetailActivity;
 import com.livescore.soccerscore.matchlive.ui.livescores.home.FixtureAdapter;
 import com.livescore.soccerscore.matchlive.ui.livescores.home.FixtureClickCallBack;
 import com.livescore.soccerscore.matchlive.ui.livescores.league_detail.LeagueDetailActivity;
 import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.TeamDetailActivity;
+import com.livescore.soccerscore.matchlive.util.SPUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -45,6 +49,9 @@ public class LeagueFixtureFragment extends BaseFragment<FragmentLeagueFixtureBin
             @Override
             public void select(FixtureModel fixtureModel) {
                 Toast.makeText(requireContext(), "select " + fixtureModel.name, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(requireContext(), MatchDetailActivity.class);
+                intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
+                startArc(intent);
             }
 
             @Override
@@ -57,7 +64,7 @@ public class LeagueFixtureFragment extends BaseFragment<FragmentLeagueFixtureBin
                 Toast.makeText(requireContext(), "alarm " + fixtureModel.name, Toast.LENGTH_SHORT).show();
             }
         });
-        int teamId = LeagueDetailActivity.instance.leagueDetail != null ? LeagueDetailActivity.instance.leagueDetail.getId() : 0;
+        long teamId = LeagueDetailActivity.instance.leagueDetail != null ? LeagueDetailActivity.instance.leagueDetail.getId() : 0;
         if (IsNetWork.haveNetworkConnection(requireContext())) {
             loadingDialog = new LoadingDialog(requireContext(), false);
             loadingDialog.show();
@@ -74,7 +81,7 @@ public class LeagueFixtureFragment extends BaseFragment<FragmentLeagueFixtureBin
     }
 
 
-    public void fetchFixtureTeam(int teamId) {
+    public void fetchFixtureTeam(long teamId) {
         try {
             ApiDataService.apiService.callLeagueFixture(teamId, ConstantApiData.KEY, "upcoming.participants;upcoming.scores;upcoming.state; inplay.participants;inplay.scores;inplay.state").enqueue(new Callback<LeagueFixtureResponse>() {
                 @Override
@@ -115,6 +122,13 @@ public class LeagueFixtureFragment extends BaseFragment<FragmentLeagueFixtureBin
             loadingDialog.dismiss();
             binding.rcvFixture.setAdapter(fixtureAdapter);
             Log.e("call_api_data", "catch: ", e);
+        }
+    }
+
+    public void startArc(Intent intent) {
+        if (getContext() instanceof HomeActivity) {
+            HomeActivity main = (HomeActivity) getContext();
+            main.resultLauncher.launch(intent);
         }
     }
 }

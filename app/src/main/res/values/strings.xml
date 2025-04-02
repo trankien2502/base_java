@@ -119,6 +119,21 @@
     <string name="table">Table</string>
     <string name="load_more">Load More</string>
     <string name="club">Club</string>
+    <string name="match_pinned">Match Pinned!</string>
+    <string name="when_the_game_start_the_score_will_stay_visible_on_your_screen_no_matter_what_you_re_doing">When the game start, the score will stay visible on your screen, no matter what you’re doing.</string>
+    <string name="ok">OK</string>
+    <string name="before_match">Before match</string>
+    <string name="at_the_start_of_match">At the start of match</string>
+    <string name="at_the_end_of_first_half_match">At the end of first half match</string>
+    <string name="at_the_start_of_second_half_match">At the start of second half match</string>
+    <string name="goals">Goals</string>
+    <string name="red_cards">Red cards</string>
+    <string name="end_match">End match</string>
+    <string name="save">Save</string>
+    <string name="hours">Hours</string>
+    <string name="minutes">Minutes</string>
+    <string name="timeline">Timeline</string>
+    <string name="lineup">Lineup</string>
 
 
 </resources>

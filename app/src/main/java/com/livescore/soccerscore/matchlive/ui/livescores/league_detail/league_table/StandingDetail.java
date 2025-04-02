@@ -26,7 +26,7 @@ public class StandingDetail {
 
     public static class Type {
         @SerializedName("id")
-        public int id;
+        public long id;
         @SerializedName("name")
         public String name;
         @SerializedName("code")

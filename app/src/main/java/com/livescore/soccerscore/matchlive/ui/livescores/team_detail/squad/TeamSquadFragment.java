@@ -45,7 +45,7 @@ public class TeamSquadFragment extends BaseFragment<FragmentTeamSquadBinding> {
 
     @Override
     public void initView() {
-        int teamId = TeamDetailActivity.instance.teamModel != null ? TeamDetailActivity.instance.teamModel.getId() : 0;
+        long teamId = TeamDetailActivity.instance.teamModel != null ? TeamDetailActivity.instance.teamModel.getId() : 0;
         adapter = new SquadAdapter(requireContext(), squadModelList);
         if (IsNetWork.haveNetworkConnection(requireContext())) {
             loadingDialog = new LoadingDialog(requireContext(), false);
@@ -62,7 +62,7 @@ public class TeamSquadFragment extends BaseFragment<FragmentTeamSquadBinding> {
 
     }
 
-    public void fetchSquadPage(int teamId) {
+    public void fetchSquadPage(long teamId) {
         try {
             ApiDataService.apiService.callSquad(teamId, ConstantApiData.KEY, "player;position").enqueue(new Callback<SquadResponse>() {
                 @Override

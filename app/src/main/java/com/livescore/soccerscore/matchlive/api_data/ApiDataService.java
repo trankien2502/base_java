@@ -7,6 +7,7 @@ import com.livescore.soccerscore.matchlive.api_data.model.StateResponse;
 import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureResponse;
 import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueResponse;
 import com.livescore.soccerscore.matchlive.api_data.model.team.TeamResponse;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.FixtureDetailResponse;
 import com.livescore.soccerscore.matchlive.ui.livescores.league_detail.league_fixture.LeagueFixtureResponse;
 import com.livescore.soccerscore.matchlive.ui.livescores.league_detail.league_table.StandingResponse;
 import com.livescore.soccerscore.matchlive.ui.livescores.live.LiveResponse;
@@ -55,9 +56,11 @@ public interface ApiDataService {
 
 
     @GET("teams/search/{search}")
-    Call<TeamResponse> callTeamSearch(@Path("search") String search,@Query("api_token") String token, @Query("page") int page, @Query("include") String include);
+    Call<TeamResponse> callTeamSearch(@Path("search") String search, @Query("api_token") String token, @Query("page") int page, @Query("include") String include);
+
     @GET("leagues/search/{search}")
-    Call<LeagueResponse> callLeagueSearch(@Path("search") String search,@Query("api_token") String token, @Query("page") int page, @Query("include") String include);
+    Call<LeagueResponse> callLeagueSearch(@Path("search") String search, @Query("api_token") String token, @Query("page") int page, @Query("include") String include);
+
     @GET(ConstantApiData.TEAM)
     Call<TeamResponse> callTeam(@Query("api_token") String token, @Query("page") int page, @Query("include") String include);
 
@@ -65,17 +68,23 @@ public interface ApiDataService {
     Call<FixtureResponse> callFixtureToday(@Path("date") String date, @Query("api_token") String token, @Query("include") String include, @Query("page") int page);
 
     @GET("squads/teams/{team}")
-    Call<SquadResponse> callSquad(@Path("team") int team, @Query("api_token") String token, @Query("include") String include);
+    Call<SquadResponse> callSquad(@Path("team") long team, @Query("api_token") String token, @Query("include") String include);
 
     @GET("schedules/teams/{team}")
-    Call<SeasonResponse> callScheduleTeam(@Path("team") int team, @Query("api_token") String token);
+    Call<SeasonResponse> callScheduleTeam(@Path("team") long team, @Query("api_token") String token);
+
     @GET("teams/{team}")
-    Call<TeamFixtureResponse> callTeamFixture(@Path("team") int team, @Query("api_token") String token, @Query("include") String include);
+    Call<TeamFixtureResponse> callTeamFixture(@Path("team") long team, @Query("api_token") String token, @Query("include") String include);
+
     @GET("leagues/{league}")
-    Call<LeagueFixtureResponse> callLeagueFixture(@Path("league") int league, @Query("api_token") String token, @Query("include") String include);
+    Call<LeagueFixtureResponse> callLeagueFixture(@Path("league") long league, @Query("api_token") String token, @Query("include") String include);
+
     @GET("livescores")
     Call<LiveResponse> callLiveMatch(@Query("api_token") String token, @Query("include") String include);
-    @GET("standings/live/leagues/{league}")
-    Call<StandingResponse> callStandingLeague(@Path("league") int league, @Query("api_token") String token, @Query("include") String include);
 
+    @GET("standings/live/leagues/{league}")
+    Call<StandingResponse> callStandingLeague(@Path("league") long league, @Query("api_token") String token, @Query("include") String include);
+
+    @GET("fixtures/{fixtureId}")
+    Call<FixtureDetailResponse> callFixtureDetail(@Path("fixtureId") long id, @Query("api_token") String token, @Query("include") String include);
 }

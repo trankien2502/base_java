@@ -14,7 +14,7 @@ import java.util.List;
 public class LeagueModel implements Serializable {
     @PrimaryKey
     @SerializedName("id")
-    public int id;
+    public long id;
     @SerializedName("sport_id")
     public int sport_id;
     @SerializedName("country_id")
@@ -44,11 +44,11 @@ public class LeagueModel implements Serializable {
         this.sport_id = sport_id;
     }
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

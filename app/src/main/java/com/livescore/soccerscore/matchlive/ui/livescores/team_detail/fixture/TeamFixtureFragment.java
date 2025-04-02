@@ -59,7 +59,7 @@ public class TeamFixtureFragment extends BaseFragment<FragmentTeamStatsBinding> 
                 Toast.makeText(requireContext(), "alarm " + fixtureModel.name, Toast.LENGTH_SHORT).show();
             }
         });
-        int teamId = TeamDetailActivity.instance.teamModel != null ? TeamDetailActivity.instance.teamModel.getId() : 0;
+        long teamId = TeamDetailActivity.instance.teamModel != null ? TeamDetailActivity.instance.teamModel.getId() : 0;
         if (IsNetWork.haveNetworkConnection(requireContext())) {
             loadingDialog = new LoadingDialog(requireContext(), false);
             loadingDialog.show();
@@ -133,7 +133,7 @@ public class TeamFixtureFragment extends BaseFragment<FragmentTeamStatsBinding> 
         }
     }
 
-    public void fetchFixtureTeam(int teamId) {
+    public void fetchFixtureTeam(long teamId) {
         try {
             ApiDataService.apiService.callTeamFixture(teamId, ConstantApiData.KEY, "upcoming.participants;upcoming.scores;upcoming.state").enqueue(new Callback<TeamFixtureResponse>() {
                 @Override

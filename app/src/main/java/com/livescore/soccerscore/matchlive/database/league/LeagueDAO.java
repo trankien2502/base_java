@@ -25,12 +25,12 @@ public interface LeagueDAO {
     List<LeagueModel> getFavouriteTeam(boolean isFavourite);
 
     @Query("SELECT * FROM league where id = :id")
-    LeagueModel getLeagueById(int id);
+    LeagueModel getLeagueById(long id);
 
     @Update
     void update(LeagueModel teamModel);
 
     @Query("Delete from league where id = :id")
-    void delete(int id);
+    void delete(long id);
 
 }

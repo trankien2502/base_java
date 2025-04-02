@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class PeriodModel {
     @SerializedName("id")
-    public int id;
+    public long id;
     @SerializedName("sort_order")
     public int sort_order;
     @SerializedName("time_added")
@@ -17,4 +17,17 @@ public class PeriodModel {
     public int seconds;
     @SerializedName("has_timer")
     public boolean has_timer;
+
+    @Override
+    public String toString() {
+        return "PeriodModel{" +
+                "id=" + id +
+                ", sort_order=" + sort_order +
+                ", time_added=" + time_added +
+                ", description='" + description + '\'' +
+                ", minutes=" + minutes +
+                ", seconds=" + seconds +
+                ", has_timer=" + has_timer +
+                '}';
+    }
 }

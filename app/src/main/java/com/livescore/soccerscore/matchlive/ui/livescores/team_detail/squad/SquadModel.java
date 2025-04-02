@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class SquadModel {
     @SerializedName("id")
-    public int id;
+    public long id;
     @SerializedName("captain")
     public boolean captain;
     @SerializedName("jersey_number")
@@ -25,7 +25,7 @@ public class SquadModel {
 
     public static class Position {
         @SerializedName("id")
-        public int id;
+        public long id;
         @SerializedName("name")
         public String name;
 
@@ -40,7 +40,7 @@ public class SquadModel {
 
     public static class Player {
         @SerializedName("id")
-        public int id;
+        public long id;
         @SerializedName("name")
         public String name;
         @SerializedName("common_name")

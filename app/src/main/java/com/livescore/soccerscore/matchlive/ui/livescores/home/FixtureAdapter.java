@@ -74,9 +74,9 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.FixtureV
             long diffMillis = date.getTime() - System.currentTimeMillis();
 
             if (diffMillis <= 0) {
-                holder.binding.llScore.setVisibility(VISIBLE);
-                holder.binding.llPin.setVisibility(GONE);
                 if (!fixtureModel.scores.isEmpty()) {
+                    holder.binding.llScore.setVisibility(VISIBLE);
+                    holder.binding.llPin.setVisibility(GONE);
                     for (ScoreModel scoreModel : fixtureModel.scores) {
                         if (scoreModel.description.equals("CURRENT")) {
                             if (scoreModel.getScore().participant.equals("home")) {
@@ -87,6 +87,9 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.FixtureV
                             }
                         }
                     }
+                } else {
+                    holder.binding.llScore.setVisibility(GONE);
+                    holder.binding.llPin.setVisibility(VISIBLE);
                 }
             } else {
                 holder.binding.llScore.setVisibility(GONE);

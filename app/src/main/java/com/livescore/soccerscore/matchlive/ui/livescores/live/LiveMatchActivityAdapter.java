@@ -53,7 +53,7 @@ public class LiveMatchActivityAdapter extends RecyclerView.Adapter<LiveMatchActi
         holder.binding.tvHome.setSelected(true);
         holder.binding.tvAway.setSelected(true);
         holder.binding.tvStatus.setText("(" + fixtureModel.getState().short_name + ")");
-        if (fixtureModel.periods == null) {
+        if (fixtureModel.periods.isEmpty()) {
             holder.binding.tvTime.setText("");
         } else
             holder.binding.tvTime.setText(fixtureModel.periods.get(fixtureModel.periods.size() - 1).minutes + "'");

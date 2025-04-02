@@ -12,7 +12,7 @@ import java.io.Serializable;
 public class TeamModel implements Serializable {
     @PrimaryKey
     @SerializedName("id")
-    int id;
+    long id;
     @SerializedName("name")
     String name;
     @SerializedName("image_path")
@@ -21,11 +21,11 @@ public class TeamModel implements Serializable {
     boolean isFavourite;
 
 
-    public int getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(long id) {
         this.id = id;
     }
 

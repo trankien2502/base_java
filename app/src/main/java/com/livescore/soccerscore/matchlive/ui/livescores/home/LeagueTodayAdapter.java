@@ -5,6 +5,7 @@ import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -17,6 +18,8 @@ import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
 import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueTodayModel;
 import com.livescore.soccerscore.matchlive.databinding.ItemLeagueTodayBinding;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.MatchDetailActivity;
+import com.livescore.soccerscore.matchlive.util.SPUtils;
 
 import java.util.List;
 
@@ -24,11 +27,13 @@ public class LeagueTodayAdapter extends RecyclerView.Adapter<LeagueTodayAdapter.
     Context context;
     List<LeagueTodayModel> list;
     LeagueHomeClickCallBack callBack;
+    FixtureClickCallBack fixtureClickCallBack;
 
-    public LeagueTodayAdapter(Context context, List<LeagueTodayModel> list, LeagueHomeClickCallBack callBack) {
+    public LeagueTodayAdapter(Context context, List<LeagueTodayModel> list, LeagueHomeClickCallBack callBack, FixtureClickCallBack fixtureClickCallBack) {
         this.context = context;
         this.list = list;
         this.callBack = callBack;
+        this.fixtureClickCallBack = fixtureClickCallBack;
     }
 
     @NonNull
@@ -52,22 +57,7 @@ public class LeagueTodayAdapter extends RecyclerView.Adapter<LeagueTodayAdapter.
         if (!leagueTodayModel.today.isEmpty()) {
             holder.binding.tvLeagueName.setText(leagueTodayModel.name + " (" + leagueTodayModel.today.size() + ")");
         }
-        FixtureAdapter fixtureAdapter = new FixtureAdapter(context, leagueTodayModel.today, new FixtureClickCallBack() {
-            @Override
-            public void select(FixtureModel fixtureModel) {
-                Toast.makeText(context, "select " + fixtureModel.name, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void pin(FixtureModel fixtureModel) {
-                Toast.makeText(context, "pin " + fixtureModel.name, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void alarm(FixtureModel fixtureModel) {
-                Toast.makeText(context, "alarm " + fixtureModel.name, Toast.LENGTH_SHORT).show();
-            }
-        });
+        FixtureAdapter fixtureAdapter = new FixtureAdapter(context, leagueTodayModel.today, fixtureClickCallBack);
         holder.binding.rcvFixture.setAdapter(fixtureAdapter);
         holder.binding.ivHide.setOnClickListener(v -> {
             if (holder.binding.rcvFixture.getVisibility() == VISIBLE) {

@@ -24,6 +24,9 @@
         android:theme="@style/Theme.BaseJava"
         tools:targetApi="n">
         <activity
+            android:name=".ui.livescores.fixture_detail.MatchDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.livescores.league_detail.LeagueDetailActivity"
             android:exported="false" />
         <activity

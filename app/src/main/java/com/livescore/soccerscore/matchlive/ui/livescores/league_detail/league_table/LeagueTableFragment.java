@@ -45,7 +45,7 @@ public class LeagueTableFragment extends BaseFragment<FragmentLeagueTableBinding
         adapter = new StandingTableAdapter(requireContext(), list);
         binding.rcvStanding.setAdapter(adapter);
         loadingDialog = new LoadingDialog(requireContext(), false);
-        int leagueId = LeagueDetailActivity.instance.leagueDetail != null ? LeagueDetailActivity.instance.leagueDetail.getId() : 0;
+        long leagueId = LeagueDetailActivity.instance.leagueDetail != null ? LeagueDetailActivity.instance.leagueDetail.getId() : 0;
         if (IsNetWork.haveNetworkConnection(requireContext())) {
             list.clear();
             loadingDialog.show();
@@ -61,7 +61,7 @@ public class LeagueTableFragment extends BaseFragment<FragmentLeagueTableBinding
 
     }
 
-    public void fetchStanding(int leagueId) {
+    public void fetchStanding(long leagueId) {
         try {
             ApiDataService.apiService.callStandingLeague(leagueId, ConstantApiData.KEY, "participant;details.type").enqueue(new Callback<StandingResponse>() {
                 @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
@@ -77,18 +77,17 @@ public class LeagueTableFragment extends BaseFragment<FragmentLeagueTableBinding
                             for (StandingModel liveModel : list) {
                                 Log.e("API_RESPONSE", "livemodel: " + liveModel.toString());
                             }
-                            Collections.sort(list, new Comparator<StandingModel>() {
-                                @Override
-                                public int compare(StandingModel p1, StandingModel p2) {
-                                    return Integer.compare(p1.position, p2.position);
-                                }
-                            });
+//                            Collections.sort(list, new Comparator<StandingModel>() {
+//                                @Override
+//                                public int compare(StandingModel p1, StandingModel p2) {
+//                                    return Integer.compare(p1.position, p2.position);
+//                                }
+//                            });
                             adapter.notifyDataSetChanged();
                             binding.rcvStanding.post(() -> {
                                 loadingDialog.dismiss();
                             });
-                        }
-                        loadingDialog.dismiss();
+                        } else loadingDialog.dismiss();
                     } else {
                         loadingDialog.dismiss();
                         Log.e("call_api_data", "call false: Code: " + response.code());

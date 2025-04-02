@@ -29,12 +29,14 @@ import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.databinding.FragmentHomeBinding;
 import com.livescore.soccerscore.matchlive.dialog.LoadingDialog;
 import com.livescore.soccerscore.matchlive.ui.livescores.HomeActivity;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.MatchDetailActivity;
 import com.livescore.soccerscore.matchlive.ui.livescores.live.FixtureLiveModel;
 import com.livescore.soccerscore.matchlive.ui.livescores.live.LiveMatchAdapter;
 import com.livescore.soccerscore.matchlive.ui.livescores.live.LiveMatchClickCallBack;
 import com.livescore.soccerscore.matchlive.ui.livescores.live.LiveResponse;
 import com.livescore.soccerscore.matchlive.ui.livescores.live.LiveScoreActivity;
 import com.livescore.soccerscore.matchlive.ui.livescores.search.SearchActivity;
+import com.livescore.soccerscore.matchlive.util.SPUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -80,6 +82,24 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                 } else {
                     new Handler().postDelayed(() -> loadingDialog.dismiss(), 500);
                 }
+            }
+        }, new FixtureClickCallBack() {
+            @Override
+            public void select(FixtureModel fixtureModel) {
+                Toast.makeText(requireContext(), "select " + fixtureModel.id, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(requireContext(), MatchDetailActivity.class);
+                intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
+                startArc(intent);
+            }
+
+            @Override
+            public void pin(FixtureModel fixtureModel) {
+                Toast.makeText(requireContext(), "pin " + fixtureModel.name, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void alarm(FixtureModel fixtureModel) {
+                Toast.makeText(requireContext(), "alarm " + fixtureModel.name, Toast.LENGTH_SHORT).show();
             }
         });
         liveMatchAdapter = new LiveMatchAdapter(requireContext(), listLive, new LiveMatchClickCallBack() {

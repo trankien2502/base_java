@@ -7,7 +7,7 @@ public class ScoreModel {
     @SerializedName("description")
     public String description;
     @SerializedName("id")
-    public int id;
+    public long id;
     @SerializedName("fixture_id")
     public int fixture_id;
     @SerializedName("type_id")

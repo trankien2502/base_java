@@ -26,6 +26,7 @@ import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.ads.IsNetWork;
 import com.livescore.soccerscore.matchlive.service.NetworkReceiver;
 import com.livescore.soccerscore.matchlive.ui.livescores.NoInternetActivity;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.MatchDetailActivity;
 import com.livescore.soccerscore.matchlive.util.SystemUtil;
 import com.livescore.soccerscore.matchlive.ui.intro.IntroActivity;
 
@@ -78,7 +79,7 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
                 onBack();
             }
         });
-        if (!(this instanceof IntroActivity)) {
+        if (!(this instanceof IntroActivity) && !(this instanceof MatchDetailActivity)) {
             binding.getRoot().setPadding(
                     binding.getRoot().getPaddingLeft(),
                     binding.getRoot().getPaddingTop() + getStatusBarHeight(),

@@ -7,7 +7,7 @@ import java.util.List;
 
 public class FixtureLiveModel extends FixtureModel {
     @SerializedName("periods")
-    List<PeriodModel> periods;
+    public List<PeriodModel> periods;
 
     @Override
     public String toString() {

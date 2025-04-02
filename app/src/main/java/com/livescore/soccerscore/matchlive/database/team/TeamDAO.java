@@ -24,12 +24,12 @@ public interface TeamDAO {
     List<TeamModel> getFavouriteTeam(boolean isFavourite);
 
     @Query("SELECT * FROM team where id = :id")
-    TeamModel getTeamById(int id);
+    TeamModel getTeamById(long id);
 
     @Update
     void update(TeamModel teamModel);
 
     @Query("Delete from team where id = :id")
-    void delete(int id);
+    void delete(long id);
 
 }

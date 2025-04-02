@@ -7,7 +7,7 @@ import java.util.List;
 
 public class SeasonModel {
     @SerializedName("id")
-    public int id;
+    public long id;
     @SerializedName("name")
     public String name;
     @SerializedName("finished")
