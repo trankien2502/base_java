@@ -105,7 +105,10 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
         liveMatchAdapter = new LiveMatchAdapter(requireContext(), listLive, new LiveMatchClickCallBack() {
             @Override
             public void detail(FixtureLiveModel fixtureModel) {
-                Toast.makeText(requireContext(), "league: " + fixtureModel.name, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "select " + fixtureModel.id, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(requireContext(), MatchDetailActivity.class);
+                intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
+                startArc(intent);
             }
         });
         binding.rcvLeagueToday.setAdapter(adapter);

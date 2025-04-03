@@ -34,11 +34,13 @@ public class FixtureModel extends FixtureBase {
     public String toString() {
         return "FixtureModel{" +
                 "id=" + id +
+                "season_id=" + season_id +
                 "state_id=" + state_id +
                 ", league_id=" + league_id +
                 ", name='" + name + '\'' +
                 ", starting_at='" + starting_at + '\'' +
                 ", result_info='" + result_info + '\'' +
+                ", has_odds=" + has_odds +
                 ", length=" + length +
                 ", participants=" + participants +
                 ", scores=" + scores +

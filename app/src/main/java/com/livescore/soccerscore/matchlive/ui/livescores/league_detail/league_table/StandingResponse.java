@@ -6,5 +6,7 @@ import java.util.List;
 
 public class StandingResponse {
     @SerializedName("data")
-    List<StandingModel> data;
+    public List<StandingModel> data;
+    @SerializedName("pagination")
+    public Object pagination;
 }

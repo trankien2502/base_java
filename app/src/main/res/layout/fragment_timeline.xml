@@ -1,16 +1,435 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical"
     tools:context=".ui.livescores.fixture_detail.timeline.TimelineFragment">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcvEvent"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/item_event" />
+        android:layout_marginTop="16dp">
 
-</FrameLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/llGuess"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:background="@drawable/bg_dialog"
+                android:orientation="vertical"
+                android:padding="16dp"
+                android:visibility="visible">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginEnd="15dp"
+                        android:background="#0094FD"
+                        app:layout_constraintBottom_toBottomOf="@id/tvWhoWin"
+                        app:layout_constraintEnd_toStartOf="@id/tvWhoWin"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvWhoWin"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sf_pro_text_medium"
+                        android:includeFontPadding="false"
+                        android:text="@string/who_will_win"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="15dp"
+                        android:background="#0094FD"
+                        app:layout_constraintBottom_toBottomOf="@id/tvWhoWin"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/tvWhoWin"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/llButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="16dp">
+
+                    <TextView
+                        android:id="@+id/tvHome"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/bg_select"
+                        android:fontFamily="@font/sf_pro_text_medium"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:minWidth="80dp"
+                        android:paddingHorizontal="8dp"
+                        android:text="@string/league"
+                        android:textColor="#ffffff"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toStartOf="@id/tvDrawBtn"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvDrawBtn"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_draw"
+                        android:fontFamily="@font/sf_pro_text_medium"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:minWidth="80dp"
+                        android:paddingHorizontal="8dp"
+                        android:text="@string/draw"
+                        android:textColor="#335872"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvAway"
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginStart="16dp"
+                        android:background="@drawable/bg_select"
+                        android:fontFamily="@font/sf_pro_text_medium"
+                        android:gravity="center"
+                        android:includeFontPadding="false"
+                        android:minWidth="80dp"
+                        android:paddingHorizontal="8dp"
+                        android:text="@string/league"
+                        android:textColor="#ffffff"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/tvDrawBtn"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/llResultGuess"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="16dp"
+                    android:visibility="gone">
+
+                    <ImageView
+                        android:id="@+id/ivGuessHome"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/img_logo"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardView"
+                        android:layout_width="0dp"
+                        android:layout_height="8dp"
+                        android:layout_marginHorizontal="16dp"
+                        app:cardCornerRadius="4dp"
+                        app:cardElevation="0dp"
+                        app:layout_constraintBottom_toBottomOf="@id/ivGuessHome"
+                        app:layout_constraintEnd_toStartOf="@id/ivGuessAway"
+                        app:layout_constraintStart_toEndOf="@id/ivGuessHome"
+                        app:layout_constraintTop_toTopOf="@id/ivGuessHome">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent">
+
+                            <View
+                                android:id="@+id/viewHomeWin"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="6"
+                                android:background="#0094FD" />
+
+                            <View
+                                android:id="@+id/viewDraw"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="3"
+                                android:background="#D7EEFF" />
+
+                            <View
+                                android:id="@+id/viewAwayWin"
+                                android:layout_width="0dp"
+                                android:layout_height="match_parent"
+                                android:layout_weight="1"
+                                android:background="#0094FD" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="10dp"
+                        android:layout_marginHorizontal="16dp"
+                        android:layout_marginTop="4dp"
+                        app:layout_constraintEnd_toStartOf="@id/ivGuessAway"
+                        app:layout_constraintStart_toEndOf="@id/ivGuessHome"
+                        app:layout_constraintTop_toBottomOf="@id/cardView">
+
+                        <TextView
+                            android:id="@+id/tvHomeWin"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="6"
+                            android:fontFamily="@font/sf_pro_text_medium"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:text="68.2%"
+                            android:textColor="@color/black"
+                            android:textSize="8sp" />
+
+                        <TextView
+                            android:id="@+id/tvDraw"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="3"
+                            android:fontFamily="@font/sf_pro_text_medium"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:text="27.3%"
+                            android:textColor="@color/black"
+                            android:textSize="8sp" />
+
+                        <TextView
+                            android:id="@+id/tvAwayWin"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1"
+                            android:fontFamily="@font/sf_pro_text_medium"
+                            android:gravity="center"
+                            android:includeFontPadding="false"
+                            android:text="4.5%"
+                            android:textColor="@color/black"
+                            android:textSize="8sp" />
+                    </LinearLayout>
+
+                    <ImageView
+                        android:id="@+id/ivGuessAway"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/img_logo"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_dialog"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginEnd="15dp"
+                        android:background="#0094FD"
+                        app:layout_constraintBottom_toBottomOf="@id/tvFullTime"
+                        app:layout_constraintEnd_toStartOf="@id/tvFullTime"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvFullTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sf_pro_text_medium"
+                        android:includeFontPadding="false"
+                        android:text="@string/full_time"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="15dp"
+                        android:background="#0094FD"
+                        app:layout_constraintBottom_toBottomOf="@id/tvFullTime"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/tvFullTime"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rcvEventSecond"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_event" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginEnd="15dp"
+                        android:background="#0094FD"
+                        app:layout_constraintBottom_toBottomOf="@id/tvHalfTime"
+                        app:layout_constraintEnd_toStartOf="@id/tvHalfTime"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tvHalfTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sf_pro_text_medium"
+                        android:includeFontPadding="false"
+                        android:text="@string/half_time"
+                        android:textColor="@color/black"
+                        android:textSize="14sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="1dp"
+                        android:layout_marginStart="15dp"
+                        android:background="#0094FD"
+                        app:layout_constraintBottom_toBottomOf="@id/tvHalfTime"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toEndOf="@id/tvHalfTime"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rcvEventFirst"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    tools:listitem="@layout/item_event" />
+            </LinearLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:fontFamily="@font/sf_pro_text_medium"
+                android:text="@string/kick_off"
+                android:textColor="@color/black"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/tvTimeKickOff"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/sf_pro_text_medium"
+                android:text="24/02/2025 - 03:00"
+                android:textColor="@color/black"
+                android:textSize="12sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="20dp"
+                android:background="@drawable/bg_dialog"
+                android:orientation="vertical"
+                android:paddingHorizontal="24dp"
+                android:paddingVertical="8dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sf_pro_text_medium"
+                        android:includeFontPadding="false"
+                        android:text="@string/venue"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvVenue"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:fontFamily="@font/sf_pro_text_medium"
+                        android:includeFontPadding="false"
+                        android:text="@string/venue"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/sf_pro_text_medium"
+                        android:includeFontPadding="false"
+                        android:text="@string/competition"
+                        android:textColor="@color/black"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tvCompetition"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="4dp"
+                        android:fontFamily="@font/sf_pro_text_medium"
+                        android:includeFontPadding="false"
+                        android:text="@string/competition"
+                        android:textColor="@color/black"
+                        android:textSize="12sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+
+</LinearLayout>

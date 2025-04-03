@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueDetail;
 import com.livescore.soccerscore.matchlive.api_data.model.team.TeamInMatch;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.timeline.OddDetail;
 import com.livescore.soccerscore.matchlive.ui.livescores.live.FixtureLiveModel;
 
 import java.util.List;
@@ -17,6 +18,8 @@ public class FixtureDetailModel extends FixtureLiveModel {
     public List<EventDetail> events;
     @SerializedName("lineups")
     public List<LineupDetail> lineups;
+    @SerializedName("odds")
+    public List<OddDetail> odds;
 
     public LeagueDetail getLeague() {
         return new Gson().fromJson(new Gson().toJson(league), LeagueDetail.class);
@@ -53,6 +56,8 @@ public class FixtureDetailModel extends FixtureLiveModel {
     @Override
     public String toString() {
         return "FixtureDetailModel{" +
+                ",has_odds=" + has_odds +
+                ",odds=" + odds +
                 "league=" + getLeague() +
                 ", venue=" + getVenue() +
                 ", events=" + events +
@@ -63,6 +68,7 @@ public class FixtureDetailModel extends FixtureLiveModel {
                 ", id=" + id +
                 ", league_id=" + league_id +
                 ", state_id=" + state_id +
+                ", season_id=" + season_id +
                 ", name='" + name + '\'' +
                 ", starting_at='" + starting_at + '\'' +
                 ", result_info='" + result_info + '\'' +

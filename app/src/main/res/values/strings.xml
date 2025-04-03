@@ -134,6 +134,19 @@
     <string name="minutes">Minutes</string>
     <string name="timeline">Timeline</string>
     <string name="lineup">Lineup</string>
+    <string name="cleansheets">Cleansheets</string>
+    <string name="goals_conceded">Goals Conceded</string>
+    <string name="team_draws">Team Draws</string>
+    <string name="team_wins">Team Wins</string>
+    <string name="failed_to_score">Failed to Score</string>
+    <string name="most_substituted">Most Substituted</string>
+    <string name="who_will_win">Who will win?</string>
+    <string name="draw">Draw</string>
+    <string name="kick_off">Kick Off</string>
+    <string name="venue">Venue:</string>
+    <string name="competition">Competition:</string>
+    <string name="full_time">Full Time</string>
+    <string name="half_time">Half Time</string>
 
 
 </resources>

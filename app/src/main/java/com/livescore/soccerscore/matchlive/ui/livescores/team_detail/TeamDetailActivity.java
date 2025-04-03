@@ -1,10 +1,14 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.team_detail;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -26,7 +30,7 @@ import java.util.List;
 
 public class TeamDetailActivity extends BaseActivity<ActivityTeamDetailBinding> {
 
-    TeamDetailAdapter adapter = new TeamDetailAdapter(this);
+    TeamDetailAdapter adapter;
     public TeamInMatch teamModel;
     public static TeamDetailActivity instance;
 
@@ -37,6 +41,7 @@ public class TeamDetailActivity extends BaseActivity<ActivityTeamDetailBinding> 
 
     @Override
     public void initView() {
+        adapter = new TeamDetailAdapter(this);
         teamModel = (TeamInMatch) getIntent().getSerializableExtra(SPUtils.INTENT_TEAM);
         if (teamModel == null) {
             Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show();
@@ -128,4 +133,10 @@ public class TeamDetailActivity extends BaseActivity<ActivityTeamDetailBinding> 
         setResult(RESULT_OK);
         finish();
     }
+    public ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == RESULT_OK) {
+            //ads
+            Log.d("activity_check", "home");
+        }
+    });
 }

@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.livescores.team_detail.TeamStatsFragment">
+    tools:context=".ui.livescores.team_detail.stats.TeamStatsFragment">
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rcvSquad"
+        android:id="@+id/rcvFixture"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="20dp"
-        tools:listitem="@layout/item_squad"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/item_fixture_home" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

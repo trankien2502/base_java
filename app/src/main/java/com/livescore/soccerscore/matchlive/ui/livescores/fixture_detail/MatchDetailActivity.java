@@ -23,6 +23,7 @@ import com.livescore.soccerscore.matchlive.dialog.LoadingDialog;
 import com.livescore.soccerscore.matchlive.ui.livescores.HomeAdapter;
 import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.goal.GoalAwayAdapter;
 import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.goal.GoalHomeAdapter;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.timeline.OddDetail;
 import com.livescore.soccerscore.matchlive.ui.livescores.live.PeriodModel;
 import com.livescore.soccerscore.matchlive.util.EventTracking;
 import com.livescore.soccerscore.matchlive.util.SPUtils;
@@ -113,7 +114,7 @@ public class MatchDetailActivity extends BaseActivity<ActivityMatchDeatilBinding
 
     public void fetchFixtureDetail(long id) {
         try {
-            ApiDataService.apiService.callFixtureDetail(id, ConstantApiData.KEY, "participants;periods;league.country;venue;state;scores;events.type;events.period;lineups.position")
+            ApiDataService.apiService.callFixtureDetail(id, ConstantApiData.KEY, "participants;periods;league.country;venue;state;scores;events.type;events.period;lineups.position;odds", "markets:1;bookmakers:2")
                     .enqueue(new Callback<FixtureDetailResponse>() {
                         @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
                         @Override
@@ -130,6 +131,7 @@ public class MatchDetailActivity extends BaseActivity<ActivityMatchDeatilBinding
                                         for (ScoreModel score : fixtureDetailModel.scores)
                                             Log.e("API_RESPONSE", "score: " + score);
                                     }
+
                                     if (!fixtureDetailModel.periods.isEmpty()) {
                                         for (PeriodModel periodModel : fixtureDetailModel.periods)
                                             Log.e("API_RESPONSE", "periods: " + periodModel);
@@ -145,6 +147,10 @@ public class MatchDetailActivity extends BaseActivity<ActivityMatchDeatilBinding
                                     if (!fixtureDetailModel.events.isEmpty()) {
                                         for (EventDetail eventDetail : fixtureDetailModel.events)
                                             Log.e("API_RESPONSE", "events: " + eventDetail);
+                                    }
+                                    if (!fixtureDetailModel.odds.isEmpty()) {
+                                        for (OddDetail oddDetail : fixtureDetailModel.odds)
+                                            Log.e("API_RESPONSE", "odds: " + oddDetail);
                                     }
 //                            liveMatchAdapter.notifyDataSetChanged();
 //                            binding.rcvLive.post(() -> {
@@ -236,11 +242,11 @@ public class MatchDetailActivity extends BaseActivity<ActivityMatchDeatilBinding
             List<EventDetail> listAway = new ArrayList<>();
             for (EventDetail eventDetail : fixtureDetailModel.events) {
                 if (eventDetail.participant_id == homeId) {
-                    if (eventDetail.getType().developer_name.equals("PENALTY") || eventDetail.getType().developer_name.equals("GOAL")) {
+                    if (eventDetail.getType().developer_name.equals("PENALTY") || eventDetail.getType().developer_name.equals("GOAL") || eventDetail.getType().developer_name.equals("OWNGOAL")) {
                         listHome.add(eventDetail);
                     }
                 } else if (eventDetail.participant_id == awayId) {
-                    if (eventDetail.getType().developer_name.equals("PENALTY") || eventDetail.getType().developer_name.equals("GOAL")) {
+                    if (eventDetail.getType().developer_name.equals("PENALTY") || eventDetail.getType().developer_name.equals("GOAL") || eventDetail.getType().developer_name.equals("OWNGOAL")) {
                         listAway.add(eventDetail);
                     }
                 }

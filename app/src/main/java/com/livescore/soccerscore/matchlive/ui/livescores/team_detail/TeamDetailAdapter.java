@@ -7,6 +7,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.fixture.TeamFixtureFragment;
 import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.squad.TeamSquadFragment;
+import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.stats.TeamStatsFragment;
 
 public class TeamDetailAdapter extends FragmentStateAdapter {
     public TeamDetailAdapter(@NonNull FragmentActivity fragmentActivity) {

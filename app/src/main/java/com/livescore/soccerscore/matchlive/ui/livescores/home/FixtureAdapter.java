@@ -73,24 +73,24 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.FixtureV
             holder.binding.tvTimeDay.setText(dateText);
             long diffMillis = date.getTime() - System.currentTimeMillis();
 
-            if (diffMillis <= 0) {
-                if (!fixtureModel.scores.isEmpty()) {
-                    holder.binding.llScore.setVisibility(VISIBLE);
-                    holder.binding.llPin.setVisibility(GONE);
-                    for (ScoreModel scoreModel : fixtureModel.scores) {
-                        if (scoreModel.description.equals("CURRENT")) {
-                            if (scoreModel.getScore().participant.equals("home")) {
-                                holder.binding.tvHomeScore.setText("" + scoreModel.getScore().goals);
-                            }
-                            if (scoreModel.getScore().participant.equals("away")) {
-                                holder.binding.tvAwayScore.setText("" + scoreModel.getScore().goals);
-                            }
+//            if (diffMillis <= 0) {
+            if (!fixtureModel.scores.isEmpty()) {
+                holder.binding.llScore.setVisibility(VISIBLE);
+                holder.binding.llPin.setVisibility(GONE);
+                for (ScoreModel scoreModel : fixtureModel.scores) {
+                    if (scoreModel.description.equals("CURRENT")) {
+                        if (scoreModel.getScore().participant.equals("home")) {
+                            holder.binding.tvHomeScore.setText("" + scoreModel.getScore().goals);
+                        }
+                        if (scoreModel.getScore().participant.equals("away")) {
+                            holder.binding.tvAwayScore.setText("" + scoreModel.getScore().goals);
                         }
                     }
-                } else {
-                    holder.binding.llScore.setVisibility(GONE);
-                    holder.binding.llPin.setVisibility(VISIBLE);
                 }
+//                } else {
+//                    holder.binding.llScore.setVisibility(GONE);
+//                    holder.binding.llPin.setVisibility(VISIBLE);
+//                }
             } else {
                 holder.binding.llScore.setVisibility(GONE);
                 holder.binding.llPin.setVisibility(VISIBLE);

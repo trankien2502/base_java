@@ -1,5 +1,6 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.team_detail.fixture;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,11 +15,15 @@ import com.livescore.soccerscore.matchlive.api_data.ApiDataService;
 import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
 import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
+import com.livescore.soccerscore.matchlive.databinding.FragmentTeamFixtureBinding;
 import com.livescore.soccerscore.matchlive.databinding.FragmentTeamStatsBinding;
 import com.livescore.soccerscore.matchlive.dialog.LoadingDialog;
+import com.livescore.soccerscore.matchlive.ui.livescores.HomeActivity;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.MatchDetailActivity;
 import com.livescore.soccerscore.matchlive.ui.livescores.home.FixtureAdapter;
 import com.livescore.soccerscore.matchlive.ui.livescores.home.FixtureClickCallBack;
 import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.TeamDetailActivity;
+import com.livescore.soccerscore.matchlive.util.SPUtils;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -31,14 +36,14 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class TeamFixtureFragment extends BaseFragment<FragmentTeamStatsBinding> {
+public class TeamFixtureFragment extends BaseFragment<FragmentTeamFixtureBinding> {
     List<FixtureModel> list = new ArrayList<>();
     FixtureAdapter fixtureAdapter;
     LoadingDialog loadingDialog;
 
     @Override
-    public FragmentTeamStatsBinding setBinding(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState) {
-        return FragmentTeamStatsBinding.inflate(getLayoutInflater());
+    public FragmentTeamFixtureBinding setBinding(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState) {
+        return FragmentTeamFixtureBinding.inflate(getLayoutInflater());
     }
 
     @Override
@@ -46,7 +51,10 @@ public class TeamFixtureFragment extends BaseFragment<FragmentTeamStatsBinding> 
         fixtureAdapter = new FixtureAdapter(requireContext(), list, new FixtureClickCallBack() {
             @Override
             public void select(FixtureModel fixtureModel) {
-                Toast.makeText(requireContext(), "select " + fixtureModel.name, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "select " + fixtureModel.id, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(requireContext(), MatchDetailActivity.class);
+                intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
+                startArc(intent);
             }
 
             @Override
@@ -75,63 +83,69 @@ public class TeamFixtureFragment extends BaseFragment<FragmentTeamStatsBinding> 
 
     }
 
-    public void fetchFixtureScheduleTeam(int teamId) {
-        try {
-            ApiDataService.apiService.callScheduleTeam(teamId, ConstantApiData.KEY).enqueue(new Callback<SeasonResponse>() {
-                @Override
-                public void onResponse(@NonNull Call<SeasonResponse> call, @NonNull Response<SeasonResponse> response) {
-                    if (response.isSuccessful() && response.body() != null) {
-                        Log.e("API_RESPONSE", "Raw JSON: " + new Gson().toJson(response.body()));
-                        SeasonResponse seasonResponse = response.body();
-                        Log.e("API_RESPONSE", "data: " + seasonResponse.seasons);
-                        if (seasonResponse.seasons != null) {
-                            for (SeasonModel seasonModel : seasonResponse.seasons) {
-                                if (seasonModel != null) {
-                                    for (RoundModel roundModel : seasonModel.rounds) {
-                                        if (roundModel != null) {
-                                            if (roundModel.fixtures != null) {
-                                                for (FixtureModel fixtureModel : roundModel.fixtures) {
-                                                    for (FixtureModel.StateModel stateModel : ConstantApiData.listState) {
-                                                        if (fixtureModel.state_id == stateModel.id) {
-                                                            fixtureModel.setState(stateModel);
-                                                            break;
-                                                        }
-                                                    }
-                                                }
-                                                list.addAll(roundModel.fixtures);
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            for (FixtureModel fixtureModel : list) {
-                                Log.e("API_RESPONSE", "fixturesModel: " + fixtureModel);
-
-                            }
-                        }
-                        loadingDialog.dismiss();
-                        binding.rcvFixture.setAdapter(fixtureAdapter);
-                    } else {
-                        loadingDialog.dismiss();
-                        binding.rcvFixture.setAdapter(fixtureAdapter);
-                        Log.e("call_api_data", "call false: Code: " + response.code());
-                    }
-                }
-
-                @Override
-                public void onFailure(@NonNull Call<SeasonResponse> call, @NonNull Throwable t) {
-                    loadingDialog.dismiss();
-                    binding.rcvFixture.setAdapter(fixtureAdapter);
-                    Log.e("call_api_data", "onfailure" + t);
-                }
-            });
-
-        } catch (Exception e) {
-            loadingDialog.dismiss();
-            binding.rcvFixture.setAdapter(fixtureAdapter);
-            Log.e("call_api_data", "catch: ", e);
+    public void startArc(Intent intent) {
+        if (getContext() instanceof TeamDetailActivity) {
+            TeamDetailActivity main = (TeamDetailActivity) getContext();
+            main.resultLauncher.launch(intent);
         }
     }
+//    public void fetchFixtureScheduleTeam(int teamId) {
+//        try {
+//            ApiDataService.apiService.callScheduleTeam(teamId, ConstantApiData.KEY).enqueue(new Callback<SeasonResponse>() {
+//                @Override
+//                public void onResponse(@NonNull Call<SeasonResponse> call, @NonNull Response<SeasonResponse> response) {
+//                    if (response.isSuccessful() && response.body() != null) {
+//                        Log.e("API_RESPONSE", "Raw JSON: " + new Gson().toJson(response.body()));
+//                        SeasonResponse seasonResponse = response.body();
+//                        Log.e("API_RESPONSE", "data: " + seasonResponse.seasons);
+//                        if (seasonResponse.seasons != null) {
+//                            for (SeasonModel seasonModel : seasonResponse.seasons) {
+//                                if (seasonModel != null) {
+//                                    for (RoundModel roundModel : seasonModel.rounds) {
+//                                        if (roundModel != null) {
+//                                            if (roundModel.fixtures != null) {
+//                                                for (FixtureModel fixtureModel : roundModel.fixtures) {
+//                                                    for (FixtureModel.StateModel stateModel : ConstantApiData.listState) {
+//                                                        if (fixtureModel.state_id == stateModel.id) {
+//                                                            fixtureModel.setState(stateModel);
+//                                                            break;
+//                                                        }
+//                                                    }
+//                                                }
+//                                                list.addAll(roundModel.fixtures);
+//                                            }
+//                                        }
+//                                    }
+//                                }
+//                            }
+//                            for (FixtureModel fixtureModel : list) {
+//                                Log.e("API_RESPONSE", "fixturesModel: " + fixtureModel);
+//
+//                            }
+//                        }
+//                        loadingDialog.dismiss();
+//                        binding.rcvFixture.setAdapter(fixtureAdapter);
+//                    } else {
+//                        loadingDialog.dismiss();
+//                        binding.rcvFixture.setAdapter(fixtureAdapter);
+//                        Log.e("call_api_data", "call false: Code: " + response.code());
+//                    }
+//                }
+//
+//                @Override
+//                public void onFailure(@NonNull Call<SeasonResponse> call, @NonNull Throwable t) {
+//                    loadingDialog.dismiss();
+//                    binding.rcvFixture.setAdapter(fixtureAdapter);
+//                    Log.e("call_api_data", "onfailure" + t);
+//                }
+//            });
+//
+//        } catch (Exception e) {
+//            loadingDialog.dismiss();
+//            binding.rcvFixture.setAdapter(fixtureAdapter);
+//            Log.e("call_api_data", "catch: ", e);
+//        }
+//    }
 
     public void fetchFixtureTeam(long teamId) {
         try {

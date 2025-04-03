@@ -12,6 +12,8 @@ public class FixtureLiveModel extends FixtureModel {
     @Override
     public String toString() {
         return "FixtureLiveModel{" +
+                "has_odds=" + has_odds +
+                "season_id=" + season_id +
                 "periods=" + periods +
                 ", participants=" + participants +
                 ", scores=" + scores +

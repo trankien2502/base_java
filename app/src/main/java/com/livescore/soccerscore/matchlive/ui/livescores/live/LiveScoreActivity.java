@@ -4,9 +4,12 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
@@ -18,7 +21,9 @@ import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
 import com.livescore.soccerscore.matchlive.base.BaseActivity;
 import com.livescore.soccerscore.matchlive.databinding.ActivityLiveScoreBinding;
 import com.livescore.soccerscore.matchlive.dialog.LoadingDialog;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.MatchDetailActivity;
 import com.livescore.soccerscore.matchlive.ui.livescores.home.LeagueTodayAdapter;
+import com.livescore.soccerscore.matchlive.util.SPUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +49,10 @@ public class LiveScoreActivity extends BaseActivity<ActivityLiveScoreBinding> {
         liveMatchAdapter = new LiveMatchActivityAdapter(this, listLive, new LiveMatchClickCallBack() {
             @Override
             public void detail(FixtureLiveModel fixtureModel) {
-                Toast.makeText(LiveScoreActivity.this, fixtureModel.name, Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "select " + fixtureModel.id, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getBaseContext(), MatchDetailActivity.class);
+                intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
+                resultLauncher.launch(intent);
             }
         });
         binding.rcvLive.setAdapter(liveMatchAdapter);
@@ -57,6 +65,13 @@ public class LiveScoreActivity extends BaseActivity<ActivityLiveScoreBinding> {
             Log.e("call_api_data", "No internet to call api");
         }
     }
+
+    public ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == RESULT_OK) {
+            //ads
+            Log.d("activity_check", "home");
+        }
+    });
 
     @SuppressLint("NotifyDataSetChanged")
     @Override

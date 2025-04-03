@@ -5,6 +5,7 @@ import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,16 +42,22 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
         EventDetail eventDetail = list.get(position);
         int sourceImageEvent;
         String player_name = eventDetail.player_name;
-        String player_related = "";
-        if (eventDetail.related_player_name != null)
-            player_related = eventDetail.related_player_name;
+        String player_related = eventDetail.related_player_name != null ? eventDetail.related_player_name : "";
+        Log.e("check_api_name", "related_player_name: " + eventDetail.related_player_name);
+        Log.e("check_api_name", "player_related: " + eventDetail.related_player_name);
         holder.binding.tvMinute.setText(eventDetail.minute + "'");
-        if (eventDetail.getType().developer_name.equals("PENALTY") || eventDetail.getType().developer_name.equals("GOAL")) {
+        if (eventDetail.getType().developer_name.equals("PENALTY") || eventDetail.getType().developer_name.equals("GOAL") || eventDetail.getType().developer_name.equals("OWNGOAL")) {
             sourceImageEvent = R.drawable.event_goal;
         } else if (eventDetail.getType().developer_name.equals("YELLOWCARD")) {
             sourceImageEvent = R.drawable.event_yellow_card;
         } else if (eventDetail.getType().developer_name.equals("SUBSTITUTION")) {
             sourceImageEvent = R.drawable.event_substitution;
+        } else if (eventDetail.getType().developer_name.equals("VARCARD")) {
+            sourceImageEvent = R.drawable.img_logo;
+        } else if (eventDetail.getType().developer_name.equals("YELLOWREDCARD")) {
+            sourceImageEvent = R.drawable.img_logo;
+        } else if (eventDetail.getType().developer_name.equals("REDCARD")) {
+            sourceImageEvent = R.drawable.img_logo;
         } else {
             sourceImageEvent = R.drawable.img_logo;
         }
@@ -60,16 +67,22 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             holder.binding.ivHomeEvent.setImageResource(sourceImageEvent);
             holder.binding.tvHomePlayerName.setText(player_name);
             if (player_related.equals("null") || player_related.isEmpty()) {
+                holder.binding.tvHomePlayerNameRelate.setVisibility(GONE);
+            } else {
+                holder.binding.tvHomePlayerNameRelate.setVisibility(VISIBLE);
                 holder.binding.tvHomePlayerNameRelate.setText(player_related);
-            } else holder.binding.tvHomePlayerNameRelate.setVisibility(GONE);
+            }
         } else {
             holder.binding.eventAway.setVisibility(VISIBLE);
             holder.binding.eventHome.setVisibility(GONE);
             holder.binding.ivAwayEvent.setImageResource(sourceImageEvent);
             holder.binding.tvAwayPlayerName.setText(player_name);
             if (player_related.equals("null") || player_related.isEmpty()) {
+                holder.binding.tvAwayPlayerNameRelate.setVisibility(GONE);
+            } else {
                 holder.binding.tvAwayPlayerNameRelate.setText(player_related);
-            } else holder.binding.tvAwayPlayerNameRelate.setVisibility(GONE);
+                holder.binding.tvAwayPlayerNameRelate.setVisibility(VISIBLE);
+            }
         }
 
     }
