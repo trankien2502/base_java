@@ -4,6 +4,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -21,6 +22,7 @@ import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.databinding.FragmentTimelineBinding;
 import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.EventDetail;
 import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.FixtureDetailModel;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.LineupDetail;
 import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.MatchDetailActivity;
 
 import java.text.SimpleDateFormat;
@@ -29,6 +31,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class TimelineFragment extends BaseFragment<FragmentTimelineBinding> {
 
@@ -80,8 +84,8 @@ public class TimelineFragment extends BaseFragment<FragmentTimelineBinding> {
                 binding.rcvEventFirst.setAdapter(adapter1);
                 adapter2 = new EventAdapter(requireContext(), listSecondHalf, MatchDetailActivity.instance.homeId);
                 binding.rcvEventSecond.setAdapter(adapter2);
-                binding.tvVenue.setText(fixtureDetailModel.getVenue().address);
-                binding.tvCompetition.setText(fixtureDetailModel.getLeague().name);
+                binding.tvVenue.setText(fixtureDetailModel.getVenue() != null ? fixtureDetailModel.getVenue().name : "");
+                binding.tvCompetition.setText(fixtureDetailModel.getLeague() != null ? fixtureDetailModel.getLeague().name : "");
                 if (!fixtureDetailModel.scores.isEmpty()) {
                     int scoreHome1 = 0, scoreAway1 = 0;
                     int scoreHome2 = 0, scoreAway2 = 0;
@@ -127,8 +131,12 @@ public class TimelineFragment extends BaseFragment<FragmentTimelineBinding> {
         if (fixtureDetailModel != null) {
             if (!fixtureDetailModel.events.isEmpty()) {
                 for (EventDetail eventDetail : fixtureDetailModel.events) {
-                    if (eventDetail.getPeriod().sort_order == 1) {
-                        listFirstHalf.add(eventDetail);
+                    if (eventDetail.getPeriod() != null) {
+                        if (eventDetail.getPeriod().sort_order == 1) {
+                            listFirstHalf.add(eventDetail);
+                        } else {
+                            listSecondHalf.add(eventDetail);
+                        }
                     } else {
                         listSecondHalf.add(eventDetail);
                     }
@@ -203,4 +211,5 @@ public class TimelineFragment extends BaseFragment<FragmentTimelineBinding> {
             }
         }
     }
+
 }

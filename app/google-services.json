@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "209602126188",
+    "project_id": "livescoretest-a9558",
+    "storage_bucket": "livescoretest-a9558.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:209602126188:android:e22323f6bfbb4f80c7d349",
+        "android_client_info": {
+          "package_name": "com.livescore.soccerscore.matchlive"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnmIkkMZbfYvrJ2D2R1JTK_XM2qAZup-M"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

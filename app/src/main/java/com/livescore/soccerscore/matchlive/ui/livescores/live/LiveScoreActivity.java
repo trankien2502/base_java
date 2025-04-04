@@ -87,6 +87,7 @@ public class LiveScoreActivity extends BaseActivity<ActivityLiveScoreBinding> {
                 Log.e("call_api_data", "No internet to call api");
             }
         });
+        binding.ivBack.setOnClickListener(v -> onBack());
     }
 
     public void fetchLiveMatch() {

@@ -23,6 +23,7 @@ import com.livescore.soccerscore.matchlive.dialog.LoadingDialog;
 import com.livescore.soccerscore.matchlive.ui.livescores.HomeAdapter;
 import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.goal.GoalAwayAdapter;
 import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.goal.GoalHomeAdapter;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.stats.StatsDetail;
 import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.timeline.OddDetail;
 import com.livescore.soccerscore.matchlive.ui.livescores.live.PeriodModel;
 import com.livescore.soccerscore.matchlive.util.EventTracking;
@@ -114,7 +115,8 @@ public class MatchDetailActivity extends BaseActivity<ActivityMatchDeatilBinding
 
     public void fetchFixtureDetail(long id) {
         try {
-            ApiDataService.apiService.callFixtureDetail(id, ConstantApiData.KEY, "participants;periods;league.country;venue;state;scores;events.type;events.period;lineups.position;odds", "markets:1;bookmakers:2")
+            ApiDataService.apiService.
+                    callFixtureDetail(id, ConstantApiData.KEY, "participants;periods;league.country;venue;state;scores;events.type;events.period;lineups.position;lineups.player;odds;statistics.type", "markets:1;bookmakers:2")
                     .enqueue(new Callback<FixtureDetailResponse>() {
                         @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
                         @Override
@@ -151,6 +153,10 @@ public class MatchDetailActivity extends BaseActivity<ActivityMatchDeatilBinding
                                     if (!fixtureDetailModel.odds.isEmpty()) {
                                         for (OddDetail oddDetail : fixtureDetailModel.odds)
                                             Log.e("API_RESPONSE", "odds: " + oddDetail);
+                                    }
+                                    if (!fixtureDetailModel.statistics.isEmpty()) {
+                                        for (StatsDetail statsDetail : fixtureDetailModel.statistics)
+                                            Log.e("API_RESPONSE", "odds: " + statsDetail);
                                     }
 //                            liveMatchAdapter.notifyDataSetChanged();
 //                            binding.rcvLive.post(() -> {

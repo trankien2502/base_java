@@ -31,7 +31,7 @@ import java.util.List;
 public class TeamDetailActivity extends BaseActivity<ActivityTeamDetailBinding> {
 
     TeamDetailAdapter adapter;
-    public TeamInMatch teamModel;
+    public TeamModel teamModel;
     public static TeamDetailActivity instance;
 
     @Override
@@ -42,12 +42,12 @@ public class TeamDetailActivity extends BaseActivity<ActivityTeamDetailBinding> 
     @Override
     public void initView() {
         adapter = new TeamDetailAdapter(this);
-        teamModel = (TeamInMatch) getIntent().getSerializableExtra(SPUtils.INTENT_TEAM);
+        teamModel = (TeamModel) getIntent().getSerializableExtra(SPUtils.INTENT_TEAM);
         if (teamModel == null) {
             Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show();
             onBack();
         } else {
-            binding.tvTeamNational.setText(teamModel.getCountry().name);
+            binding.tvTeamNational.setText(teamModel.countryName);
             binding.tvTeamName.setText(teamModel.getName());
             Glide.with(this).load(teamModel.getImage_path()).into(binding.ivTeam);
             if (TeamDatabase.getInstance(this).teamDAO().getTeamById(teamModel.getId()) != null) {
@@ -133,6 +133,7 @@ public class TeamDetailActivity extends BaseActivity<ActivityTeamDetailBinding> 
         setResult(RESULT_OK);
         finish();
     }
+
     public ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == RESULT_OK) {
             //ads

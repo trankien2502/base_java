@@ -17,6 +17,7 @@ public class TeamModel implements Serializable {
     String name;
     @SerializedName("image_path")
     String image_path;
+    public String countryName;
     @SerializedName("isFavourite")
     boolean isFavourite;
 

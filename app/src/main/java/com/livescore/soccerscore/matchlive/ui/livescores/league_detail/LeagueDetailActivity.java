@@ -15,6 +15,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import com.bumptech.glide.Glide;
 import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueDetail;
+import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
 import com.livescore.soccerscore.matchlive.api_data.model.team.TeamInMatch;
 import com.livescore.soccerscore.matchlive.base.BaseActivity;
 import com.livescore.soccerscore.matchlive.database.league.LeagueDatabase;
@@ -29,7 +30,7 @@ public class LeagueDetailActivity extends BaseActivity<ActivityLeagueDetailBindi
 
 
     LeagueDetailAdapter adapter = new LeagueDetailAdapter(this);
-    public LeagueDetail leagueDetail;
+    public LeagueModel leagueDetail;
     public static LeagueDetailActivity instance;
 
     @Override
@@ -39,12 +40,12 @@ public class LeagueDetailActivity extends BaseActivity<ActivityLeagueDetailBindi
 
     @Override
     public void initView() {
-        leagueDetail = (LeagueDetail) getIntent().getSerializableExtra(SPUtils.INTENT_LEAGUE);
+        leagueDetail = (LeagueModel) getIntent().getSerializableExtra(SPUtils.INTENT_LEAGUE);
         if (leagueDetail == null) {
             Toast.makeText(this, R.string.error, Toast.LENGTH_SHORT).show();
             onBack();
         } else {
-            binding.tvLeagueNational.setText(leagueDetail.getCountry().name);
+            binding.tvLeagueNational.setText(leagueDetail.countryName);
             binding.tvLeagueName.setText(leagueDetail.getName());
             Glide.with(this).load(leagueDetail.getImage_path()).into(binding.ivLeague);
             if (LeagueDatabase.getInstance(this).leagueDAO().getLeagueById(leagueDetail.getId()) != null) {

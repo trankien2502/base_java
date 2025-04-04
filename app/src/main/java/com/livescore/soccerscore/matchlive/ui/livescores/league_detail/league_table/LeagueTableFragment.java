@@ -36,6 +36,7 @@ public class LeagueTableFragment extends BaseFragment<FragmentLeagueTableBinding
     List<StandingModel> list = new ArrayList<>();
     List<SeasonDetail> listSeason = new ArrayList<>();
     StandingTableAdapter adapter;
+    boolean isHaveSeasonCurrent = false;
 
     @Override
     public FragmentLeagueTableBinding setBinding(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState) {
@@ -67,7 +68,8 @@ public class LeagueTableFragment extends BaseFragment<FragmentLeagueTableBinding
     public void fetchStanding(int page, long leagueId, long seasonId) {
         try {
             String filters = "standingLeagues:" + leagueId + ";standingdetailTypes:129,133,134,179; standingSeasons:" + seasonId;
-            ApiDataService.apiService.callStandingLeague(ConstantApiData.KEY, "participant;details.type", filters, page).enqueue(new Callback<StandingResponse>() {
+            ApiDataService.apiService.
+                    callStandingLeague(ConstantApiData.KEY, "participant;details.type", filters, page).enqueue(new Callback<StandingResponse>() {
                 @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
                 @Override
                 public void onResponse(@NonNull Call<StandingResponse> call, @NonNull Response<StandingResponse> response) {
@@ -155,18 +157,22 @@ public class LeagueTableFragment extends BaseFragment<FragmentLeagueTableBinding
                                 } else {
                                     for (SeasonDetail seasonDetail : listSeason) {
                                         if (seasonDetail.is_current) {
+                                            isHaveSeasonCurrent = true;
                                             fetchStanding(1, leagueId, seasonDetail.id);
                                             break;
                                         }
                                     }
+                                    if (!isHaveSeasonCurrent) loadingDialog.dismiss();
                                 }
                             } else {
                                 for (SeasonDetail seasonDetail : listSeason) {
                                     if (seasonDetail.is_current) {
+                                        isHaveSeasonCurrent = true;
                                         fetchStanding(1, leagueId, seasonDetail.id);
                                         break;
                                     }
                                 }
+                                if (!isHaveSeasonCurrent) loadingDialog.dismiss();
                             }
                         } else loadingDialog.dismiss();
                     } else {

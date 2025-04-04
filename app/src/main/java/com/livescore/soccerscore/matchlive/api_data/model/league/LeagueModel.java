@@ -19,6 +19,7 @@ public class LeagueModel implements Serializable {
     public int sport_id;
     @SerializedName("country_id")
     public int country_id;
+    public String countryName;
     @SerializedName("name")
     public String name;
     @SerializedName("active")

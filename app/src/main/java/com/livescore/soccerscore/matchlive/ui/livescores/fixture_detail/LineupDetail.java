@@ -15,9 +15,15 @@ public class LineupDetail {
     public int formation_position;
     @SerializedName("position")
     public Object position;
+    @SerializedName("player")
+    public Object player;
 
     public SquadModel.Position getPosition() {
         return new Gson().fromJson(new Gson().toJson(position), SquadModel.Position.class);
+    }
+
+    public SquadModel.Player getPlayer() {
+        return new Gson().fromJson(new Gson().toJson(player), SquadModel.Player.class);
     }
 
     @Override
@@ -28,6 +34,7 @@ public class LineupDetail {
                 ", player_name='" + player_name + '\'' +
                 ", formation_position=" + formation_position +
                 ", position=" + getPosition() +
+                ", player=" + getPlayer() +
                 '}';
     }
 }

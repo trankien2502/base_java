@@ -362,6 +362,7 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
         });
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void search() {
         if (str.isEmpty()) {
             if (state == TEAM) {
@@ -369,11 +370,19 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
                 currentPageTeam = 1;
                 loadingDialog.show();
                 fetchTeamPage(currentPageTeam);
+                listTeamFavourite.clear();
+                listTeamFavourite.addAll(TeamDatabase.getInstance(requireContext()).teamDAO().getAllTeamFavourite());
+                teamAdapterFavourite.notifyDataSetChanged();
+                checkEmptyTeam();
             } else {
                 listAllLeague.clear();
                 currentPageLeague = 1;
                 loadingDialog.show();
                 fetchLeaguePage(currentPageLeague);
+                listLeagueFavourite.clear();
+                listLeagueFavourite.addAll(LeagueDatabase.getInstance(requireContext()).leagueDAO().getAllLeagueFavourite());
+                leagueAdapterFavourite.notifyDataSetChanged();
+                checkEmptyLeague();
             }
         } else {
             if (state == TEAM) {
@@ -381,11 +390,25 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
                 currentPageTeam = 1;
                 loadingDialog.show();
                 fetchTeamPageSearch(str, currentPageTeam);
+                listTeamFavourite.clear();
+                for (TeamModel teamModel : TeamDatabase.getInstance(requireContext()).teamDAO().getAllTeamFavourite()) {
+                    if (teamModel.getName().toLowerCase().contains(str.toLowerCase()))
+                        listTeamFavourite.add(teamModel);
+                }
+                teamAdapterFavourite.notifyDataSetChanged();
+                checkEmptyTeam();
             } else {
                 listAllLeague.clear();
                 currentPageLeague = 1;
                 loadingDialog.show();
                 fetchLeaguePageSearch(str, currentPageLeague);
+                listLeagueFavourite.clear();
+                for (LeagueModel leagueModel : LeagueDatabase.getInstance(requireContext()).leagueDAO().getAllLeagueFavourite()) {
+                    if (leagueModel.getName().toLowerCase().contains(str.toLowerCase()))
+                        listLeagueFavourite.add(leagueModel);
+                }
+                leagueAdapterFavourite.notifyDataSetChanged();
+                checkEmptyLeague();
             }
         }
     }
@@ -401,6 +424,9 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
                         TeamResponse teamResponse = response.body();
                         if (teamResponse.data != null) {
                             int oldPos = listAllTeam.size();
+                            for (TeamInMatch team : teamResponse.data) {
+                                team.countryName = team.getCountry().name;
+                            }
                             listAllTeam.addAll(teamResponse.data);
                             Log.e("call_api_data", "call true:");
                             Gson gson = new Gson();
@@ -458,6 +484,9 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
                         TeamResponse teamResponse = response.body();
                         if (teamResponse.data != null) {
                             int oldPos = listAllTeam.size();
+                            for (TeamInMatch team : teamResponse.data) {
+                                team.countryName = team.getCountry().name;
+                            }
                             listAllTeam.addAll(teamResponse.data);
                             Log.e("call_api_data", "call true:");
                             Gson gson = new Gson();
@@ -515,6 +544,9 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
                         LeagueResponse leagueResponse = response.body();
                         if (leagueResponse.data != null) {
                             int oldPos = listAllLeague.size();
+                            for (LeagueDetail leagueDetail : leagueResponse.data) {
+                                leagueDetail.countryName = leagueDetail.getCountry().name;
+                            }
                             listAllLeague.addAll(leagueResponse.data);
                             Log.e("call_api_data", "call true:");
                             Gson gson = new Gson();
@@ -572,6 +604,9 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
                         LeagueResponse leagueResponse = response.body();
                         if (leagueResponse.data != null) {
                             int oldPos = listAllLeague.size();
+                            for (LeagueDetail leagueDetail : leagueResponse.data) {
+                                leagueDetail.countryName = leagueDetail.getCountry().name;
+                            }
                             listAllLeague.addAll(leagueResponse.data);
                             Log.e("call_api_data", "call true:");
                             Gson gson = new Gson();
@@ -672,15 +707,21 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
         teamClickCallBack = new TeamClickCallBack() {
             @Override
             public void select(TeamModel teamModel) {
-                for (TeamModel team : listAllTeam) {
-                    if (team.getId() == teamModel.getId()) {
-                        Intent intent = new Intent(requireContext(), TeamDetailActivity.class);
-                        intent.putExtra(SPUtils.INTENT_TEAM, team);
-                        startArc(intent);
-                        break;
+                TeamModel teamModel1 = TeamDatabase.getInstance(requireContext()).teamDAO().getTeamById(teamModel.getId());
+                if (teamModel1 != null) {
+                    Intent intent = new Intent(requireContext(), TeamDetailActivity.class);
+                    intent.putExtra(SPUtils.INTENT_TEAM, teamModel1);
+                    startArc(intent);
+                } else {
+                    for (TeamModel team : listAllTeam) {
+                        if (team.getId() == teamModel.getId()) {
+                            Intent intent = new Intent(requireContext(), TeamDetailActivity.class);
+                            intent.putExtra(SPUtils.INTENT_TEAM, team);
+                            startArc(intent);
+                            break;
+                        }
                     }
                 }
-
             }
 
             @Override
@@ -709,14 +750,22 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
         leagueClickCallBack = new LeagueClickCallBack() {
             @Override
             public void select(LeagueModel leagueModel) {
-                for (LeagueModel leagueDetail : listAllLeague) {
-                    if (leagueModel.getId() == leagueDetail.getId()) {
-                        Intent intent = new Intent(requireContext(), LeagueDetailActivity.class);
-                        intent.putExtra(SPUtils.INTENT_LEAGUE, leagueDetail);
-                        startArc(intent);
-                        break;
+                LeagueModel leagueModel1 = LeagueDatabase.getInstance(requireContext()).leagueDAO().getLeagueById(leagueModel.id);
+                if (leagueModel1 != null) {
+                    Intent intent = new Intent(requireContext(), LeagueDetailActivity.class);
+                    intent.putExtra(SPUtils.INTENT_LEAGUE, leagueModel1);
+                    startArc(intent);
+                } else {
+                    for (LeagueModel leagueDetail : listAllLeague) {
+                        if (leagueModel.getId() == leagueDetail.getId()) {
+                            Intent intent = new Intent(requireContext(), LeagueDetailActivity.class);
+                            intent.putExtra(SPUtils.INTENT_LEAGUE, leagueDetail);
+                            startArc(intent);
+                            break;
+                        }
                     }
                 }
+
             }
 
             @Override
