@@ -59,14 +59,8 @@ public class FixtureDetailModel extends FixtureLiveModel {
     @Override
     public String toString() {
         return "FixtureDetailModel{" +
+                ", result_info='" + result_info + '\'' +
                 ",has_odds=" + has_odds +
-                ",odds=" + odds +
-                "league=" + getLeague() +
-                ", venue=" + getVenue() +
-                ", events=" + events +
-                ", lineups=" + lineups +
-                ", participants=" + participants +
-                ", scores=" + scores +
                 ", state=" + state +
                 ", id=" + id +
                 ", league_id=" + league_id +
@@ -74,7 +68,15 @@ public class FixtureDetailModel extends FixtureLiveModel {
                 ", season_id=" + season_id +
                 ", name='" + name + '\'' +
                 ", starting_at='" + starting_at + '\'' +
-                ", result_info='" + result_info + '\'' +
+                ",odds=" + odds +
+                "league=" + getLeague() +
+                ", venue=" + getVenue() +
+                ", events=" + events +
+                ", lineups=" + lineups +
+                ", participants=" + participants +
+                ", scores=" + scores +
+
+
                 '}';
     }
 }

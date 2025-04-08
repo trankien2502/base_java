@@ -17,6 +17,7 @@ public class ConstantApiData {
     public static List<FixtureModel.StateModel> listState = new ArrayList<>();
     public static final String FIXTURE = "fixtures";
     public static final String STATE = "states";
+    public static final String TIMEZONE = "Asia/Ho_Chi_Minh";
     public static final String KEY = "tCaaAbgORG4Czb3byoAN4ywt70oCxMMpfQqVCmRetJp3BYapxRv419koCJQT";
     public static final String AI_TREND_DEMO = "altrend_demo";
     public static final String HOLIDAY_DEMO = "holiday_demo";

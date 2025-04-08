@@ -4,6 +4,7 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -22,12 +23,19 @@ import com.livescore.soccerscore.matchlive.api_data.ApiDataService;
 import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
 import com.livescore.soccerscore.matchlive.api_data.model.PaginationModel;
 import com.livescore.soccerscore.matchlive.api_data.model.ScoreModel;
+import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureBase;
 import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
 import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureResponse;
+import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueDetail;
 import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueTodayModel;
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
+import com.livescore.soccerscore.matchlive.database.fixture.FixtureDatabase;
 import com.livescore.soccerscore.matchlive.databinding.FragmentHomeBinding;
 import com.livescore.soccerscore.matchlive.dialog.LoadingDialog;
+import com.livescore.soccerscore.matchlive.dialog.MatchPinWarnDialog;
+import com.livescore.soccerscore.matchlive.dialog.MatchPinnedDialog;
+import com.livescore.soccerscore.matchlive.dialog.notification.DialogNotificationCallBack;
+import com.livescore.soccerscore.matchlive.dialog.notification.NotificationDialog;
 import com.livescore.soccerscore.matchlive.ui.livescores.HomeActivity;
 import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.MatchDetailActivity;
 import com.livescore.soccerscore.matchlive.ui.livescores.live.FixtureLiveModel;
@@ -54,6 +62,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
     List<LeagueTodayModel> list = new ArrayList<>();
     List<FixtureLiveModel> listLive = new ArrayList<>();
     LeagueTodayAdapter adapter;
+    FixtureAdapter fixtureAdapter;
     LiveMatchAdapter liveMatchAdapter;
     int currentPage = 1;
     String selectedDate = "";
@@ -64,6 +73,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
         return FragmentHomeBinding.inflate(getLayoutInflater());
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     @Override
     public void initView() {
         adapter = new LeagueTodayAdapter(requireContext(), list, new LeagueHomeClickCallBack() {
@@ -85,21 +95,107 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
             }
         }, new FixtureClickCallBack() {
             @Override
-            public void select(FixtureModel fixtureModel) {
+            public void select(int pos, FixtureModel fixtureModel) {
                 Toast.makeText(requireContext(), "select " + fixtureModel.id, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(requireContext(), MatchDetailActivity.class);
                 intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
                 startArc(intent);
             }
 
+
             @Override
-            public void pin(FixtureModel fixtureModel) {
-                Toast.makeText(requireContext(), "pin " + fixtureModel.name, Toast.LENGTH_SHORT).show();
+            public void pin(int pos, FixtureModel fixtureModel) {
+                if (fixtureModel.isPin) {
+                    fixtureModel.isPin = false;
+                    if (fixtureModel.isAlarm) {
+                        FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel);
+                    } else {
+                        FixtureDatabase.getInstance(requireContext()).fixtureDAO().delete(fixtureModel.id);
+                    }
+                    FixtureModel fixtureBase = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureByPin();
+                    if (fixtureBase != null)
+                        Toast.makeText(requireContext(), fixtureBase.name, Toast.LENGTH_SHORT).show();
+                    adapter.notifyItemChanged(pos);
+
+                } else {
+                    FixtureModel fixtureBase = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureByPin();
+                    if (fixtureBase == null) {
+                        fixtureModel.isPin = true;
+                        FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel);
+                        adapter.notifyItemChanged(pos);
+                        showPinnedMatch();
+                        FixtureModel fixtureBase1 = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureByPin();
+                        if (fixtureBase1 != null)
+                            Toast.makeText(requireContext(), fixtureBase1.name, Toast.LENGTH_SHORT).show();
+                    } else {
+                        MatchPinWarnDialog dialog = new MatchPinWarnDialog(requireContext(), false);
+                        dialog.binding.btnCancel.setOnClickListener(v -> {
+                            dialog.dismiss();
+                        });
+                        dialog.binding.btnReplace.setOnClickListener(v -> {
+                            fixtureModel.isPin = true;
+                            adapter.notifyItemChanged(pos);
+                            FixtureDatabase.getInstance(requireContext()).fixtureDAO().deletePin();
+                            FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel);
+                            dialog.dismiss();
+                            FixtureModel fixtureBase1 = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureByPin();
+                            if (fixtureBase1 != null)
+                                Toast.makeText(requireContext(), fixtureBase1.name, Toast.LENGTH_SHORT).show();
+                            out:
+                            for (int i = 0; i < list.size(); i++) {
+                                for (FixtureModel fixtureModel1 : list.get(i).getToday()) {
+                                    if (fixtureModel1.id != fixtureModel.id && fixtureModel1.isPin) {
+                                        adapter.notifyItemChanged(i);
+                                        break out;
+                                    }
+                                }
+                            }
+                        });
+                        dialog.show();
+                    }
+
+                }
+
+
             }
 
             @Override
-            public void alarm(FixtureModel fixtureModel) {
-                Toast.makeText(requireContext(), "alarm " + fixtureModel.name, Toast.LENGTH_SHORT).show();
+            public void alarm(int pos, FixtureModel fixtureModel) {
+                FixtureModel fixtureBase = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureById(fixtureModel.id);
+                NotificationDialog dialog = new NotificationDialog(requireContext(), false);
+                dialog.initFixture(fixtureModel);
+                dialog.initCallBack(new DialogNotificationCallBack() {
+                    @Override
+                    public void cancel() {
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void save(FixtureModel fixtureModel1) {
+                        if (fixtureModel1.isAlarm) {
+                            if (fixtureBase != null) {
+                                FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel1);
+                            } else
+                                FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel1);
+                        } else {
+                            if (fixtureBase != null) {
+                                if (fixtureBase.isPin) {
+                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel1);
+                                } else
+                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().delete(fixtureBase.id);
+                            }
+                        }
+                        for (FixtureModel fixtureModel2 : list.get(pos).getToday()) {
+                            if (fixtureModel1.id == fixtureModel2.id) {
+                                fixtureModel2 = fixtureModel1;
+                                break;
+                            }
+                        }
+                        adapter.notifyItemChanged(pos);
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
             }
         });
         liveMatchAdapter = new LiveMatchAdapter(requireContext(), listLive, new LiveMatchClickCallBack() {
@@ -187,7 +283,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 
     public void fetchFixtureDatePage(String date, int page) {
         try {
-            ApiDataService.apiService.callFixtureToday(date, ConstantApiData.KEY, "today.participants;today.scores;today.state", page).enqueue(new Callback<FixtureResponse>() {
+            ApiDataService.apiService.callFixtureToday(date, ConstantApiData.KEY, ConstantApiData.TIMEZONE, "today.participants;today.scores;today.state", page).enqueue(new Callback<FixtureResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<FixtureResponse> call, @NonNull Response<FixtureResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -235,7 +331,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 
     public void fetchLiveMatch() {
         try {
-            ApiDataService.apiService.callLiveMatch(ConstantApiData.KEY, "participants;scores;state;periods").enqueue(new Callback<LiveResponse>() {
+            ApiDataService.apiService.callLiveMatch(ConstantApiData.KEY, ConstantApiData.TIMEZONE, "participants;scores;state;periods").enqueue(new Callback<LiveResponse>() {
                 @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
                 @Override
                 public void onResponse(@NonNull Call<LiveResponse> call, @NonNull Response<LiveResponse> response) {
@@ -243,7 +339,11 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                         Log.e("API_RESPONSE", "Raw JSON: " + new Gson().toJson(response.body()));
                         LiveResponse teamResponse = response.body();
                         if (teamResponse.data != null) {
-                            listLive.addAll(teamResponse.data);
+//                            listLive.addAll(teamResponse.data);
+                            for (FixtureLiveModel fixtureLiveModel : teamResponse.data) {
+                                if (!fixtureLiveModel.getState().short_name.equals("NS") && !fixtureLiveModel.getState().short_name.equals("FT"))
+                                    listLive.add(fixtureLiveModel);
+                            }
                             Log.e("API_RESPONSE", "data: " + teamResponse.data);
                             Log.e("call_api_data", "call true:");
                             for (FixtureLiveModel liveModel : listLive) {
@@ -275,4 +375,22 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
             Log.e("call_api_data", "catch: ", e);
         }
     }
+
+    public void showPinnedMatch() {
+        MatchPinnedDialog dialog = new MatchPinnedDialog(requireContext(), false);
+        dialog.binding.btnOK.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+        dialog.show();
+    }
+//    public void showPinWarnMatch(int pos,FixtureModel fixtureModel){
+//        MatchPinWarnDialog dialog = new MatchPinWarnDialog(requireContext(),false);
+//        dialog.binding.btnCancel.setOnClickListener(v -> {
+//            dialog.dismiss();
+//        });
+//        dialog.binding.btnReplace.setOnClickListener(v -> {
+//            for ( )
+//        });
+//        dialog.show();
+//    }
 }

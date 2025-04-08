@@ -321,7 +321,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
 
     private void fetchTeamPage(String str, int page) {
         try {
-            ApiDataService.apiService.callTeamSearch(str, ConstantApiData.KEY, page, "country").enqueue(new Callback<TeamResponse>() {
+            ApiDataService.apiService.callTeamSearch(str, ConstantApiData.KEY,ConstantApiData.TIMEZONE, page, "country").enqueue(new Callback<TeamResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<TeamResponse> call, @NonNull Response<TeamResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -379,7 +379,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
 
     private void fetchLeaguePage(String str, int page) {
         try {
-            ApiDataService.apiService.callLeagueSearch(str, ConstantApiData.KEY, page, "country").enqueue(new Callback<LeagueResponse>() {
+            ApiDataService.apiService.callLeagueSearch(str, ConstantApiData.KEY,ConstantApiData.TIMEZONE, page, "country").enqueue(new Callback<LeagueResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<LeagueResponse> call, @NonNull Response<LeagueResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {

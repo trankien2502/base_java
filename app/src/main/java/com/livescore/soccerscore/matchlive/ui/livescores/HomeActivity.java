@@ -44,8 +44,8 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     public void initView() {
         adapter = new HomeAdapter(this);
         EventTracking.logEvent(this, "home_view");
-        binding.frContentHome.setAdapter(adapter);
-        binding.frContentHome.setUserInputEnabled(false);
+//        binding.frContentHome.setAdapter(adapter);
+//        binding.frContentHome.setUserInputEnabled(false);
         changeState();
     }
 
@@ -100,26 +100,27 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         resetChange();
         switch (state) {
             case STATE_HOME:
-//                replaceFragment(new HomeFragment());
-                binding.frContentHome.setCurrentItem(0);
+                replaceFragment(new HomeFragment());
+//                binding.frContentHome.setCurrentItem(0);
                 binding.ivHome.setImageResource(R.drawable.live_s);
                 binding.tvHome.setTextColor(Color.parseColor("#0094FD"));
                 break;
             case STATE_FAVOURITE:
-                binding.frContentHome.setCurrentItem(1);
-//                replaceFragment(new FavouriteFragment());
+//                binding.frContentHome.setCurrentItem(1);
+                replaceFragment(new FavouriteFragment());
                 binding.ivFavourite.setImageResource(R.drawable.star_s);
                 binding.tvFavourite.setTextColor(Color.parseColor("#0094FD"));
                 break;
             case STATE_NOTIFICATION:
-                binding.frContentHome.setCurrentItem(2);
-//                replaceFragment(new NotificationFragment());
+//                binding.frContentHome.setCurrentItem(2);
+//                adapter.notifyItemChanged(2);
+                replaceFragment(new NotificationFragment());
                 binding.ivNotification.setImageResource(R.drawable.clock_s);
                 binding.tvNotification.setTextColor(Color.parseColor("#0094FD"));
                 break;
             case STATE_SETTING:
-                binding.frContentHome.setCurrentItem(3);
-//                replaceFragment(new SettingFragment());
+//                binding.frContentHome.setCurrentItem(3);
+                replaceFragment(new SettingFragment());
                 binding.ivSetting.setImageResource(R.drawable.setting_s);
                 binding.tvSetting.setTextColor(Color.parseColor("#0094FD"));
                 break;

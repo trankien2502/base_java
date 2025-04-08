@@ -97,7 +97,7 @@ public class TeamStatsFragment extends BaseFragment<FragmentTeamStatsBinding> {
 
     public void fetchSeason(long id) {
         try {
-            ApiDataService.apiService.callSeasonOfTeam(id, ConstantApiData.KEY, "league.country").enqueue(new Callback<SeasonResponse>() {
+            ApiDataService.apiService.callSeasonOfTeam(id, ConstantApiData.KEY,ConstantApiData.TIMEZONE, "league.country").enqueue(new Callback<SeasonResponse>() {
                 @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
                 @Override
                 public void onResponse(@NonNull Call<SeasonResponse> call, @NonNull Response<SeasonResponse> response) {

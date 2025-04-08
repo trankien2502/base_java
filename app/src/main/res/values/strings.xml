@@ -120,6 +120,8 @@
     <string name="load_more">Load More</string>
     <string name="club">Club</string>
     <string name="match_pinned">Match Pinned!</string>
+    <string name="match_pin_one">One match at a time!</string>
+    <string name="do_you_want">Do you want to pin this match instead of the old one?</string>
     <string name="when_the_game_start_the_score_will_stay_visible_on_your_screen_no_matter_what_you_re_doing">When the game start, the score will stay visible on your screen, no matter what you’re doing.</string>
     <string name="ok">OK</string>
     <string name="before_match">Before match</string>
@@ -130,6 +132,7 @@
     <string name="red_cards">Red cards</string>
     <string name="end_match">End match</string>
     <string name="save">Save</string>
+    <string name="replace">Replace</string>
     <string name="hours">Hours</string>
     <string name="minutes">Minutes</string>
     <string name="timeline">Timeline</string>
@@ -148,6 +151,9 @@
     <string name="full_time">Full Time</string>
     <string name="half_time">Half Time</string>
     <string name="substitutions">Substitutions</string>
+    <string name="bundle_alarm_obj">BundleFixtureObject</string>
+    <string name="arg_alarm_obj">FixtureObject</string>
+    <string name="please_choose_time_before_match_greater_than_0">Please choose time before match greater than 0</string>
 
 
 </resources>

@@ -116,7 +116,7 @@ public class MatchDetailActivity extends BaseActivity<ActivityMatchDeatilBinding
     public void fetchFixtureDetail(long id) {
         try {
             ApiDataService.apiService.
-                    callFixtureDetail(id, ConstantApiData.KEY, "participants;periods;league.country;venue;state;scores;events.type;events.period;lineups.position;lineups.player;odds;statistics.type", "markets:1;bookmakers:2")
+                    callFixtureDetail(id, ConstantApiData.KEY,ConstantApiData.TIMEZONE, "participants;periods;league.country;venue;state;scores;events.type;events.period;lineups.position;lineups.player;odds;statistics.type", "markets:1;bookmakers:2")
                     .enqueue(new Callback<FixtureDetailResponse>() {
                         @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
                         @Override

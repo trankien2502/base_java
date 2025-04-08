@@ -83,7 +83,7 @@ public class TableFixtureFragment extends BaseFragment<FragmentTableFixtureBindi
     public void fetchStanding(int page, long leagueId, long seasonId) {
         try {
             String filters = "standingLeagues:" + leagueId + ";standingdetailTypes:129,133,134,179; standingSeasons:" + seasonId;
-            ApiDataService.apiService.callStandingLeague(ConstantApiData.KEY, "participant;details.type", filters, page).enqueue(new Callback<StandingResponse>() {
+            ApiDataService.apiService.callStandingLeague(ConstantApiData.KEY,ConstantApiData.TIMEZONE, "participant;details.type", filters, page).enqueue(new Callback<StandingResponse>() {
                 @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
                 @Override
                 public void onResponse(@NonNull Call<StandingResponse> call, @NonNull Response<StandingResponse> response) {
@@ -148,7 +148,7 @@ public class TableFixtureFragment extends BaseFragment<FragmentTableFixtureBindi
 //    public void fetchSeason(int page, long leagueId) {
 //        try {
 //            String filters = "seasonLeagues:" + leagueId;
-//            ApiDataService.apiService.callSeasonOfLeague(ConstantApiData.KEY,  filters, page).enqueue(new Callback<SeasonResponse>() {
+//            ApiDataService.apiService.callSeasonOfLeague(ConstantApiData.KEY,ConstantApiData.TIMEZONE,  filters, page).enqueue(new Callback<SeasonResponse>() {
 //                @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
 //                @Override
 //                public void onResponse(@NonNull Call<SeasonResponse> call, @NonNull Response<SeasonResponse> response) {

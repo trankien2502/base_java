@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.api_data.model.ScoreModel;
+import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureBase;
 import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
 import com.livescore.soccerscore.matchlive.databinding.ItemFixtureHomeBinding;
 
@@ -25,12 +26,21 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.FixtureV
     Context context;
     List<FixtureModel> list;
     FixtureClickCallBack callBack;
+    int leagueTodayPos = -1;
 
     public FixtureAdapter(Context context, List<FixtureModel> list, FixtureClickCallBack callBack) {
         this.context = context;
         this.list = list;
         this.callBack = callBack;
     }
+
+    public FixtureAdapter(Context context, List<FixtureModel> list, FixtureClickCallBack callBack, int leagueTodayPos) {
+        this.context = context;
+        this.list = list;
+        this.callBack = callBack;
+        this.leagueTodayPos = leagueTodayPos;
+    }
+
 
     @NonNull
     @Override
@@ -54,7 +64,7 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.FixtureV
             holder.binding.tvTeamHome.setText(fixtureModel.participants.get(1).getName());
             holder.binding.tvTeamAway.setText(fixtureModel.participants.get(0).getName());
         }
-        holder.binding.tvState.setText(fixtureModel.getState().state);
+        holder.binding.tvState.setText(fixtureModel.getState().short_name);
         if (fixtureModel.isAlarm) holder.binding.ivAlarm.setImageResource(R.drawable.alarm_s);
         else holder.binding.ivAlarm.setImageResource(R.drawable.alarm_sn);
         if (fixtureModel.isPin) holder.binding.ivPin.setImageResource(R.drawable.pin_s);
@@ -98,18 +108,16 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.FixtureV
         } catch (Exception e) {
             e.printStackTrace();
         }
-        holder.binding.layoutItem.setOnClickListener(v -> callBack.select(fixtureModel));
+        holder.binding.layoutItem.setOnClickListener(v -> callBack.select(position, fixtureModel));
         holder.binding.ivAlarm.setOnClickListener(v -> {
-            fixtureModel.isAlarm = !fixtureModel.isAlarm;
-            if (fixtureModel.isAlarm) holder.binding.ivAlarm.setImageResource(R.drawable.alarm_s);
-            else holder.binding.ivAlarm.setImageResource(R.drawable.alarm_sn);
-            callBack.alarm(fixtureModel);
+            if (leagueTodayPos == -1)
+                callBack.alarm(position, fixtureModel);
+            else callBack.alarm(leagueTodayPos, fixtureModel);
         });
         holder.binding.ivPin.setOnClickListener(v -> {
-            fixtureModel.isPin = !fixtureModel.isPin;
-            if (fixtureModel.isPin) holder.binding.ivPin.setImageResource(R.drawable.pin_s);
-            else holder.binding.ivPin.setImageResource(R.drawable.pin_sn);
-            callBack.pin(fixtureModel);
+            if (leagueTodayPos == -1)
+                callBack.pin(position, fixtureModel);
+            else callBack.pin(leagueTodayPos, fixtureModel);
         });
     }
 

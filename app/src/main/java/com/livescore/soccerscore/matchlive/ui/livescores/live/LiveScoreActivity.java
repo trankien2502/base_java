@@ -92,7 +92,7 @@ public class LiveScoreActivity extends BaseActivity<ActivityLiveScoreBinding> {
 
     public void fetchLiveMatch() {
         try {
-            ApiDataService.apiService.callLiveMatch(ConstantApiData.KEY, "participants;scores;state;periods").enqueue(new Callback<LiveResponse>() {
+            ApiDataService.apiService.callLiveMatch(ConstantApiData.KEY,ConstantApiData.TIMEZONE, "participants;scores;state;periods").enqueue(new Callback<LiveResponse>() {
                 @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
                 @Override
                 public void onResponse(@NonNull Call<LiveResponse> call, @NonNull Response<LiveResponse> response) {
@@ -100,7 +100,10 @@ public class LiveScoreActivity extends BaseActivity<ActivityLiveScoreBinding> {
                         Log.e("API_RESPONSE", "Raw JSON: " + new Gson().toJson(response.body()));
                         LiveResponse teamResponse = response.body();
                         if (teamResponse.data != null) {
-                            listLive.addAll(teamResponse.data);
+//                            listLive.addAll(teamResponse.data);
+                            for (FixtureLiveModel fixtureLiveModel: teamResponse.data){
+                                if (!fixtureLiveModel.getState().short_name.equals("NS")&&!fixtureLiveModel.getState().short_name.equals("FT")) listLive.add(fixtureLiveModel);
+                            }
                             Log.e("API_RESPONSE", "data: " + teamResponse.data);
                             Log.e("call_api_data", "call true:");
                             for (FixtureLiveModel liveModel : listLive) {

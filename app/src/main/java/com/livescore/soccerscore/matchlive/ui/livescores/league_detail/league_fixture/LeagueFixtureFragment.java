@@ -47,7 +47,7 @@ public class LeagueFixtureFragment extends BaseFragment<FragmentLeagueFixtureBin
     public void initView() {
         fixtureAdapter = new FixtureAdapter(requireContext(), list, new FixtureClickCallBack() {
             @Override
-            public void select(FixtureModel fixtureModel) {
+            public void select(int pos, FixtureModel fixtureModel) {
                 Toast.makeText(requireContext(), "select " + fixtureModel.name, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(requireContext(), MatchDetailActivity.class);
                 intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
@@ -55,12 +55,12 @@ public class LeagueFixtureFragment extends BaseFragment<FragmentLeagueFixtureBin
             }
 
             @Override
-            public void pin(FixtureModel fixtureModel) {
+            public void pin(int pos, FixtureModel fixtureModel) {
                 Toast.makeText(requireContext(), "pin " + fixtureModel.name, Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void alarm(FixtureModel fixtureModel) {
+            public void alarm(int pos, FixtureModel fixtureModel) {
                 Toast.makeText(requireContext(), "alarm " + fixtureModel.name, Toast.LENGTH_SHORT).show();
             }
         });
@@ -83,7 +83,7 @@ public class LeagueFixtureFragment extends BaseFragment<FragmentLeagueFixtureBin
 
     public void fetchFixtureTeam(long teamId) {
         try {
-            ApiDataService.apiService.callLeagueFixture(teamId, ConstantApiData.KEY, "upcoming.participants;upcoming.scores;upcoming.state; inplay.participants;inplay.scores;inplay.state").enqueue(new Callback<LeagueFixtureResponse>() {
+            ApiDataService.apiService.callLeagueFixture(teamId, ConstantApiData.KEY, ConstantApiData.TIMEZONE, "upcoming.participants;upcoming.scores;upcoming.state; inplay.participants;inplay.scores;inplay.state").enqueue(new Callback<LeagueFixtureResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<LeagueFixtureResponse> call, @NonNull Response<LeagueFixtureResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {

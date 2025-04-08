@@ -1,9 +1,17 @@
 package com.livescore.soccerscore.matchlive.api_data.model.fixture;
 
 
+import android.content.Context;
+
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import com.google.gson.annotations.SerializedName;
 
-public class FixtureBase {
+import java.io.Serializable;
+
+public class FixtureBase implements Serializable {
+    @PrimaryKey
     @SerializedName("id")
     public long id;
     @SerializedName("league_id")
@@ -22,8 +30,10 @@ public class FixtureBase {
     public int length;
     @SerializedName("has_odds")
     public boolean has_odds;
-    public boolean isAlarm;
-    public boolean isPin;
+    @SerializedName("isAlarm")
+    public boolean isAlarm = false;
+    @SerializedName("isPin")
+    public boolean isPin = false;
 
     @Override
     public String toString() {
@@ -40,5 +50,13 @@ public class FixtureBase {
                 ", isAlarm=" + isAlarm +
                 ", isPin=" + isPin +
                 '}';
+    }
+
+    public void scheduleSendNotification(Context context) {
+
+    }
+
+    public void schedulePin(Context context) {
+
     }
 }

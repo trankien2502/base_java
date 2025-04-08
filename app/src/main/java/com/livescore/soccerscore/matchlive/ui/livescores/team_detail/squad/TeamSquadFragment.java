@@ -64,7 +64,7 @@ public class TeamSquadFragment extends BaseFragment<FragmentTeamSquadBinding> {
 
     public void fetchSquadPage(long teamId) {
         try {
-            ApiDataService.apiService.callSquad(teamId, ConstantApiData.KEY, "player;position").enqueue(new Callback<SquadResponse>() {
+            ApiDataService.apiService.callSquad(teamId, ConstantApiData.KEY,ConstantApiData.TIMEZONE, "player;position").enqueue(new Callback<SquadResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<SquadResponse> call, @NonNull Response<SquadResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {

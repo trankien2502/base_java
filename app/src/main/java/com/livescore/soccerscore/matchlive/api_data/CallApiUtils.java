@@ -38,7 +38,7 @@ public class CallApiUtils {
         if (IsNetWork.haveNetworkConnection(context)) {
             ConstantApiData.listState.clear();
             try {
-                ApiDataService.apiService.callState(ConstantApiData.KEY).enqueue(new Callback<StateResponse>() {
+                ApiDataService.apiService.callState(ConstantApiData.KEY, ConstantApiData.TIMEZONE).enqueue(new Callback<StateResponse>() {
                     @Override
                     public void onResponse(@NonNull Call<StateResponse> call, @NonNull Response<StateResponse> response) {
                         if (response.isSuccessful() && response.body() != null) {
@@ -71,7 +71,7 @@ public class CallApiUtils {
 
     private static void fetchLeaguePage(int page) {
         try {
-            ApiDataService.apiService.callLeague(ConstantApiData.KEY, 1, "country").enqueue(new Callback<LeagueResponse>() {
+            ApiDataService.apiService.callLeague(ConstantApiData.KEY, ConstantApiData.TIMEZONE, 1, "country").enqueue(new Callback<LeagueResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<LeagueResponse> call, @NonNull Response<LeagueResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -117,7 +117,7 @@ public class CallApiUtils {
 
     private static void fetchTeamPage(int page) {
         try {
-            ApiDataService.apiService.callTeam(ConstantApiData.KEY, page, "country").enqueue(new Callback<TeamResponse>() {
+            ApiDataService.apiService.callTeam(ConstantApiData.KEY, ConstantApiData.TIMEZONE, page, "country").enqueue(new Callback<TeamResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<TeamResponse> call, @NonNull Response<TeamResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -155,7 +155,7 @@ public class CallApiUtils {
 
     public static void fetchFixtureDatePage(String date, int page) {
         try {
-            ApiDataService.apiService.callFixtureToday(date, ConstantApiData.KEY, "today.participants;today.scores;today.state", page).enqueue(new Callback<FixtureResponse>() {
+            ApiDataService.apiService.callFixtureToday(date, ConstantApiData.KEY, ConstantApiData.TIMEZONE, "today.participants;today.scores;today.state", page).enqueue(new Callback<FixtureResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<FixtureResponse> call, @NonNull Response<FixtureResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {

@@ -1,13 +1,15 @@
 package com.livescore.soccerscore.matchlive.api_data.model.fixture;
 
+import androidx.room.Entity;
+
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.livescore.soccerscore.matchlive.api_data.model.ScoreModel;
 import com.livescore.soccerscore.matchlive.api_data.model.team.TeamInMatch;
-import com.livescore.soccerscore.matchlive.api_data.model.team.TeamModel;
 
 import java.util.List;
 
+@Entity(tableName = "fixture")
 public class FixtureModel extends FixtureBase {
     @SerializedName("participants")
     public List<TeamInMatch> participants;
@@ -15,6 +17,20 @@ public class FixtureModel extends FixtureBase {
     public List<ScoreModel> scores;
     @SerializedName("state")
     public Object state;
+    @SerializedName("start_match")
+    public boolean start_match;
+    @SerializedName("end_first_half")
+    public boolean end_first_half;
+    @SerializedName("start_second_half")
+    public boolean start_second_half;
+    @SerializedName("goals")
+    public boolean goals;
+    @SerializedName("red_card")
+    public boolean red_card;
+    @SerializedName("end_match")
+    public boolean end_match;
+    @SerializedName("before_match")
+    public int before_match = -1;
 
 
     public StateModel getState() {
@@ -42,8 +58,11 @@ public class FixtureModel extends FixtureBase {
                 ", result_info='" + result_info + '\'' +
                 ", has_odds=" + has_odds +
                 ", length=" + length +
+                ", isAlarm=" + isAlarm +
+                ", isPin=" + isPin +
                 ", participants=" + participants +
                 ", scores=" + scores +
+
                 ", state=" + getState() +
                 '}';
     }

@@ -26,6 +26,7 @@ import java.util.List;
 public class LeagueTodayAdapter extends RecyclerView.Adapter<LeagueTodayAdapter.LeaguaTodayViewHolder> {
     Context context;
     List<LeagueTodayModel> list;
+    FixtureAdapter fixtureAdapter;
     LeagueHomeClickCallBack callBack;
     FixtureClickCallBack fixtureClickCallBack;
 
@@ -57,7 +58,7 @@ public class LeagueTodayAdapter extends RecyclerView.Adapter<LeagueTodayAdapter.
         if (!leagueTodayModel.today.isEmpty()) {
             holder.binding.tvLeagueName.setText(leagueTodayModel.name + " (" + leagueTodayModel.today.size() + ")");
         }
-        FixtureAdapter fixtureAdapter = new FixtureAdapter(context, leagueTodayModel.today, fixtureClickCallBack);
+        FixtureAdapter fixtureAdapter = new FixtureAdapter(context, leagueTodayModel.today, fixtureClickCallBack, position);
         holder.binding.rcvFixture.setAdapter(fixtureAdapter);
         holder.binding.ivHide.setOnClickListener(v -> {
             if (holder.binding.rcvFixture.getVisibility() == VISIBLE) {

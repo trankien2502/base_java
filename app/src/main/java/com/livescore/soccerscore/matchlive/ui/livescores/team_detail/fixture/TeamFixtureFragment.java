@@ -50,7 +50,7 @@ public class TeamFixtureFragment extends BaseFragment<FragmentTeamFixtureBinding
     public void initView() {
         fixtureAdapter = new FixtureAdapter(requireContext(), list, new FixtureClickCallBack() {
             @Override
-            public void select(FixtureModel fixtureModel) {
+            public void select(int pos, FixtureModel fixtureModel) {
                 Toast.makeText(requireContext(), "select " + fixtureModel.id, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(requireContext(), MatchDetailActivity.class);
                 intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
@@ -58,12 +58,12 @@ public class TeamFixtureFragment extends BaseFragment<FragmentTeamFixtureBinding
             }
 
             @Override
-            public void pin(FixtureModel fixtureModel) {
+            public void pin(int pos, FixtureModel fixtureModel) {
                 Toast.makeText(requireContext(), "pin " + fixtureModel.name, Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void alarm(FixtureModel fixtureModel) {
+            public void alarm(int pos, FixtureModel fixtureModel) {
                 Toast.makeText(requireContext(), "alarm " + fixtureModel.name, Toast.LENGTH_SHORT).show();
             }
         });
@@ -91,7 +91,7 @@ public class TeamFixtureFragment extends BaseFragment<FragmentTeamFixtureBinding
     }
 //    public void fetchFixtureScheduleTeam(int teamId) {
 //        try {
-//            ApiDataService.apiService.callScheduleTeam(teamId, ConstantApiData.KEY).enqueue(new Callback<SeasonResponse>() {
+//            ApiDataService.apiService.callScheduleTeam(teamId, ConstantApiData.KEY,ConstantApiData.TIMEZONE).enqueue(new Callback<SeasonResponse>() {
 //                @Override
 //                public void onResponse(@NonNull Call<SeasonResponse> call, @NonNull Response<SeasonResponse> response) {
 //                    if (response.isSuccessful() && response.body() != null) {
@@ -149,7 +149,7 @@ public class TeamFixtureFragment extends BaseFragment<FragmentTeamFixtureBinding
 
     public void fetchFixtureTeam(long teamId) {
         try {
-            ApiDataService.apiService.callTeamFixture(teamId, ConstantApiData.KEY, "upcoming.participants;upcoming.scores;upcoming.state").enqueue(new Callback<TeamFixtureResponse>() {
+            ApiDataService.apiService.callTeamFixture(teamId, ConstantApiData.KEY,ConstantApiData.TIMEZONE, "upcoming.participants;upcoming.scores;upcoming.state").enqueue(new Callback<TeamFixtureResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<TeamFixtureResponse> call, @NonNull Response<TeamFixtureResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
