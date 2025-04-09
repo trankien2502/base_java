@@ -1,16 +1,34 @@
 package com.livescore.soccerscore.matchlive.api_data.model.fixture;
 
+import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
+
 import androidx.room.Entity;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.api_data.model.ScoreModel;
 import com.livescore.soccerscore.matchlive.api_data.model.team.TeamInMatch;
+import com.livescore.soccerscore.matchlive.service.ScheduleBroadcastReceiver;
 
+import java.io.Serializable;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 @Entity(tableName = "fixture")
-public class FixtureModel extends FixtureBase {
+public class FixtureModel extends FixtureBase implements Serializable {
     @SerializedName("participants")
     public List<TeamInMatch> participants;
     @SerializedName("scores")
@@ -29,8 +47,10 @@ public class FixtureModel extends FixtureBase {
     public boolean red_card;
     @SerializedName("end_match")
     public boolean end_match;
+    @SerializedName("is_before_match")
+    public boolean is_before_match;
     @SerializedName("before_match")
-    public int before_match = -1;
+    public int before_match = 60;
 
 
     public StateModel getState() {
@@ -60,12 +80,71 @@ public class FixtureModel extends FixtureBase {
                 ", length=" + length +
                 ", isAlarm=" + isAlarm +
                 ", isPin=" + isPin +
+                ", is_before_match=" + is_before_match +
                 ", participants=" + participants +
                 ", scores=" + scores +
 
                 ", state=" + getState() +
                 '}';
     }
+
+    @SuppressLint("ScheduleExactAlarm")
+    public void schedule(Context context) {
+        cancelNotification(context);
+        try {
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(context, ScheduleBroadcastReceiver.class);
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(context.getString(R.string.arg_alarm_obj), this);
+            intent.putExtra(context.getString(R.string.bundle_alarm_obj), bundle);
+            intent.putExtra("type", "ontime");
+            long time = parseDateToInt(0);
+
+            intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+            PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, (int) ((id + time) % 1000000000), intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            Log.e("alarmcheck", "schedule: " + name);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        time,
+                        alarmPendingIntent
+                );
+            } else {
+                alarmManager.setExact(
+                        AlarmManager.RTC_WAKEUP,
+                        time,
+                        alarmPendingIntent
+                );
+            }
+//            if (is_before_match) {
+            long timeBefore = parseDateToInt(before_match);
+            Intent intentBefore = new Intent(context, ScheduleBroadcastReceiver.class);
+            Bundle bundleBefore = new Bundle();
+            bundleBefore.putSerializable(context.getString(R.string.arg_alarm_obj), this);
+            intentBefore.putExtra(context.getString(R.string.bundle_alarm_obj), bundle);
+            intentBefore.putExtra("type", "early");
+            intentBefore.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+            PendingIntent alarmPendingIntentBefore = PendingIntent.getBroadcast(context, (int) ((id + timeBefore) % 1000000000), intentBefore, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+            Log.e("alarmcheck", "schedule before: " + name);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                alarmManager.setExactAndAllowWhileIdle(
+                        AlarmManager.RTC_WAKEUP,
+                        timeBefore,
+                        alarmPendingIntentBefore
+                );
+            } else {
+                alarmManager.setExact(
+                        AlarmManager.RTC_WAKEUP,
+                        timeBefore,
+                        alarmPendingIntentBefore
+                );
+            }
+//            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static class StateModel {
         @SerializedName("id")
@@ -88,5 +167,58 @@ public class FixtureModel extends FixtureBase {
         }
     }
 
+    public long parseDateToInt(int timeBefore) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        try {
+            Date targetDate = sdf.parse(starting_at);
+            long targetMillis = targetDate.getTime() - (long) timeBefore * 60 * 1000;
+            long now = System.currentTimeMillis();
+            Log.d("alarmcheck", "Đã đặt báo thức vào " + date(targetMillis));
+            return targetMillis;
+
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+    public void cancelNotification(Context context) {
+        try {
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            Intent intent = new Intent(context, ScheduleBroadcastReceiver.class);
+            PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, (int) ((id + parseDateToInt(0)) % 1000000000), intent, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+            alarmManager.cancel(alarmPendingIntent);
+            if (is_before_match) {
+                cancelNotificationBefore(context);
+            }
+            Log.e("alarmcheck", "cancel noti: " + name);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void cancelNotificationBefore(Context context) {
+        try {
+            this.is_before_match = false;
+            AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            Intent intentBefore = new Intent(context, ScheduleBroadcastReceiver.class);
+            PendingIntent alarmPendingIntentBefore = PendingIntent.getBroadcast(context, (int) ((id + parseDateToInt(before_match)) % 1000000000), intentBefore, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);
+            alarmManager.cancel(alarmPendingIntentBefore);
+//            Toast.makeText(context, "cancel noti before: " + name, Toast.LENGTH_SHORT).show();
+            Log.e("alarmcheck", "cancel noti before: " + name);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String date(long millis) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        String formattedDate = sdf.format(new Date(millis));
+
+        Log.d("TimeConvert", "Thời gian: " + formattedDate);
+        return formattedDate;
+    }
 
 }

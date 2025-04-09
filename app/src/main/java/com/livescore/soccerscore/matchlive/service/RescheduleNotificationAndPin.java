@@ -25,13 +25,8 @@ public class RescheduleNotificationAndPin extends LifecycleService {
 
         List<FixtureModel> fixtures = FixtureDatabase.getInstance(this).fixtureDAO().getAllFixture();
 
-        for (FixtureBase a : fixtures) {
-            if (a.isPin) {
-                a.schedulePin(getApplicationContext());
-            }
-            if (a.isAlarm) {
-                a.scheduleSendNotification(getApplicationContext());
-            }
+        for (FixtureModel a : fixtures) {
+            if (a.isAlarm) a.schedule(getApplicationContext());
         }
         return START_STICKY;
     }

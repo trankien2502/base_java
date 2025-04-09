@@ -21,11 +21,10 @@ public interface FixtureDAO {
     @Query("SELECT * FROM fixture")
     List<FixtureModel> getAllFixture();
 
-    @Query("SELECT * FROM fixture where isPin = 1")
-    FixtureModel getFixtureByPin();
-
     @Query("SELECT * FROM fixture where id = :id")
     FixtureModel getFixtureById(long id);
+    @Query("SELECT * FROM fixture where isPin = 1")
+    FixtureModel getFixtureByPin();
 
     @Update
     void update(FixtureModel fixtureBase);

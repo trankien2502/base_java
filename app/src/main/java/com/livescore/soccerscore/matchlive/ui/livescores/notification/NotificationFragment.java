@@ -12,6 +12,10 @@ import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.database.fixture.FixtureDatabase;
 import com.livescore.soccerscore.matchlive.databinding.FragmentNotificationBinding;
+import com.livescore.soccerscore.matchlive.dialog.MatchPinWarnDialog;
+import com.livescore.soccerscore.matchlive.dialog.MatchPinnedDialog;
+import com.livescore.soccerscore.matchlive.dialog.notification.DialogNotificationCallBack;
+import com.livescore.soccerscore.matchlive.dialog.notification.NotificationDialog;
 import com.livescore.soccerscore.matchlive.ui.livescores.HomeActivity;
 import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.MatchDetailActivity;
 import com.livescore.soccerscore.matchlive.ui.livescores.home.FixtureAdapter;
@@ -46,12 +50,125 @@ public class NotificationFragment extends BaseFragment<FragmentNotificationBindi
 
             @Override
             public void pin(int pos, FixtureModel fixtureModel) {
+                if (fixtureModel.isPin) {
+                    fixtureModel.isPin = false;
+                    if (fixtureModel.isAlarm) {
+                        FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel);
+                        fixtureModel.schedule(requireContext());
+                    } else {
+                        FixtureDatabase.getInstance(requireContext()).fixtureDAO().delete(fixtureModel.id);
+                        fixtureModel.cancelNotification(requireContext());
+                    }
+                    FixtureModel fixtureBase = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureByPin();
+                    if (fixtureBase != null)
+                        Toast.makeText(requireContext(), fixtureBase.name, Toast.LENGTH_SHORT).show();
+                    adapter.notifyItemChanged(pos);
+
+                } else {
+                    FixtureModel fixtureBase = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureByPin();
+                    FixtureModel fixture23 = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureById(fixtureModel.id);
+                    if (fixtureBase == null) {
+                        fixtureModel.isPin = true;
+                        if (fixture23 != null) {
+                            fixture23.isPin = true;
+                            FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixture23);
+                        } else {
+                            FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel);
+                        }
+                        adapter.notifyItemChanged(pos);
+                        showPinnedMatch();
+                        FixtureModel fixtureBase1 = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureByPin();
+                        if (fixtureBase1 != null) {
+                            Toast.makeText(requireContext(), fixtureBase1.name, Toast.LENGTH_SHORT).show();
+                            fixtureBase1.schedule(requireContext());
+                        }
+
+                    } else {
+                        if (!fixtureBase.isPin) {
+                            fixtureModel.isPin = true;
+                            FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel);
+                            adapter.notifyItemChanged(pos);
+                            showPinnedMatch();
+                            FixtureModel fixtureBase1 = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureByPin();
+                            if (fixtureBase1 != null) {
+                                Toast.makeText(requireContext(), fixtureBase1.name, Toast.LENGTH_SHORT).show();
+                                fixtureBase1.schedule(requireContext());
+                            }
+                        } else {
+                            MatchPinWarnDialog dialog = new MatchPinWarnDialog(requireContext(), false);
+                            dialog.binding.btnCancel.setOnClickListener(v -> {
+                                dialog.dismiss();
+                            });
+                            dialog.binding.btnReplace.setOnClickListener(v -> {
+                                fixtureModel.isPin = true;
+                                adapter.notifyItemChanged(pos);
+                                FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel);
+                                dialog.dismiss();
+                                FixtureModel fixtureBase1 = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureByPin();
+                                if (fixtureBase1 != null) {
+                                    Toast.makeText(requireContext(), fixtureBase1.name, Toast.LENGTH_SHORT).show();
+                                    fixtureBase1.schedule(requireContext());
+                                }
+
+                                for (int i = 0; i < list.size(); i++) {
+                                    if (list.get(i).id != fixtureModel.id && list.get(i).isPin) {
+                                        list.get(i).isPin = false;
+                                        list.get(i).cancelNotification(requireContext());
+                                        adapter.notifyItemChanged(i);
+                                        break;
+                                    }
+                                }
+                            });
+                            dialog.show();
+                        }
+                    }
+
+                }
+
 
             }
 
             @Override
             public void alarm(int pos, FixtureModel fixtureModel) {
+                FixtureModel fixtureBase = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureById(fixtureModel.id);
+                NotificationDialog dialog = new NotificationDialog(requireContext(), false);
 
+                dialog.initCallBack(new DialogNotificationCallBack() {
+                    @Override
+                    public void cancel() {
+                        dialog.dismiss();
+                    }
+
+                    @Override
+                    public void save(FixtureModel fixtureModel1) {
+                        if (fixtureModel1.isAlarm) {
+                            if (fixtureBase != null) {
+                                FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel1);
+                            } else
+                                FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel1);
+                            FixtureModel fixtureBase1 = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureById(fixtureModel1.id);
+                            if (fixtureBase1 != null) {
+                                Toast.makeText(requireContext(), fixtureBase1.name, Toast.LENGTH_SHORT).show();
+                                fixtureBase1.schedule(requireContext());
+                            }
+                        } else {
+                            if (fixtureBase != null) {
+                                if (fixtureBase.isPin) {
+                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel1);
+                                    fixtureModel1.schedule(requireContext());
+                                } else {
+                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().delete(fixtureBase.id);
+                                    fixtureBase.cancelNotification(requireContext());
+                                }
+
+                            }
+                        }
+                        adapter.notifyItemChanged(pos);
+                        dialog.dismiss();
+                    }
+                });
+                dialog.show();
+                dialog.initFixture(fixtureModel);
             }
         });
         binding.rcvNotification.setAdapter(adapter);
@@ -72,10 +189,19 @@ public class NotificationFragment extends BaseFragment<FragmentNotificationBindi
 //            adapter.notifyDataSetChanged();
 //        }
     }
+
     public void startArc(Intent intent) {
         if (getContext() instanceof HomeActivity) {
             HomeActivity main = (HomeActivity) getContext();
             main.resultLauncher.launch(intent);
         }
+    }
+
+    public void showPinnedMatch() {
+        MatchPinnedDialog dialog = new MatchPinnedDialog(requireContext(), false);
+        dialog.binding.btnOK.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+        dialog.show();
     }
 }

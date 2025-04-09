@@ -154,6 +154,9 @@
     <string name="bundle_alarm_obj">BundleFixtureObject</string>
     <string name="arg_alarm_obj">FixtureObject</string>
     <string name="please_choose_time_before_match_greater_than_0">Please choose time before match greater than 0</string>
+    <string name="no_data">No data</string>
+    <string name="asisitive_touch_s_service_is_running">Live Score \'s Service is running</string>
+    <string name="tap_to_open">Tap to open</string>
 
 
 </resources>

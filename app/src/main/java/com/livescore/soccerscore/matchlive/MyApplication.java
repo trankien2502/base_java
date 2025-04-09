@@ -10,7 +10,8 @@ import com.livescore.soccerscore.matchlive.util.SharePrefUtils;
 
 public class MyApplication extends Application {
 
-    public static final String CHANNEL_ID = "live_score_channel";
+    public static final String CHANNEL_ID_SERVICE = "live_score_channel_service";
+    public static final String CHANNEL_ID_GENERAL = "live_score_channel_general";
 
     @Override
     public void onCreate() {
@@ -22,13 +23,19 @@ public class MyApplication extends Application {
     private void createNotificationChannel() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel serviceChannel = new NotificationChannel(
-                    CHANNEL_ID,
+                    CHANNEL_ID_SERVICE,
                     "Foreground Service Live Score",
                     NotificationManager.IMPORTANCE_LOW
+            );
+            NotificationChannel generalChannel = new NotificationChannel(
+                    CHANNEL_ID_GENERAL,
+                    "General notification",
+                    NotificationManager.IMPORTANCE_DEFAULT
             );
             NotificationManager manager = getSystemService(NotificationManager.class);
             if (manager != null) {
                 manager.createNotificationChannel(serviceChannel);
+                manager.createNotificationChannel(generalChannel);
             }
         }
     }

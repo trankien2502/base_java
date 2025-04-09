@@ -52,11 +52,5 @@ public class FixtureBase implements Serializable {
                 '}';
     }
 
-    public void scheduleSendNotification(Context context) {
 
-    }
-
-    public void schedulePin(Context context) {
-
-    }
 }

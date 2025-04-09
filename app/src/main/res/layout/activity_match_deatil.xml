@@ -229,12 +229,13 @@
                             android:id="@+id/tvAway"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/svn_gilroy"
+                            android:fontFamily="@font/sf_pro_text_medium"
                             android:gravity="center"
                             android:includeFontPadding="false"
                             android:text="Away"
                             android:textColor="@color/black"
                             android:textSize="14sp"
+                            android:textStyle="bold"
                             tools:ignore="HardcodedText" />
                     </LinearLayout>
 

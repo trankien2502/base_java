@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.databinding.ItemLineupAwayBinding;
 import com.livescore.soccerscore.matchlive.databinding.ItemLineupHomeBinding;
 import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.LineupDetail;
@@ -32,9 +33,28 @@ public class LineupAwayAdapter extends RecyclerView.Adapter<LineupAwayAdapter.Li
     @Override
     public void onBindViewHolder(@NonNull LineupHomeViewHolder holder, int position) {
         LineupDetail lineupDetail = list.get(position);
-        Glide.with(context).load(lineupDetail.getPlayer().image_path).into(holder.binding.ivAway);
-        holder.binding.tvName.setText(lineupDetail.player_name);
-        holder.binding.tvPosition.setText(lineupDetail.getPosition().name);
+
+        // Check null trước khi truy cập
+        if (lineupDetail != null) {
+            if (lineupDetail.getPlayer() != null && lineupDetail.getPlayer().image_path != null) {
+                Glide.with(context)
+                        .load(lineupDetail.getPlayer().image_path)
+                        .into(holder.binding.ivAway);
+            } else {
+                // Load ảnh mặc định nếu null
+                holder.binding.ivAway.setImageResource(R.drawable.img_no_result);
+            }
+
+            holder.binding.tvName.setText(
+                    lineupDetail.player_name != null ? lineupDetail.player_name : context.getString(R.string.no_data));
+
+            if (lineupDetail.getPosition() != null && lineupDetail.getPosition().name != null) {
+                holder.binding.tvPosition.setText(lineupDetail.getPosition().name);
+            } else {
+                holder.binding.tvPosition.setText(context.getString(R.string.no_data));
+            }
+        }
+
     }
 
     @Override

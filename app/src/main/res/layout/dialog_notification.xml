@@ -100,7 +100,7 @@
                     app:np_selectedTextColor="#809EB4"
                     app:np_selectedTextSize="24sp"
                     app:np_textColor="#809EB4"
-                    app:np_value="0"
+                    app:np_value="1"
                     app:np_wheelItemCount="3"
                     app:np_wrapSelectorWheel="true" />
 
