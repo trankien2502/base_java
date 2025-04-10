@@ -60,7 +60,10 @@ public class FixtureModel extends FixtureBase implements Serializable {
         } else return new StateModel();
 
     }
-
+    public String getDate(){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return sdf.format(parseDateToInt(0));
+    }
     public void setState(StateModel stateModel) {
         this.state = stateModel;
     }
@@ -70,6 +73,7 @@ public class FixtureModel extends FixtureBase implements Serializable {
     public String toString() {
         return "FixtureModel{" +
                 "id=" + id +
+                "date=" + getDate() +
                 "season_id=" + season_id +
                 "state_id=" + state_id +
                 ", league_id=" + league_id +
@@ -81,9 +85,15 @@ public class FixtureModel extends FixtureBase implements Serializable {
                 ", isAlarm=" + isAlarm +
                 ", isPin=" + isPin +
                 ", is_before_match=" + is_before_match +
+                ", before_match=" + before_match +
+                ", start_match=" + start_match +
+                ", end_first_half=" + end_first_half +
+                ", start_second_half=" + start_second_half +
+                ", goals=" + goals +
+                ", red_card=" + red_card +
+                ", end_match=" + end_match +
                 ", participants=" + participants +
                 ", scores=" + scores +
-
                 ", state=" + getState() +
                 '}';
     }
@@ -92,17 +102,21 @@ public class FixtureModel extends FixtureBase implements Serializable {
     public void schedule(Context context) {
         cancelNotification(context);
         try {
+            long now = System.currentTimeMillis();
+            long time = parseDateToInt(0);
+//            if (time < now) {
+//                Log.e("alarmcheck", "time is past:");
+//                return;
+//            }
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(context, ScheduleBroadcastReceiver.class);
             Bundle bundle = new Bundle();
             bundle.putSerializable(context.getString(R.string.arg_alarm_obj), this);
             intent.putExtra(context.getString(R.string.bundle_alarm_obj), bundle);
             intent.putExtra("type", "ontime");
-            long time = parseDateToInt(0);
-
             intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
             PendingIntent alarmPendingIntent = PendingIntent.getBroadcast(context, (int) ((id + time) % 1000000000), intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-            Log.e("alarmcheck", "schedule: " + name);
+            Log.e("alarmcheck", "schedule fm: " + this);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setExactAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
@@ -116,30 +130,34 @@ public class FixtureModel extends FixtureBase implements Serializable {
                         alarmPendingIntent
                 );
             }
-//            if (is_before_match) {
-            long timeBefore = parseDateToInt(before_match);
-            Intent intentBefore = new Intent(context, ScheduleBroadcastReceiver.class);
-            Bundle bundleBefore = new Bundle();
-            bundleBefore.putSerializable(context.getString(R.string.arg_alarm_obj), this);
-            intentBefore.putExtra(context.getString(R.string.bundle_alarm_obj), bundle);
-            intentBefore.putExtra("type", "early");
-            intentBefore.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
-            PendingIntent alarmPendingIntentBefore = PendingIntent.getBroadcast(context, (int) ((id + timeBefore) % 1000000000), intentBefore, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
-            Log.e("alarmcheck", "schedule before: " + name);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                alarmManager.setExactAndAllowWhileIdle(
-                        AlarmManager.RTC_WAKEUP,
-                        timeBefore,
-                        alarmPendingIntentBefore
-                );
-            } else {
-                alarmManager.setExact(
-                        AlarmManager.RTC_WAKEUP,
-                        timeBefore,
-                        alarmPendingIntentBefore
-                );
+            if (is_before_match) {
+                long timeBefore = parseDateToInt(before_match);
+                if (timeBefore >= now) {
+                    Intent intentBefore = new Intent(context, ScheduleBroadcastReceiver.class);
+                    Bundle bundleBefore = new Bundle();
+                    bundleBefore.putSerializable(context.getString(R.string.arg_alarm_obj), this);
+                    intentBefore.putExtra(context.getString(R.string.bundle_alarm_obj), bundle);
+                    intentBefore.putExtra("type", "early");
+                    intentBefore.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
+                    PendingIntent alarmPendingIntentBefore = PendingIntent.getBroadcast(context, (int) ((id + timeBefore) % 1000000000), intentBefore, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+                    Log.e("alarmcheck", "schedule fm before: " + this);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        alarmManager.setExactAndAllowWhileIdle(
+                                AlarmManager.RTC_WAKEUP,
+                                timeBefore,
+                                alarmPendingIntentBefore
+                        );
+                    } else {
+                        alarmManager.setExact(
+                                AlarmManager.RTC_WAKEUP,
+                                timeBefore,
+                                alarmPendingIntentBefore
+                        );
+                    }
+                } else {
+                    Log.e("alarmcheck", "time before is past:");
+                }
             }
-//            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -200,7 +218,6 @@ public class FixtureModel extends FixtureBase implements Serializable {
 
     public void cancelNotificationBefore(Context context) {
         try {
-            this.is_before_match = false;
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             Intent intentBefore = new Intent(context, ScheduleBroadcastReceiver.class);
             PendingIntent alarmPendingIntentBefore = PendingIntent.getBroadcast(context, (int) ((id + parseDateToInt(before_match)) % 1000000000), intentBefore, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_MUTABLE);

@@ -87,7 +87,8 @@ public interface ApiDataService {
 
     @GET("fixtures/{fixtureId}")
     Call<FixtureDetailResponse> callFixtureDetail(@Path("fixtureId") long id, @Query("api_token") String token, @Query("timezone") String timezone, @Query("include") String include, @Query("filters") String filters);
-
+    @GET("fixtures/{fixtureId}")
+    Call<FixtureDetailResponse> callFixtureDetail(@Path("fixtureId") long id, @Query("api_token") String token, @Query("timezone") String timezone, @Query("include") String include);
     @GET("seasons")
     Call<SeasonResponse> callSeasonOfLeague( @Query("api_token") String token,@Query("timezone") String timezone, @Query("include") String include, @Query("filters") String filter, @Query("page") int page);
 

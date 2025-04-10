@@ -99,7 +99,7 @@ public class FixtureAdapter extends RecyclerView.Adapter<FixtureAdapter.FixtureV
                 }
 //                } else {
 //                    holder.binding.llScore.setVisibility(GONE);
-//                    holder.binding.llPin.setVisibility(VISIBLE);
+//                    holder.binding.llPin.setVisibility(GONE);
 //                }
             } else {
                 holder.binding.llScore.setVisibility(GONE);

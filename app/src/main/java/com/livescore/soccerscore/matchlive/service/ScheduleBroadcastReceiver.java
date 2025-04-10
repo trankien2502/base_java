@@ -57,7 +57,7 @@ public class ScheduleBroadcastReceiver extends BroadcastReceiver {
 
                         notificationManager.notify((int) System.currentTimeMillis(), notification);
                     } else
-                        Log.d("alarmcheck", "before not set alarm" + fixtureBase.isAlarm + fixtureBase.is_before_match);
+                        Log.d("alarmcheck", "before not set alarm" + fixtureBase.isAlarm + fixtureBase.is_before_match + fixtureBase);
                 } else if ("ontime".equals(type)) {
                     content = "Đến giờ rồi!";
                     Log.d("alarmcheck", "receive alarm");
@@ -78,7 +78,7 @@ public class ScheduleBroadcastReceiver extends BroadcastReceiver {
                     } else Log.d("alarmcheck", "not set alarm"+fixtureBase.isAlarm);
                     if (fixtureBase.isAlarm || fixtureBase.isPin)
                         startAlarmService(context, fixtureBase);
-                } else if ("pin".equals(type)) {
+                } else if ("event".equals(type)) {
 
                 }
 

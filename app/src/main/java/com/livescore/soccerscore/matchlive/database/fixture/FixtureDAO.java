@@ -25,6 +25,8 @@ public interface FixtureDAO {
     FixtureModel getFixtureById(long id);
     @Query("SELECT * FROM fixture where isPin = 1")
     FixtureModel getFixtureByPin();
+    @Query("SELECT * FROM fixture WHERE starting_at LIKE '%' || :date || '%'")
+    List<FixtureModel> getFixturesByDate(String date);
 
     @Update
     void update(FixtureModel fixtureBase);

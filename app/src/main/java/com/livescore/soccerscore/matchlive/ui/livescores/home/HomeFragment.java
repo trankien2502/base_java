@@ -49,6 +49,7 @@ import com.livescore.soccerscore.matchlive.util.SPUtils;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
@@ -101,7 +102,6 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                 startArc(intent);
             }
 
-
             @Override
             public void pin(int pos, FixtureModel fixtureModel) {
                 if (fixtureModel.isPin) {
@@ -113,75 +113,116 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                         FixtureDatabase.getInstance(requireContext()).fixtureDAO().delete(fixtureModel.id);
                         fixtureModel.cancelNotification(requireContext());
                     }
-                    FixtureModel fixtureBase = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureByPin();
-                    if (fixtureBase != null)
-                        Toast.makeText(requireContext(), fixtureBase.name, Toast.LENGTH_SHORT).show();
+                    for (FixtureModel fixtureModel2 : list.get(pos).getToday()) {
+                        if (fixtureModel.id == fixtureModel2.id) {
+                            fixtureModel2 = fixtureModel;
+                            break;
+                        }
+                    }
                     adapter.notifyItemChanged(pos);
-
                 } else {
                     FixtureModel fixtureBase = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureByPin();
                     FixtureModel fixture23 = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureById(fixtureModel.id);
+
                     if (fixtureBase == null) {
-                        fixtureModel.isPin = true;
                         if (fixture23 != null) {
                             fixture23.isPin = true;
                             FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixture23);
-                        } else {
-                            FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel);
-                        }
-                        adapter.notifyItemChanged(pos);
-                        showPinnedMatch();
-                        FixtureModel fixtureBase1 = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureByPin();
-                        if (fixtureBase1 != null) {
-                            Toast.makeText(requireContext(), fixtureBase1.name, Toast.LENGTH_SHORT).show();
-                            fixtureBase1.schedule(requireContext());
-                        }
-
-                    } else {
-                        if (!fixtureBase.isPin) {
-                            fixtureModel.isPin = true;
-                            FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel);
-                            adapter.notifyItemChanged(pos);
-                            showPinnedMatch();
-                            FixtureModel fixtureBase1 = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureByPin();
-                            if (fixtureBase1 != null) {
-                                Toast.makeText(requireContext(), fixtureBase1.name, Toast.LENGTH_SHORT).show();
-                                fixtureBase1.schedule(requireContext());
+                            fixture23.schedule(requireContext());
+                            for (FixtureModel fixtureModel2 : list.get(pos).getToday()) {
+                                if (fixture23.id == fixtureModel2.id) {
+                                    fixtureModel2 = fixture23;
+                                    break;
+                                }
                             }
+                            adapter.notifyItemChanged(pos);
                         } else {
-                            MatchPinWarnDialog dialog = new MatchPinWarnDialog(requireContext(), false);
-                            dialog.binding.btnCancel.setOnClickListener(v -> {
-                                dialog.dismiss();
-                            });
+                            fixtureModel.isPin = true;
+                            FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel);
+                            fixtureModel.schedule(requireContext());
+                            for (FixtureModel fixtureModel2 : list.get(pos).getToday()) {
+                                if (fixtureModel.id == fixtureModel2.id) {
+                                    fixtureModel2 = fixtureModel;
+                                    break;
+                                }
+                            }
+                            adapter.notifyItemChanged(pos);
+                        }
+                        showPinnedMatch();
+                    } else {
+                        MatchPinWarnDialog dialog = new MatchPinWarnDialog(requireContext(), false);
+                        dialog.binding.btnCancel.setOnClickListener(v -> {
+                            dialog.dismiss();
+                        });
+                        if (fixture23 != null) {
                             dialog.binding.btnReplace.setOnClickListener(v -> {
                                 fixtureModel.isPin = true;
-                                adapter.notifyItemChanged(pos);
-                                FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel);
-                                dialog.dismiss();
-                                FixtureModel fixtureBase1 = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureByPin();
-                                if (fixtureBase1 != null) {
-                                    Toast.makeText(requireContext(), fixtureBase1.name, Toast.LENGTH_SHORT).show();
-                                    fixtureBase1.schedule(requireContext());
+                                for (FixtureModel fixtureModel2 : list.get(pos).getToday()) {
+                                    if (fixtureModel.id == fixtureModel2.id) {
+                                        fixtureModel2 = fixtureModel;
+                                        break;
+                                    }
                                 }
-
+                                adapter.notifyItemChanged(pos);
+                                if (fixtureBase.isAlarm) {
+                                    fixtureBase.isPin = false;
+                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureBase);
+                                    fixtureBase.schedule(requireContext());
+                                } else {
+                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().deletePin();
+                                    fixtureBase.cancelNotification(requireContext());
+                                }
+                                FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel);
+                                fixtureModel.schedule(requireContext());
+                                dialog.dismiss();
                                 out:
                                 for (int i = 0; i < list.size(); i++) {
                                     for (FixtureModel fixtureModel1 : list.get(i).getToday()) {
                                         if (fixtureModel1.id != fixtureModel.id && fixtureModel1.isPin) {
-                                            fixtureModel1 = fixtureBase1;
+                                            fixtureModel1.isPin = false;
                                             adapter.notifyItemChanged(i);
                                             break out;
                                         }
                                     }
                                 }
                             });
-                            dialog.show();
+                        } else {
+                            dialog.binding.btnReplace.setOnClickListener(v -> {
+                                fixtureModel.isPin = true;
+                                for (FixtureModel fixtureModel2 : list.get(pos).getToday()) {
+                                    if (fixtureModel.id == fixtureModel2.id) {
+                                        fixtureModel2 = fixtureModel;
+                                        break;
+                                    }
+                                }
+                                adapter.notifyItemChanged(pos);
+                                if (fixtureBase.isAlarm) {
+                                    fixtureBase.isPin = false;
+                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureBase);
+                                    fixtureBase.schedule(requireContext());
+                                } else {
+                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().deletePin();
+                                    fixtureBase.cancelNotification(requireContext());
+                                }
+                                FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel);
+                                fixtureModel.schedule(requireContext());
+                                dialog.dismiss();
+                                out:
+                                for (int i = 0; i < list.size(); i++) {
+                                    for (FixtureModel fixtureModel1 : list.get(i).getToday()) {
+                                        if (fixtureModel1.id != fixtureModel.id && fixtureModel1.isPin) {
+                                            fixtureModel1.isPin = false;
+                                            adapter.notifyItemChanged(i);
+                                            break out;
+                                        }
+                                    }
+                                }
+                            });
                         }
+                        dialog.show();
                     }
 
                 }
-
-
             }
 
             @Override
@@ -197,16 +238,13 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 
                     @Override
                     public void save(FixtureModel fixtureModel1) {
+                        Log.d("alarmcheck", "save: " + fixtureModel1);
                         if (fixtureModel1.isAlarm) {
                             if (fixtureBase != null) {
                                 FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel1);
                             } else
                                 FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel1);
-                            FixtureModel fixtureBase1 = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureById(fixtureModel1.id);
-                            if (fixtureBase1 != null) {
-                                Log.d("alarmcheck", "schedule: " + fixtureBase1);
-                                fixtureBase1.schedule(requireContext());
-                            }
+                            fixtureModel1.schedule(requireContext());
                         } else {
                             if (fixtureBase != null) {
                                 if (fixtureBase.isPin) {
@@ -214,8 +252,8 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                                     Log.d("alarmcheck", "schedule: " + fixtureModel1);
                                     fixtureModel1.schedule(requireContext());
                                 } else {
-                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().delete(fixtureBase.id);
-                                    fixtureBase.cancelNotification(requireContext());
+                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().delete(fixtureModel1.id);
+                                    fixtureModel1.cancelNotification(requireContext());
                                 }
 
                             }
@@ -231,7 +269,6 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                     }
                 });
                 dialog.show();
-
             }
         });
         liveMatchAdapter = new LiveMatchAdapter(requireContext(), listLive, new LiveMatchClickCallBack() {
@@ -287,7 +324,6 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
         });
         binding.btnChooseDate.setOnClickListener(v -> {
             MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
-                    .setTitleText("Chọn ngày")
                     .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
                     .build();
 
@@ -318,6 +354,8 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
     }
 
     public void fetchFixtureDatePage(String date, int page) {
+        List<FixtureModel> fixtureModelList = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixturesByDate(date);
+        Log.e("check_date", "list database " + date + fixtureModelList);
         try {
             ApiDataService.apiService.callFixtureToday(date, ConstantApiData.KEY, ConstantApiData.TIMEZONE, "today.participants;today.scores;today.state", page).enqueue(new Callback<FixtureResponse>() {
                 @Override
@@ -329,6 +367,22 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                         int oldPos = list.size();
                         if (teamResponse.data != null) {
                             list.addAll(teamResponse.data);
+                            for (LeagueTodayModel leagueTodayModel : teamResponse.data) {
+                                List<FixtureModel> todayList = leagueTodayModel.getToday();
+                                for (int i = 0; i < todayList.size(); i++) {
+                                    FixtureModel fixtureModel = todayList.get(i);
+
+                                    Iterator<FixtureModel> iterator = fixtureModelList.iterator();
+                                    while (iterator.hasNext()) {
+                                        FixtureModel fixtureModelDB = iterator.next();
+                                        if (fixtureModel.id == fixtureModelDB.id) {
+                                            todayList.set(i, fixtureModelDB);
+                                            iterator.remove();
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
                             Log.e("API_RESPONSE", "data: " + teamResponse.data);
                             Log.e("API_RESPONSE", "pagination: " + teamResponse.pagination);
                             Log.e("call_api_data", "call true:");
@@ -342,7 +396,8 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                             if (oldPos - 1 >= 0)
                                 adapter.notifyItemChanged(oldPos - 1);
                             adapter.notifyItemRangeInserted(oldPos, teamResponse.data.size());
-                            binding.rcvLeagueToday.post(() -> loadingDialog.dismiss());
+                            loadingDialog.dismiss();
+//                            binding.rcvLeagueToday.post(() -> loadingDialog.dismiss());
                         } else {
                             loadingDialog.dismiss();
                         }
@@ -419,14 +474,4 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
         });
         dialog.show();
     }
-//    public void showPinWarnMatch(int pos,FixtureModel fixtureModel){
-//        MatchPinWarnDialog dialog = new MatchPinWarnDialog(requireContext(),false);
-//        dialog.binding.btnCancel.setOnClickListener(v -> {
-//            dialog.dismiss();
-//        });
-//        dialog.binding.btnReplace.setOnClickListener(v -> {
-//            for ( )
-//        });
-//        dialog.show();
-//    }
 }

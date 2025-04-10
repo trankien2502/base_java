@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class FixtureDetailResponse {
     @SerializedName("data")
-    Object data;
+    public Object data;
 
     public FixtureDetailModel getData() {
         return new Gson().fromJson(new Gson().toJson(data), FixtureDetailModel.class);

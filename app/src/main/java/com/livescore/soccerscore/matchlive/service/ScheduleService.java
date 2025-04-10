@@ -1,36 +1,96 @@
 package com.livescore.soccerscore.matchlive.service;
 
 import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 import static com.livescore.soccerscore.matchlive.MyApplication.CHANNEL_ID_SERVICE;
 
+import android.animation.AnimatorSet;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
+import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.WindowManager;
+import android.view.WindowMetrics;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.livescore.soccerscore.matchlive.MyApplication;
 import com.livescore.soccerscore.matchlive.R;
+import com.livescore.soccerscore.matchlive.api_data.ApiDataService;
+import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
+import com.livescore.soccerscore.matchlive.api_data.model.ScoreModel;
 import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureBase;
 import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
+import com.livescore.soccerscore.matchlive.api_data.model.team.TeamInMatch;
+import com.livescore.soccerscore.matchlive.databinding.LayoutCancelPinBinding;
+import com.livescore.soccerscore.matchlive.databinding.LayoutPinMatchBinding;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.EventDetail;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.FixtureDetailModel;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.FixtureDetailResponse;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.LineupDetail;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.stats.StatsDetail;
+import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.timeline.OddDetail;
+import com.livescore.soccerscore.matchlive.ui.livescores.live.PeriodModel;
 import com.livescore.soccerscore.matchlive.ui.splash.SplashActivity;
 import com.livescore.soccerscore.matchlive.util.SystemUtil;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ScheduleService extends Service {
+    private Map<Long, Runnable> fixtureRunnables = new HashMap<>();
     public List<FixtureModel> listFixture;
+    @SuppressLint("StaticFieldLeak")
     public static ScheduleService instance;
+    private WindowManager.LayoutParams params;
+    private WindowManager.LayoutParams paramsDelete;
+    public View floatingView;
+    public View deleteView;
+    public LayoutPinMatchBinding floatingBinding;
+    public LayoutCancelPinBinding deleteBinding;
+    boolean isMoving;
+    boolean isDelete;
+    private int screenWidth;
+    private int screenHeight;
+
+    WindowManager windowManager;
+    private Handler handler = new Handler(Looper.getMainLooper());
 
     @Nullable
     @Override
@@ -42,6 +102,10 @@ public class ScheduleService extends Service {
     public void onDestroy() {
         super.onDestroy();
         instance = null;
+        for (Runnable runnable : fixtureRunnables.values()) {
+            handler.removeCallbacks(runnable);
+        }
+        fixtureRunnables.clear();
     }
 
     @Override
@@ -50,6 +114,285 @@ public class ScheduleService extends Service {
         instance = this;
         listFixture = new ArrayList<>();
         startForeground(1, createNotification());
+        windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            WindowMetrics windowMetrics = windowManager.getCurrentWindowMetrics();
+            Rect bounds = windowMetrics.getBounds();
+            screenWidth = bounds.width();
+            screenHeight = bounds.height();
+        } else {
+            DisplayMetrics displayMetrics = new DisplayMetrics();
+            windowManager.getDefaultDisplay().getMetrics(displayMetrics);
+            screenWidth = displayMetrics.widthPixels;
+            screenHeight = displayMetrics.heightPixels;
+        }
+    }
+
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Bundle bundle = intent.getBundleExtra(getString(R.string.bundle_alarm_obj));
+        if (bundle != null) {
+            FixtureModel fixtureModel = (FixtureModel) bundle.getSerializable(getString(R.string.arg_alarm_obj));
+            if (fixtureModel != null) {
+                listFixture.add(fixtureModel);
+
+                if (fixtureModel.isPin) {
+                    addDeletePin();
+                    addFloatingPin();
+                    if (fixtureModel.participants.size() >= 2) {
+                        if (fixtureModel.participants.get(0).getMeta().location.equals("home")) {
+                            Glide.with(this).load(fixtureModel.participants.get(0).getImage_path()).into(floatingBinding.ivHome);
+                            Glide.with(this).load(fixtureModel.participants.get(1).getImage_path()).into(floatingBinding.ivAway);
+                        } else {
+                            Glide.with(this).load(fixtureModel.participants.get(1).getImage_path()).into(floatingBinding.ivHome);
+                            Glide.with(this).load(fixtureModel.participants.get(0).getImage_path()).into(floatingBinding.ivAway);
+                        }
+                    }
+                    startTrackingMatch(fixtureModel);
+                }
+                if (fixtureModel.isAlarm) {
+                    startTrackingMatch(fixtureModel);
+                }
+
+            }
+        }
+        return START_STICKY;
+    }
+
+
+    private void onFloatingIconClick() {
+        Log.e("service_check", "click");
+        if (floatingView != null) {
+            floatingBinding.tvHome.setText(String.valueOf(new Random().nextInt(10)));
+        }
+    }
+
+
+    public void startTrackingMatch(FixtureModel fixtureModel) {
+        if (fixtureRunnables.containsKey(fixtureModel.id)) return;
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                fetchFixtureDetail(fixtureModel, 19411379);
+            }
+        };
+        fixtureRunnables.put(fixtureModel.id, runnable);
+        handler.post(runnable);
+    }
+
+    public void stopTrackingMatch(long matchId) {
+        Runnable runnable = fixtureRunnables.get(matchId);
+        if (runnable != null) {
+            handler.removeCallbacks(runnable);
+            fixtureRunnables.remove(matchId);
+        }
+    }
+
+    public void fetchFixtureDetail(FixtureModel fixtureModel, long id) {
+        if (!fixtureModel.isPin && !fixtureModel.isAlarm) return;
+        try {
+            ApiDataService.apiService.
+                    callFixtureDetail(id, ConstantApiData.KEY, ConstantApiData.TIMEZONE, "participants;periods;state;scores;events.type;events.period")
+                    .enqueue(new Callback<FixtureDetailResponse>() {
+                        @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
+                        @Override
+                        public void onResponse(@NonNull Call<FixtureDetailResponse> call, @NonNull Response<FixtureDetailResponse> response) {
+                            if (response.isSuccessful() && response.body() != null) {
+                                Log.e("API_RESPONSE", "Raw JSON: " + new Gson().toJson(response.body()));
+                                FixtureDetailResponse teamResponse = response.body();
+                                if (teamResponse.data != null) {
+                                    FixtureDetailModel fixtureDetailModel = teamResponse.getData();
+                                    Log.e("API_RESPONSE", "data: " + fixtureDetailModel);
+                                    Log.e("API_RESPONSE", "state: " + fixtureDetailModel.state);
+                                    Log.e("call_api_data", "call true:");
+                                    if (!fixtureDetailModel.scores.isEmpty()) {
+                                        for (ScoreModel score : fixtureDetailModel.scores)
+                                            Log.e("API_RESPONSE", "score: " + score);
+                                    }
+                                    if (!fixtureDetailModel.periods.isEmpty()) {
+                                        for (PeriodModel periodModel : fixtureDetailModel.periods)
+                                            Log.e("API_RESPONSE", "periods: " + periodModel);
+                                    }
+                                    if (!fixtureDetailModel.participants.isEmpty()) {
+                                        for (TeamInMatch team : fixtureDetailModel.participants)
+                                            Log.e("API_RESPONSE", "participants: " + team);
+                                    }
+                                    if (!fixtureDetailModel.events.isEmpty()) {
+                                        for (EventDetail eventDetail : fixtureDetailModel.events)
+                                            Log.e("API_RESPONSE", "events: " + eventDetail);
+                                    }
+                                    if (fixtureModel.isPin) {
+                                        showView(fixtureDetailModel);
+                                    }
+                                    if (fixtureModel.isAlarm) {
+                                        sendNotification(fixtureDetailModel);
+                                    }
+                                    if (fixtureRunnables.get(fixtureModel.id) != null && floatingView != null) {
+                                        handler.postDelayed(Objects.requireNonNull(fixtureRunnables.get(fixtureModel.id)), 60000);
+                                    }
+
+                                } else {
+                                    Log.e("call_api_data", "data null");
+                                    if (fixtureRunnables.get(fixtureModel.id) != null && floatingView != null) {
+                                        handler.postDelayed(Objects.requireNonNull(fixtureRunnables.get(fixtureModel.id)), 60000);
+                                    }
+                                }
+                            } else {
+                                if (fixtureRunnables.get(fixtureModel.id) != null && floatingView != null) {
+                                    handler.postDelayed(Objects.requireNonNull(fixtureRunnables.get(fixtureModel.id)), 60000);
+                                }
+                                Log.e("call_api_data", "call false: Code: " + response.code());
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<FixtureDetailResponse> call, @NonNull Throwable t) {
+                            Log.e("call_api_data", "onfailure" + t);
+                        }
+                    });
+
+        } catch (Exception e) {
+            Log.e("call_api_data", "catch: ", e);
+        }
+    }
+
+    private void sendNotification(FixtureDetailModel fixtureDetailModel) {
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void showView(FixtureDetailModel fixtureDetailModel) {
+        if (floatingView == null) return;
+        floatingBinding.tvStatus.setText("(" + fixtureDetailModel.getState().short_name + ")");
+        if (fixtureDetailModel.periods.isEmpty()) {
+            floatingBinding.tvTime.setText("");
+        } else
+            floatingBinding.tvTime.setText(fixtureDetailModel.periods.get(fixtureDetailModel.periods.size() - 1).minutes + "'");
+        if (!fixtureDetailModel.scores.isEmpty()) {
+            int scoreHome = 0, scoreAway = 0;
+            for (ScoreModel scoreModel : fixtureDetailModel.scores) {
+                if (scoreModel.description.equals("CURRENT")) {
+                    if (scoreModel.getScore().participant.equals("home")) {
+                        scoreHome = scoreModel.getScore().goals;
+                    }
+                    if (scoreModel.getScore().participant.equals("away")) {
+                        scoreAway = scoreModel.getScore().goals;
+                    }
+                }
+            }
+            floatingBinding.tvHome.setText(String.valueOf(scoreHome));
+            floatingBinding.tvAway.setText(String.valueOf(scoreAway));
+        }
+    }
+
+    public void addFloatingPin() {
+        params = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                        WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT
+        );
+        params.gravity = Gravity.TOP | Gravity.START;
+        params.x = 0;
+        params.y = 100;
+
+        floatingBinding = LayoutPinMatchBinding.inflate(LayoutInflater.from(this));
+        floatingView = floatingBinding.getRoot();
+        Rect deleteRect = new Rect((screenWidth - dpToPx(68)) / 2, screenHeight - dpToPx(148), (screenWidth + dpToPx(68)) / 2, screenHeight - dpToPx(80));
+        // Xử lý sự kiện chạm kéo
+        floatingView.setOnTouchListener(new View.OnTouchListener() {
+            private int initialX, initialY;
+            private float initialTouchX, initialTouchY;
+
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        initialX = params.x;
+                        initialY = params.y;
+                        initialTouchX = event.getRawX();
+                        initialTouchY = event.getRawY();
+                        isMoving = false;
+                        isDelete = false;
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        if (Math.abs((event.getRawX() - initialTouchX)) > 25f || Math.abs((event.getRawY() - initialTouchY)) > 25f) {
+                            isMoving = true;
+                            Log.e("check_service", "move");
+                        }
+                        if (deleteView != null) {
+                            deleteBinding.main.setVisibility(VISIBLE);
+                            if (deleteRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                                isDelete = true;
+                                floatingView.setBackgroundResource(R.drawable.bg_pin_delete);
+                            } else {
+                                isDelete = false;
+                                floatingView.setBackgroundResource(R.drawable.bg_pin);
+                            }
+                        }
+                        params.x = initialX + (int) (event.getRawX() - initialTouchX);
+                        params.y = initialY + (int) (event.getRawY() - initialTouchY);
+                        windowManager.updateViewLayout(floatingView, params);
+                        return true;
+                    case MotionEvent.ACTION_UP:
+
+                        if (isDelete) {
+                            if (floatingView != null) {
+                                windowManager.removeView(floatingView);
+                                floatingView = null;
+                            }
+                            if (deleteView != null) {
+                                windowManager.removeView(deleteView);
+                                deleteView = null;
+                            }
+
+                        }
+                        if (!isMoving) {
+                            onFloatingIconClick();
+                        }
+                        if (floatingView != null) {
+                            updatePositionAfterMove(floatingView, windowManager, params);
+                        }
+                        if (deleteView != null) {
+                            deleteBinding.main.setVisibility(GONE);
+                        }
+                        return true;
+                }
+                return false;
+            }
+        });
+        windowManager.addView(floatingView, params);
+    }
+
+    public void addDeletePin() {
+        paramsDelete = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.O ?
+                        WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY :
+                        WindowManager.LayoutParams.TYPE_PHONE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT
+        );
+        paramsDelete.gravity = Gravity.TOP | Gravity.START;
+        paramsDelete.x = (screenWidth - dpToPx(68)) / 2;
+        paramsDelete.y = screenHeight - dpToPx(148);
+
+        deleteBinding = LayoutCancelPinBinding.inflate(LayoutInflater.from(this));
+        deleteView = deleteBinding.getRoot();
+        deleteBinding.main.setVisibility(GONE);
+        windowManager.addView(deleteView, paramsDelete);
+    }
+
+    public int dpToPx(int dp) {
+        return (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                dp,
+                getResources().getDisplayMetrics()
+        );
     }
 
     private Notification createNotification() {
@@ -66,17 +409,79 @@ public class ScheduleService extends Service {
         return builder.build();
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Bundle bundle = intent.getBundleExtra(getString(R.string.bundle_alarm_obj));
-        if (bundle != null) {
-            FixtureModel fixtureModel = (FixtureModel) bundle.getSerializable(getString(R.string.arg_alarm_obj));
-            listFixture.add(fixtureModel);
+    @SuppressLint({"RestrictedApi", "ObjectAnimatorBinding"})
+    private void smoothMoveView(
+            View view,
+            WindowManager windowManager,
+            WindowManager.LayoutParams params,
+            int targetX,
+            int targetY
+    ) {
+        ValueAnimator animatorX = ValueAnimator.ofInt(params.x, targetX);
+        animatorX.setDuration(300);
+        animatorX.setInterpolator(new DecelerateInterpolator());
+        animatorX.addUpdateListener(animation -> {
+            params.x = (int) animation.getAnimatedValue();
+            windowManager.updateViewLayout(view, params);
+        });
 
-            if (fixtureModel != null) {
-                Log.d("alarmcheck", "service" + listFixture);
+        ValueAnimator animatorY = ValueAnimator.ofInt(params.y, targetY);
+        animatorY.setDuration(300);
+        animatorY.setInterpolator(new DecelerateInterpolator());
+        animatorY.addUpdateListener(animation -> {
+            params.y = (int) animation.getAnimatedValue();
+            windowManager.updateViewLayout(view, params);
+        });
+
+        animatorX.start();
+        animatorY.start();
+    }
+
+    public void updatePositionAfterMove(
+            View view,
+            WindowManager windowManager,
+            WindowManager.LayoutParams params
+    ) {
+        int centerX = params.x + (view.getWidth() / 2);
+        int centerY = params.y + (view.getHeight() / 2);
+
+        int targetX;
+        int targetY;
+
+        if (centerX > screenWidth / 2 && centerY > screenHeight / 2) { // Bottom-right quadrant
+            if (screenHeight - centerY <= screenWidth - centerX) {
+                targetX = Math.min(params.x, screenWidth);
+                targetY = screenHeight - view.getHeight() - view.getHeight() / 2;
+            } else {
+                targetX = screenWidth - view.getWidth();
+                targetY = Math.min(params.y, screenHeight);
+            }
+        } else if (centerX > screenWidth / 2 && centerY <= screenHeight / 2) { //top-right
+            if (screenWidth - centerX <= centerY) {
+                targetX = screenWidth - view.getWidth();
+                targetY = Math.max(params.y, 0);
+            } else {
+                targetX = Math.min(params.x, screenWidth);
+                targetY = 0;
+            }
+        } else if (centerX <= screenWidth / 2 && centerY > screenHeight / 2) { //bottom-lèt
+            if (screenHeight - centerY <= centerX) {
+                targetX = Math.max(params.x, 0);
+                targetY = screenHeight - view.getHeight() - view.getHeight() / 2;
+            } else {
+                targetX = 0;
+                targetY = Math.min(params.y, screenHeight);
+            }
+        } else { //top-le
+            if (centerX <= centerY) {
+                targetX = 0;
+                targetY = Math.max(params.y, 0);
+            } else {
+                targetX = Math.max(params.x, 0);
+                targetY = 0;
             }
         }
-        return START_STICKY;
+
+        smoothMoveView(view, windowManager, params, targetX, targetY);
     }
 }
