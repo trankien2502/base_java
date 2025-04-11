@@ -51,6 +51,14 @@ public class FixtureModel extends FixtureBase implements Serializable {
     public boolean is_before_match;
     @SerializedName("before_match")
     public int before_match = 60;
+    @SerializedName("is_send_end_match")
+    public boolean is_send_end_match;
+    @SerializedName("is_send_end_first_half")
+    public boolean is_send_end_first_half;
+    @SerializedName("is_send_start_match")
+    public boolean is_send_start_match;
+    @SerializedName("is_send_start_second_half")
+    public boolean is_send_start_second_half;
 
 
     public StateModel getState() {
@@ -60,10 +68,12 @@ public class FixtureModel extends FixtureBase implements Serializable {
         } else return new StateModel();
 
     }
-    public String getDate(){
+
+    public String getDate() {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         return sdf.format(parseDateToInt(0));
     }
+
     public void setState(StateModel stateModel) {
         this.state = stateModel;
     }
@@ -104,10 +114,10 @@ public class FixtureModel extends FixtureBase implements Serializable {
         try {
             long now = System.currentTimeMillis();
             long time = parseDateToInt(0);
-//            if (time < now) {
-//                Log.e("alarmcheck", "time is past:");
-//                return;
-//            }
+            if (time < now) {
+                Log.e("alarmcheck", "time is past:");
+                return;
+            }
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(context, ScheduleBroadcastReceiver.class);
             Bundle bundle = new Bundle();

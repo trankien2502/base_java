@@ -40,7 +40,7 @@ public class ScheduleBroadcastReceiver extends BroadcastReceiver {
                 String type = intent.getStringExtra("type");
                 String content;
                 if ("early".equals(type)) {
-                    content = "Sắp tới giờ rồi";
+                    content = "Don't forget the match " + fixtureBase.name + " will start at " + fixtureBase.starting_at;
                     Log.d("alarmcheck", "receive before");
                     if (fixtureBase.is_before_match && fixtureBase.isAlarm) {
                         Log.d("alarmcheck", "ring before");
@@ -59,7 +59,7 @@ public class ScheduleBroadcastReceiver extends BroadcastReceiver {
                     } else
                         Log.d("alarmcheck", "before not set alarm" + fixtureBase.isAlarm + fixtureBase.is_before_match + fixtureBase);
                 } else if ("ontime".equals(type)) {
-                    content = "Đến giờ rồi!";
+                    content = "The match " + fixtureBase.name + " start!";
                     Log.d("alarmcheck", "receive alarm");
                     if (fixtureBase.isAlarm) {
                         Log.d("alarmcheck", "ring alarm");
@@ -75,7 +75,7 @@ public class ScheduleBroadcastReceiver extends BroadcastReceiver {
                                 .build();
 
                         notificationManager.notify((int) System.currentTimeMillis(), notification);
-                    } else Log.d("alarmcheck", "not set alarm"+fixtureBase.isAlarm);
+                    } else Log.d("alarmcheck", "not set alarm" + fixtureBase.isAlarm);
                     if (fixtureBase.isAlarm || fixtureBase.isPin)
                         startAlarmService(context, fixtureBase);
                 } else if ("event".equals(type)) {

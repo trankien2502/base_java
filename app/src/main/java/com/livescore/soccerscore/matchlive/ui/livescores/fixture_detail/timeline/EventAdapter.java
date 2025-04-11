@@ -52,12 +52,10 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.EventViewHol
             sourceImageEvent = R.drawable.event_yellow_card;
         } else if (eventDetail.getType().developer_name.equals("SUBSTITUTION")) {
             sourceImageEvent = R.drawable.event_substitution;
-        } else if (eventDetail.getType().developer_name.equals("VARCARD")) {
-            sourceImageEvent = R.drawable.img_logo;
-        } else if (eventDetail.getType().developer_name.equals("YELLOWREDCARD")) {
-            sourceImageEvent = R.drawable.img_logo;
+        } else if (eventDetail.getType().developer_name.equals("VARCARD")||eventDetail.getType().developer_name.equals("YELLOWREDCARD")) {
+            sourceImageEvent = R.drawable.event_yellow_red_card;
         } else if (eventDetail.getType().developer_name.equals("REDCARD")) {
-            sourceImageEvent = R.drawable.img_logo;
+            sourceImageEvent = R.drawable.event_red_card;
         } else {
             sourceImageEvent = R.drawable.img_logo;
         }

@@ -63,6 +63,7 @@
                                 android:id="@+id/tvLineupHome"
                                 android:layout_width="wrap_content"
                                 android:layout_height="20dp"
+                                android:minWidth="40dp"
                                 android:layout_gravity="end"
                                 android:layout_marginTop="4dp"
                                 android:background="@drawable/bg_select"
@@ -71,7 +72,7 @@
                                 android:gravity="center"
                                 android:includeFontPadding="false"
                                 android:paddingHorizontal="4dp"
-                                android:text="@string/league"
+                                android:text="-"
                                 android:textColor="@color/white"
                                 android:textSize="12sp" />
                         </LinearLayout>
@@ -137,11 +138,12 @@
                                 android:layout_marginTop="4dp"
                                 android:background="@drawable/bg_select"
                                 android:ellipsize="end"
+                                android:minWidth="40dp"
                                 android:fontFamily="@font/sf_pro_text_medium"
                                 android:gravity="center"
                                 android:includeFontPadding="false"
                                 android:paddingHorizontal="4dp"
-                                android:text="@string/league"
+                                android:text="-"
                                 android:textColor="@color/white"
                                 android:textSize="12sp" />
                         </LinearLayout>

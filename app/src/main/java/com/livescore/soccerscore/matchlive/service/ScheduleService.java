@@ -10,8 +10,10 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
@@ -64,10 +66,12 @@ import com.livescore.soccerscore.matchlive.util.SystemUtil;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -75,6 +79,7 @@ import retrofit2.Response;
 
 public class ScheduleService extends Service {
     private Map<Long, Runnable> fixtureRunnables = new HashMap<>();
+    private Map<Long, List<EventDetail>> mapEvent = new HashMap<>();
     public List<FixtureModel> listFixture;
     @SuppressLint("StaticFieldLeak")
     public static ScheduleService instance;
@@ -135,26 +140,42 @@ public class ScheduleService extends Service {
         if (bundle != null) {
             FixtureModel fixtureModel = (FixtureModel) bundle.getSerializable(getString(R.string.arg_alarm_obj));
             if (fixtureModel != null) {
-                listFixture.add(fixtureModel);
-
-                if (fixtureModel.isPin) {
-                    addDeletePin();
-                    addFloatingPin();
-                    if (fixtureModel.participants.size() >= 2) {
-                        if (fixtureModel.participants.get(0).getMeta().location.equals("home")) {
-                            Glide.with(this).load(fixtureModel.participants.get(0).getImage_path()).into(floatingBinding.ivHome);
-                            Glide.with(this).load(fixtureModel.participants.get(1).getImage_path()).into(floatingBinding.ivAway);
-                        } else {
-                            Glide.with(this).load(fixtureModel.participants.get(1).getImage_path()).into(floatingBinding.ivHome);
-                            Glide.with(this).load(fixtureModel.participants.get(0).getImage_path()).into(floatingBinding.ivAway);
-                        }
+                boolean isDup = false;
+                for (FixtureModel fixtureModel1 : listFixture) {
+                    if (fixtureModel1.id == fixtureModel.id) {
+                        stopTrackingMatch(fixtureModel1);
+                        startTrackingMatch(fixtureModel);
+                        isDup = true;
                     }
-                    startTrackingMatch(fixtureModel);
                 }
-                if (fixtureModel.isAlarm) {
-                    startTrackingMatch(fixtureModel);
+                if (!isDup) {
+                    listFixture.add(fixtureModel);
+                    if (fixtureModel.isPin) {
+                        if (deleteView != null) {
+                            windowManager.removeView(deleteView);
+                            deleteView = null;
+                        }
+                        if (floatingView != null) {
+                            windowManager.removeView(floatingView);
+                            floatingView = null;
+                        }
+                        addDeletePin();
+                        addFloatingPin();
+                        if (fixtureModel.participants.size() >= 2) {
+                            if (fixtureModel.participants.get(0).getMeta().location.equals("home")) {
+                                Glide.with(this).load(fixtureModel.participants.get(0).getImage_path()).into(floatingBinding.ivHome);
+                                Glide.with(this).load(fixtureModel.participants.get(1).getImage_path()).into(floatingBinding.ivAway);
+                            } else {
+                                Glide.with(this).load(fixtureModel.participants.get(1).getImage_path()).into(floatingBinding.ivHome);
+                                Glide.with(this).load(fixtureModel.participants.get(0).getImage_path()).into(floatingBinding.ivAway);
+                            }
+                        }
+                        startTrackingMatch(fixtureModel);
+                    }
+                    if (fixtureModel.isAlarm) {
+                        startTrackingMatch(fixtureModel);
+                    }
                 }
-
             }
         }
         return START_STICKY;
@@ -163,9 +184,9 @@ public class ScheduleService extends Service {
 
     private void onFloatingIconClick() {
         Log.e("service_check", "click");
-        if (floatingView != null) {
-            floatingBinding.tvHome.setText(String.valueOf(new Random().nextInt(10)));
-        }
+//        if (floatingView != null) {
+//            floatingBinding.tvHome.setText(String.valueOf(new Random().nextInt(10)));
+//        }
     }
 
 
@@ -174,26 +195,32 @@ public class ScheduleService extends Service {
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
-                fetchFixtureDetail(fixtureModel, 19411379);
+                fetchFixtureDetail(fixtureModel);
             }
         };
         fixtureRunnables.put(fixtureModel.id, runnable);
         handler.post(runnable);
     }
 
-    public void stopTrackingMatch(long matchId) {
-        Runnable runnable = fixtureRunnables.get(matchId);
+    public void stopTrackingMatch(FixtureModel fixtureModel) {
+        Runnable runnable = fixtureRunnables.get(fixtureModel.id);
         if (runnable != null) {
             handler.removeCallbacks(runnable);
-            fixtureRunnables.remove(matchId);
+            fixtureRunnables.remove(fixtureModel.id);
         }
+        listFixture.remove(fixtureModel);
     }
 
-    public void fetchFixtureDetail(FixtureModel fixtureModel, long id) {
-        if (!fixtureModel.isPin && !fixtureModel.isAlarm) return;
+    public void fetchFixtureDetail(FixtureModel fixtureModel) {//, long id
+        if ((!fixtureModel.isPin || floatingView == null) && !fixtureModel.isAlarm) {
+            stopTrackingMatch(fixtureModel);
+            Log.e("check_service", "stop call api");
+            return;
+        }
+        if (floatingView == null) Log.e("check_service", "null");
         try {
             ApiDataService.apiService.
-                    callFixtureDetail(id, ConstantApiData.KEY, ConstantApiData.TIMEZONE, "participants;periods;state;scores;events.type;events.period")
+                    callFixtureDetail(fixtureModel.id, ConstantApiData.KEY, ConstantApiData.TIMEZONE, "participants;periods;state;scores;events.type;events.period")
                     .enqueue(new Callback<FixtureDetailResponse>() {
                         @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
                         @Override
@@ -213,33 +240,59 @@ public class ScheduleService extends Service {
                                     if (!fixtureDetailModel.periods.isEmpty()) {
                                         for (PeriodModel periodModel : fixtureDetailModel.periods)
                                             Log.e("API_RESPONSE", "periods: " + periodModel);
+                                        if (fixtureDetailModel.periods.size() == 2) {
+                                            if (fixtureDetailModel.periods.get(1).minutes >= 90 && !fixtureDetailModel.periods.get(1).has_timer ||
+                                                    fixtureDetailModel.getState().short_name.equals("FT") || fixtureDetailModel.getState().short_name.equals("AET")) {
+                                                fixtureModel.isAlarm = false;
+                                                fixtureModel.isPin = false;
+                                            }
+                                        }
                                     }
                                     if (!fixtureDetailModel.participants.isEmpty()) {
                                         for (TeamInMatch team : fixtureDetailModel.participants)
                                             Log.e("API_RESPONSE", "participants: " + team);
                                     }
-                                    if (!fixtureDetailModel.events.isEmpty()) {
-                                        for (EventDetail eventDetail : fixtureDetailModel.events)
-                                            Log.e("API_RESPONSE", "events: " + eventDetail);
-                                    }
+
                                     if (fixtureModel.isPin) {
                                         showView(fixtureDetailModel);
                                     }
                                     if (fixtureModel.isAlarm) {
-                                        sendNotification(fixtureDetailModel);
+                                        sendNotificationMatch(fixtureDetailModel, fixtureModel);
+                                        if (!fixtureDetailModel.events.isEmpty()) {
+                                            if (mapEvent.containsKey(fixtureModel.id)) {
+                                                List<EventDetail> result = new ArrayList<>();
+                                                Set<String> idsInList1 = new HashSet<>();
+                                                for (EventDetail item : Objects.requireNonNull(mapEvent.get(fixtureModel.id))) {
+                                                    idsInList1.add(item.id);
+                                                }
+                                                for (EventDetail item : fixtureDetailModel.events) {
+                                                    if (!idsInList1.contains(item.id)) {
+                                                        result.add(item);
+                                                    }
+                                                }
+                                                sendNotificationEvent(result, fixtureModel);
+                                                for (EventDetail eventDetail : result)
+                                                    Log.e("API_RESPONSE", "events: " + eventDetail);
+                                                mapEvent.put(fixtureModel.id, fixtureDetailModel.events);
+                                            } else {
+                                                mapEvent.put(fixtureModel.id, fixtureDetailModel.events);
+                                            }
+                                        }
+
+
                                     }
-                                    if (fixtureRunnables.get(fixtureModel.id) != null && floatingView != null) {
+                                    if (fixtureRunnables.get(fixtureModel.id) != null && floatingView != null && fixtureModel.isPin || fixtureModel.isAlarm) {
                                         handler.postDelayed(Objects.requireNonNull(fixtureRunnables.get(fixtureModel.id)), 60000);
                                     }
 
                                 } else {
                                     Log.e("call_api_data", "data null");
-                                    if (fixtureRunnables.get(fixtureModel.id) != null && floatingView != null) {
+                                    if (fixtureRunnables.get(fixtureModel.id) != null && floatingView != null && fixtureModel.isPin || fixtureModel.isAlarm) {
                                         handler.postDelayed(Objects.requireNonNull(fixtureRunnables.get(fixtureModel.id)), 60000);
                                     }
                                 }
                             } else {
-                                if (fixtureRunnables.get(fixtureModel.id) != null && floatingView != null) {
+                                if (fixtureRunnables.get(fixtureModel.id) != null && floatingView != null && fixtureModel.isPin || fixtureModel.isAlarm) {
                                     handler.postDelayed(Objects.requireNonNull(fixtureRunnables.get(fixtureModel.id)), 60000);
                                 }
                                 Log.e("call_api_data", "call false: Code: " + response.code());
@@ -257,12 +310,89 @@ public class ScheduleService extends Service {
         }
     }
 
-    private void sendNotification(FixtureDetailModel fixtureDetailModel) {
+    private void sendNotificationEvent(List<EventDetail> eventDetailList, FixtureModel fixtureModel) {
+        if (!eventDetailList.isEmpty()) {
+            for (EventDetail eventDetail : eventDetailList) {
+                if (eventDetail.getType().developer_name.equals("PENALTY") || eventDetail.getType().developer_name.equals("GOAL") || eventDetail.getType().developer_name.equals("OWNGOAL")) {
+                    if (fixtureModel.goals)
+                        send(fixtureModel.name, "GOAL " + eventDetail.player_name);
+                } else if (eventDetail.getType().developer_name.equals("YELLOWREDCARD")) {
+                    if (fixtureModel.red_card)
+                        send(fixtureModel.name, "YELLOWREDCARD " + eventDetail.player_name);
+                } else if (eventDetail.getType().developer_name.equals("REDCARD")) {
+                    if (fixtureModel.red_card)
+                        send(fixtureModel.name, "REDCARD " + eventDetail.player_name);
+                }
+            }
+        }
+    }
+
+    private void sendNotificationMatch(FixtureDetailModel fixtureDetailModel, FixtureModel fixtureModel) {
+        if (!fixtureDetailModel.periods.isEmpty()) {
+            if (fixtureModel.start_match) {
+                if (fixtureDetailModel.periods.size() == 1) {
+                    if (fixtureDetailModel.periods.get(0).has_timer && !fixtureModel.is_send_start_match) {
+                        send(fixtureModel.name, getString(R.string.start_first_half));
+                        fixtureModel.is_send_start_match = true;
+                    }
+                }
+            }
+            if (fixtureModel.end_first_half) {
+                if (fixtureDetailModel.periods.size() == 1) {
+                    if (!fixtureDetailModel.periods.get(0).has_timer && !fixtureModel.is_send_end_first_half) {
+                        send(fixtureModel.name, getString(R.string.at_the_end_of_first_half_match));
+                        fixtureModel.is_send_end_first_half = true;
+                    }
+                }
+            }
+            if (fixtureModel.start_second_half) {
+                if (fixtureDetailModel.periods.size() == 2) {
+                    if (fixtureDetailModel.periods.get(1).minutes == 45 && !fixtureModel.is_send_start_second_half) {
+                        send(fixtureModel.name, getString(R.string.at_the_start_of_second_half_match));
+                        fixtureModel.is_send_start_second_half = true;
+                    }
+                }
+            }
+            if (fixtureModel.end_match) {
+                if (fixtureDetailModel.periods.size() == 2) {
+                    if (fixtureDetailModel.periods.get(1).minutes >= 90 && !fixtureDetailModel.periods.get(1).has_timer && !fixtureModel.is_send_end_match ||
+                            fixtureDetailModel.getState().short_name.equals("FT") && !fixtureModel.is_send_end_match) {
+                        send(fixtureModel.name, getString(R.string.end_match));
+                        fixtureModel.is_send_end_match = true;
+                    }
+                }
+            }
+        }
+
+    }
+
+    private void send(String title, String content) {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification notification = new NotificationCompat.Builder(this, MyApplication.CHANNEL_ID_GENERAL)
+                .setContentTitle(title)
+                .setContentText(content)
+                .setSmallIcon(R.drawable.img_logo)
+                .setCategory(NotificationCompat.CATEGORY_ALARM)
+                .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setAutoCancel(true)
+                .build();
+
+        notificationManager.notify((int) (System.currentTimeMillis() % 1000000000), notification);
     }
 
     @SuppressLint("SetTextI18n")
     private void showView(FixtureDetailModel fixtureDetailModel) {
         if (floatingView == null) return;
+        if (fixtureDetailModel.participants.size() >= 2) {
+            if (fixtureDetailModel.participants.get(0).getMeta().location.equals("home")) {
+                Glide.with(this).load(fixtureDetailModel.participants.get(0).getImage_path()).into(floatingBinding.ivHome);
+                Glide.with(this).load(fixtureDetailModel.participants.get(1).getImage_path()).into(floatingBinding.ivAway);
+            } else {
+                Glide.with(this).load(fixtureDetailModel.participants.get(1).getImage_path()).into(floatingBinding.ivHome);
+                Glide.with(this).load(fixtureDetailModel.participants.get(0).getImage_path()).into(floatingBinding.ivAway);
+            }
+        }
         floatingBinding.tvStatus.setText("(" + fixtureDetailModel.getState().short_name + ")");
         if (fixtureDetailModel.periods.isEmpty()) {
             floatingBinding.tvTime.setText("");
@@ -322,15 +452,15 @@ public class ScheduleService extends Service {
                         if (Math.abs((event.getRawX() - initialTouchX)) > 25f || Math.abs((event.getRawY() - initialTouchY)) > 25f) {
                             isMoving = true;
                             Log.e("check_service", "move");
-                        }
-                        if (deleteView != null) {
-                            deleteBinding.main.setVisibility(VISIBLE);
-                            if (deleteRect.contains((int) event.getRawX(), (int) event.getRawY())) {
-                                isDelete = true;
-                                floatingView.setBackgroundResource(R.drawable.bg_pin_delete);
-                            } else {
-                                isDelete = false;
-                                floatingView.setBackgroundResource(R.drawable.bg_pin);
+                            if (deleteView != null) {
+                                deleteBinding.main.setVisibility(VISIBLE);
+                                if (deleteRect.contains((int) event.getRawX(), (int) event.getRawY())) {
+                                    isDelete = true;
+                                    floatingView.setBackgroundResource(R.drawable.bg_pin_delete);
+                                } else {
+                                    isDelete = false;
+                                    floatingView.setBackgroundResource(R.drawable.bg_pin);
+                                }
                             }
                         }
                         params.x = initialX + (int) (event.getRawX() - initialTouchX);
@@ -338,7 +468,6 @@ public class ScheduleService extends Service {
                         windowManager.updateViewLayout(floatingView, params);
                         return true;
                     case MotionEvent.ACTION_UP:
-
                         if (isDelete) {
                             if (floatingView != null) {
                                 windowManager.removeView(floatingView);
@@ -348,7 +477,6 @@ public class ScheduleService extends Service {
                                 windowManager.removeView(deleteView);
                                 deleteView = null;
                             }
-
                         }
                         if (!isMoving) {
                             onFloatingIconClick();
@@ -380,7 +508,6 @@ public class ScheduleService extends Service {
         paramsDelete.gravity = Gravity.TOP | Gravity.START;
         paramsDelete.x = (screenWidth - dpToPx(68)) / 2;
         paramsDelete.y = screenHeight - dpToPx(148);
-
         deleteBinding = LayoutCancelPinBinding.inflate(LayoutInflater.from(this));
         deleteView = deleteBinding.getRoot();
         deleteBinding.main.setVisibility(GONE);

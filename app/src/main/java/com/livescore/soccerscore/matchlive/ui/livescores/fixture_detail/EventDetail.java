@@ -6,6 +6,8 @@ import com.livescore.soccerscore.matchlive.ui.livescores.league_detail.league_ta
 import com.livescore.soccerscore.matchlive.ui.livescores.live.PeriodModel;
 
 public class EventDetail {
+    @SerializedName("id")
+    public String id;
     @SerializedName("participant_id")
     public long participant_id;
     @SerializedName("player_name")
@@ -41,6 +43,7 @@ public class EventDetail {
     public String toString() {
         return "EventDetail{" +
                 "participant_id=" + participant_id +
+                ", id='" + id + '\'' +
                 ", player_name='" + player_name + '\'' +
                 ", related_player_name='" + related_player_name + '\'' +
                 ", result='" + result + '\'' +
