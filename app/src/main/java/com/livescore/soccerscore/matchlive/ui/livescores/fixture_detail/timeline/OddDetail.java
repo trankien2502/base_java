@@ -8,6 +8,9 @@ public class OddDetail {
     @SerializedName("probability")
     public String probability;
 
+    public OddDetail() {
+    }
+
     @Override
     public String toString() {
         return "OddDetail{" +

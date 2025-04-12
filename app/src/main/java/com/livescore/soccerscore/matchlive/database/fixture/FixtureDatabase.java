@@ -7,9 +7,7 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureBase;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
+import com.livescore.soccerscore.matchlive.model.fixture.FixtureModel;
 
 
 @Database(entities = {FixtureModel.class}, version = 1)

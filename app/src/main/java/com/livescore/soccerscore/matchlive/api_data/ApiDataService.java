@@ -3,21 +3,17 @@ package com.livescore.soccerscore.matchlive.api_data;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.livescore.soccerscore.matchlive.api_data.model.StateResponse;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureResponse;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueResponse;
-import com.livescore.soccerscore.matchlive.api_data.model.team.TeamResponse;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.FixtureDetailResponse;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.stats.SeasonResponse;
-import com.livescore.soccerscore.matchlive.ui.livescores.league_detail.league_fixture.LeagueFixtureResponse;
-import com.livescore.soccerscore.matchlive.ui.livescores.league_detail.league_table.StandingResponse;
-import com.livescore.soccerscore.matchlive.ui.livescores.live.LiveResponse;
-import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.fixture.TeamFixtureDetail;
-import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.fixture.TeamFixtureResponse;
-import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.squad.SquadModel;
-import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.squad.SquadResponse;
-
-import java.util.List;
+import com.livescore.soccerscore.matchlive.model.StateResponse;
+import com.livescore.soccerscore.matchlive.model.fixture.FixtureResponse;
+import com.livescore.soccerscore.matchlive.model.league.LeagueResponse;
+import com.livescore.soccerscore.matchlive.model.team.TeamResponse;
+import com.livescore.soccerscore.matchlive.model.fixture.timeline.FixtureDetailResponse;
+import com.livescore.soccerscore.matchlive.model.fixture.stats.SeasonResponse;
+import com.livescore.soccerscore.matchlive.model.league.detail.LeagueFixtureResponse;
+import com.livescore.soccerscore.matchlive.model.league.detail.StandingResponse;
+import com.livescore.soccerscore.matchlive.model.live.LiveResponse;
+import com.livescore.soccerscore.matchlive.model.fixture.TeamFixtureResponse;
+import com.livescore.soccerscore.matchlive.model.fixture.squad.SquadResponse;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;

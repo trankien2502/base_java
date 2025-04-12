@@ -8,8 +8,7 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureBase;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
+import com.livescore.soccerscore.matchlive.model.fixture.FixtureModel;
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.database.fixture.FixtureDatabase;
 import com.livescore.soccerscore.matchlive.databinding.FragmentNotificationBinding;
@@ -24,7 +23,6 @@ import com.livescore.soccerscore.matchlive.ui.livescores.home.FixtureClickCallBa
 import com.livescore.soccerscore.matchlive.util.SPUtils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class NotificationFragment extends BaseFragment<FragmentNotificationBinding> {

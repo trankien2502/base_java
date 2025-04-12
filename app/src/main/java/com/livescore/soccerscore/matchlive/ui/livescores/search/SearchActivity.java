@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -24,11 +23,11 @@ import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.ads.IsNetWork;
 import com.livescore.soccerscore.matchlive.api_data.ApiDataService;
 import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
-import com.livescore.soccerscore.matchlive.api_data.model.PaginationModel;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueResponse;
-import com.livescore.soccerscore.matchlive.api_data.model.team.TeamModel;
-import com.livescore.soccerscore.matchlive.api_data.model.team.TeamResponse;
+import com.livescore.soccerscore.matchlive.model.PaginationModel;
+import com.livescore.soccerscore.matchlive.model.league.LeagueModel;
+import com.livescore.soccerscore.matchlive.model.league.LeagueResponse;
+import com.livescore.soccerscore.matchlive.model.team.TeamModel;
+import com.livescore.soccerscore.matchlive.model.team.TeamResponse;
 import com.livescore.soccerscore.matchlive.base.BaseActivity;
 import com.livescore.soccerscore.matchlive.databinding.ActivitySearchBinding;
 import com.livescore.soccerscore.matchlive.dialog.LoadingDialog;
@@ -41,7 +40,7 @@ import com.livescore.soccerscore.matchlive.ui.livescores.search.team.TeamSearchA
 import com.livescore.soccerscore.matchlive.ui.livescores.search.team.TeamSearchClickCallBack;
 import com.livescore.soccerscore.matchlive.ui.livescores.search.top_search.TopSearchAdapter;
 import com.livescore.soccerscore.matchlive.ui.livescores.search.top_search.TopSearchClickCallBack;
-import com.livescore.soccerscore.matchlive.ui.livescores.search.top_search.TopSearchModel;
+import com.livescore.soccerscore.matchlive.model.search.TopSearchModel;
 import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.TeamDetailActivity;
 import com.livescore.soccerscore.matchlive.util.SPUtils;
 

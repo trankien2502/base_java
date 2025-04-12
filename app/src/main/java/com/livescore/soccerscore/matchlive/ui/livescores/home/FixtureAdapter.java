@@ -13,9 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.livescore.soccerscore.matchlive.R;
-import com.livescore.soccerscore.matchlive.api_data.model.ScoreModel;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureBase;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
+import com.livescore.soccerscore.matchlive.model.ScoreModel;
+import com.livescore.soccerscore.matchlive.model.fixture.FixtureModel;
 import com.livescore.soccerscore.matchlive.databinding.ItemFixtureHomeBinding;
 
 import java.text.SimpleDateFormat;

@@ -6,7 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.livescore.soccerscore.matchlive.api_data.model.team.TeamModel;
+import com.livescore.soccerscore.matchlive.model.team.TeamModel;
 
 
 @Database(entities = {TeamModel.class}, version = 1)

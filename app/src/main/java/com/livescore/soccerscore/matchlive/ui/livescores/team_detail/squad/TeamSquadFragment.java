@@ -11,22 +11,15 @@ import com.google.gson.Gson;
 import com.livescore.soccerscore.matchlive.ads.IsNetWork;
 import com.livescore.soccerscore.matchlive.api_data.ApiDataService;
 import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
-import com.livescore.soccerscore.matchlive.api_data.model.PaginationModel;
-import com.livescore.soccerscore.matchlive.api_data.model.ScoreModel;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureResponse;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueTodayModel;
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.databinding.FragmentTeamSquadBinding;
-import com.livescore.soccerscore.matchlive.databinding.FragmentTeamStatsBinding;
 import com.livescore.soccerscore.matchlive.dialog.LoadingDialog;
+import com.livescore.soccerscore.matchlive.model.fixture.squad.SquadModel;
+import com.livescore.soccerscore.matchlive.model.fixture.squad.SquadResponse;
 import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.TeamDetailActivity;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;

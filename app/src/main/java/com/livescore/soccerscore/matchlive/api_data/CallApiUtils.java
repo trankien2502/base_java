@@ -7,17 +7,16 @@ import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.livescore.soccerscore.matchlive.ads.IsNetWork;
-import com.livescore.soccerscore.matchlive.api_data.model.PaginationModel;
-import com.livescore.soccerscore.matchlive.api_data.model.ScoreModel;
-import com.livescore.soccerscore.matchlive.api_data.model.StateResponse;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureResponse;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueDetail;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueResponse;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueTodayModel;
-import com.livescore.soccerscore.matchlive.api_data.model.team.TeamModel;
-import com.livescore.soccerscore.matchlive.api_data.model.team.TeamResponse;
+import com.livescore.soccerscore.matchlive.model.PaginationModel;
+import com.livescore.soccerscore.matchlive.model.ScoreModel;
+import com.livescore.soccerscore.matchlive.model.StateResponse;
+import com.livescore.soccerscore.matchlive.model.fixture.FixtureModel;
+import com.livescore.soccerscore.matchlive.model.fixture.FixtureResponse;
+import com.livescore.soccerscore.matchlive.model.league.LeagueDetail;
+import com.livescore.soccerscore.matchlive.model.league.LeagueResponse;
+import com.livescore.soccerscore.matchlive.model.league.LeagueTodayModel;
+import com.livescore.soccerscore.matchlive.model.team.TeamModel;
+import com.livescore.soccerscore.matchlive.model.team.TeamResponse;
 
 import retrofit2.Call;
 import retrofit2.Callback;

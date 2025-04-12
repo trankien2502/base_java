@@ -9,9 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.livescore.soccerscore.matchlive.api_data.model.ScoreModel;
+import com.livescore.soccerscore.matchlive.model.ScoreModel;
 import com.livescore.soccerscore.matchlive.databinding.ItemLiveMatchActivityBinding;
-import com.livescore.soccerscore.matchlive.databinding.ItemLiveMatchBinding;
+import com.livescore.soccerscore.matchlive.model.live.FixtureLiveModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;

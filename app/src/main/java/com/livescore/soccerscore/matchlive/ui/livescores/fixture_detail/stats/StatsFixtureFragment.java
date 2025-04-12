@@ -8,8 +8,9 @@ import android.view.ViewGroup;
 
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.databinding.FragmentStatsFixtureBinding;
-import com.livescore.soccerscore.matchlive.databinding.FragmentTimelineBinding;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.FixtureDetailModel;
+import com.livescore.soccerscore.matchlive.model.fixture.stats.StatsDetail;
+import com.livescore.soccerscore.matchlive.model.fixture.stats.StatsHomeAndAway;
+import com.livescore.soccerscore.matchlive.model.fixture.timeline.FixtureDetailModel;
 import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.MatchDetailActivity;
 
 import java.util.ArrayList;

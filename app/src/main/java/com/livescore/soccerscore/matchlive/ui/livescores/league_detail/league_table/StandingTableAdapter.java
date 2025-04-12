@@ -2,13 +2,14 @@ package com.livescore.soccerscore.matchlive.ui.livescores.league_detail.league_t
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.livescore.soccerscore.matchlive.databinding.ItemStandingTableBinding;
+import com.livescore.soccerscore.matchlive.model.league.detail.StandingDetail;
+import com.livescore.soccerscore.matchlive.model.league.detail.StandingModel;
 
 import java.util.List;
 

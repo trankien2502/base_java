@@ -1,7 +1,6 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.search.league;
 
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
-import com.livescore.soccerscore.matchlive.api_data.model.team.TeamModel;
+import com.livescore.soccerscore.matchlive.model.league.LeagueModel;
 
 public interface LeagueSearchClickCallBack {
     void select(LeagueModel leagueModel);

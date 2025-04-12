@@ -4,25 +4,20 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
-import android.os.Build;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
 
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 import com.bumptech.glide.Glide;
 import com.livescore.soccerscore.matchlive.R;
-import com.livescore.soccerscore.matchlive.api_data.model.ScoreModel;
+import com.livescore.soccerscore.matchlive.model.ScoreModel;
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.databinding.FragmentTimelineBinding;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.EventDetail;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.FixtureDetailModel;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.LineupDetail;
+import com.livescore.soccerscore.matchlive.model.fixture.timeline.EventDetail;
+import com.livescore.soccerscore.matchlive.model.fixture.timeline.FixtureDetailModel;
 import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.MatchDetailActivity;
 
 import java.text.SimpleDateFormat;
@@ -31,8 +26,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 public class TimelineFragment extends BaseFragment<FragmentTimelineBinding> {
 

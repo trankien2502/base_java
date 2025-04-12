@@ -5,8 +5,7 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
+import com.livescore.soccerscore.matchlive.model.league.LeagueModel;
 
 import java.util.List;
 

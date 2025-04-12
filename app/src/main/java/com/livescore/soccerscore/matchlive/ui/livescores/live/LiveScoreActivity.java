@@ -1,8 +1,5 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.live;
 
-import static android.view.View.GONE;
-import static android.view.View.VISIBLE;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.util.Log;
@@ -13,16 +10,15 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 
 import com.google.gson.Gson;
-import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.ads.IsNetWork;
 import com.livescore.soccerscore.matchlive.api_data.ApiDataService;
 import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
 import com.livescore.soccerscore.matchlive.base.BaseActivity;
 import com.livescore.soccerscore.matchlive.databinding.ActivityLiveScoreBinding;
 import com.livescore.soccerscore.matchlive.dialog.LoadingDialog;
+import com.livescore.soccerscore.matchlive.model.live.FixtureLiveModel;
+import com.livescore.soccerscore.matchlive.model.live.LiveResponse;
 import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.MatchDetailActivity;
-import com.livescore.soccerscore.matchlive.ui.livescores.home.LeagueTodayAdapter;
 import com.livescore.soccerscore.matchlive.util.SPUtils;
 
 import java.util.ArrayList;

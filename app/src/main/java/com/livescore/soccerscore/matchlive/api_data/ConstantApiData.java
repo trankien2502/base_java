@@ -1,10 +1,8 @@
 package com.livescore.soccerscore.matchlive.api_data;
 
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueDetail;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
-import com.livescore.soccerscore.matchlive.api_data.model.team.TeamInMatch;
-import com.livescore.soccerscore.matchlive.api_data.model.team.TeamModel;
+import com.livescore.soccerscore.matchlive.model.fixture.FixtureModel;
+import com.livescore.soccerscore.matchlive.model.league.LeagueDetail;
+import com.livescore.soccerscore.matchlive.model.team.TeamInMatch;
 
 import java.util.ArrayList;
 import java.util.List;

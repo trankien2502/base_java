@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.livescore.soccerscore.matchlive.databinding.ItemSearchBinding;
+import com.livescore.soccerscore.matchlive.model.search.TopSearchModel;
 
 import java.util.List;
 

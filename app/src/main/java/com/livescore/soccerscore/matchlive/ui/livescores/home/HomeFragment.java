@@ -4,8 +4,8 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -21,13 +21,11 @@ import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.ads.IsNetWork;
 import com.livescore.soccerscore.matchlive.api_data.ApiDataService;
 import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
-import com.livescore.soccerscore.matchlive.api_data.model.PaginationModel;
-import com.livescore.soccerscore.matchlive.api_data.model.ScoreModel;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureBase;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureResponse;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueDetail;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueTodayModel;
+import com.livescore.soccerscore.matchlive.dialog.NoteDateTimeDialog;
+import com.livescore.soccerscore.matchlive.model.PaginationModel;
+import com.livescore.soccerscore.matchlive.model.fixture.FixtureModel;
+import com.livescore.soccerscore.matchlive.model.fixture.FixtureResponse;
+import com.livescore.soccerscore.matchlive.model.league.LeagueTodayModel;
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.database.fixture.FixtureDatabase;
 import com.livescore.soccerscore.matchlive.databinding.FragmentHomeBinding;
@@ -38,21 +36,29 @@ import com.livescore.soccerscore.matchlive.dialog.notification.DialogNotificatio
 import com.livescore.soccerscore.matchlive.dialog.notification.NotificationDialog;
 import com.livescore.soccerscore.matchlive.ui.livescores.HomeActivity;
 import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.MatchDetailActivity;
-import com.livescore.soccerscore.matchlive.ui.livescores.live.FixtureLiveModel;
+import com.livescore.soccerscore.matchlive.model.live.FixtureLiveModel;
 import com.livescore.soccerscore.matchlive.ui.livescores.live.LiveMatchAdapter;
 import com.livescore.soccerscore.matchlive.ui.livescores.live.LiveMatchClickCallBack;
-import com.livescore.soccerscore.matchlive.ui.livescores.live.LiveResponse;
+import com.livescore.soccerscore.matchlive.model.live.LiveResponse;
 import com.livescore.soccerscore.matchlive.ui.livescores.live.LiveScoreActivity;
 import com.livescore.soccerscore.matchlive.ui.livescores.search.SearchActivity;
 import com.livescore.soccerscore.matchlive.util.SPUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Random;
 
+import devs.mulham.horizontalcalendar.HorizontalCalendar;
+import devs.mulham.horizontalcalendar.model.CalendarEvent;
+import devs.mulham.horizontalcalendar.utils.CalendarEventsPredicate;
+import devs.mulham.horizontalcalendar.utils.HorizontalCalendarListener;
+import kotlin.Unit;
+import kotlin.jvm.functions.Function5;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -67,6 +73,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
     int currentPage = 1;
     String selectedDate = "";
     boolean isEnableToLoadMore = true;
+    private HorizontalCalendar horizontalCalendar;
 
     @Override
     public FragmentHomeBinding setBinding(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState) {
@@ -76,6 +83,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void initView() {
+        initHorizontalCalendarPicker();
         adapter = new LeagueTodayAdapter(requireContext(), list, new LeagueHomeClickCallBack() {
             @Override
             public void select(LeagueTodayModel leagueTodayModel) {
@@ -323,33 +331,96 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
             startArc(new Intent(requireContext(), SearchActivity.class));
         });
         binding.btnChooseDate.setOnClickListener(v -> {
-            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
-                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                    .build();
-
-            datePicker.show(requireActivity().getSupportFragmentManager(), "DATE_PICKER");
-
-            datePicker.addOnPositiveButtonClickListener(selection -> {
+            NoteDateTimeDialog noteDateTimeDialog = new NoteDateTimeDialog(requireContext(), (day, month, year, hour, minute) -> {
+                Calendar calendar = Calendar.getInstance();
+                calendar.set(Calendar.YEAR, year);
+                calendar.set(Calendar.MONTH, month-1);
+                calendar.set(Calendar.DAY_OF_MONTH, day);
+                calendar.set(Calendar.HOUR_OF_DAY, hour);
+                calendar.set(Calendar.MINUTE, minute);
+                calendar.set(Calendar.SECOND, 0);
+                calendar.set(Calendar.MILLISECOND, 0);
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                selectedDate = sdf.format(new Date(selection));
-                if (IsNetWork.haveNetworkConnection(requireContext())) {
-                    list.clear();
-                    adapter.notifyDataSetChanged();
-                    loadingDialog = new LoadingDialog(requireContext(), false);
-                    loadingDialog.show();
-                    currentPage = 1;
-                    fetchFixtureDatePage(selectedDate, 1);
-                } else {
-                    Log.e("call_api_data", "No internet to call api");
-                }
+                selectedDate = sdf.format(calendar.getTimeInMillis());
+                horizontalCalendar.selectDate(calendar, true);
+                return null;
             });
+            noteDateTimeDialog.show();
         });
     }
+
 
     public void startArc(Intent intent) {
         if (getContext() instanceof HomeActivity) {
             HomeActivity main = (HomeActivity) getContext();
             main.resultLauncher.launch(intent);
+        }
+    }
+
+    private void initHorizontalCalendarPicker() {
+        Calendar startDate = Calendar.getInstance();
+        startDate.add(Calendar.YEAR, -5);
+
+        Calendar endDate = Calendar.getInstance();
+        endDate.add(Calendar.YEAR, 5);
+
+        try {
+            horizontalCalendar = new HorizontalCalendar.Builder(requireActivity(), R.id.calendarView)
+                    .range(startDate, endDate)
+                    .datesNumberOnScreen(5)
+                    .configure()
+                    .formatTopText("MMM")
+                    .formatMiddleText("dd")
+                    .formatBottomText("EEE")
+                    .showTopText(true)
+                    .showBottomText(true)
+                    .textSize(16, 16, 12)
+                    .textColor(Color.BLACK, Color.BLACK)
+                    .end()
+                    //.defaultSelectedDate(calendar)
+                    .addEvents(new CalendarEventsPredicate() {
+                        Random rnd = new Random();
+
+                        @Override
+                        public List<CalendarEvent> events(Calendar date) {
+                            List<CalendarEvent> events = new ArrayList<>();
+                            int count = rnd.nextInt(6); // 0 to 5
+                            for (int i = 0; i <= count; i++) {
+                                events.add(new CalendarEvent(
+                                        Color.rgb(rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256)),
+                                        "event"
+                                ));
+                            }
+                            return events;
+                        }
+                    })
+                    .build();
+
+            horizontalCalendar.selectDate(Calendar.getInstance(), true);
+            horizontalCalendar.setCalendarListener(new HorizontalCalendarListener() {
+                @SuppressLint("NotifyDataSetChanged")
+                @Override
+                public void onDateSelected(Calendar date, int position) {
+                    date.add(Calendar.DAY_OF_YEAR,1);
+                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                    selectedDate = sdf.format(date.getTimeInMillis());
+                    Toast.makeText(requireContext(), selectedDate, Toast.LENGTH_SHORT).show();
+                    if (IsNetWork.haveNetworkConnection(requireContext())) {
+                        list.clear();
+                        adapter.notifyDataSetChanged();
+                        loadingDialog = new LoadingDialog(requireContext(), false);
+                        loadingDialog.show();
+                        currentPage = 1;
+                        fetchFixtureDatePage(selectedDate, 1);
+                        Toast.makeText(requireContext(), selectedDate, Toast.LENGTH_SHORT).show();
+                    } else {
+                        Log.e("call_api_data", "No internet to call api");
+                    }
+                }
+            });
+
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
         }
     }
 
@@ -400,6 +471,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 //                            binding.rcvLeagueToday.post(() -> loadingDialog.dismiss());
                         } else {
                             loadingDialog.dismiss();
+                            Log.e("call_api_data", "data list null");
                         }
                     } else {
                         loadingDialog.dismiss();
@@ -447,6 +519,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                             });
                         } else {
                             binding.loadingLive.setVisibility(GONE);
+                            Log.e("call_api_data", "data live null");
                         }
                     } else {
                         binding.loadingLive.setVisibility(GONE);

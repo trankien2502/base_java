@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.livescore.soccerscore.matchlive.databinding.ItemSquadBinding;
+import com.livescore.soccerscore.matchlive.model.fixture.squad.SquadModel;
 
 import java.util.List;
 

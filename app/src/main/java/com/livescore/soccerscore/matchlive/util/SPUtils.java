@@ -9,7 +9,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class SPUtils {
     public static final String SHARED_PREFS_NAME = "Live Soccer Scores: Live Match";
@@ -36,7 +38,6 @@ public class SPUtils {
     public static String getString(Context context, String str, String str2) {
         return context.getSharedPreferences(SHARED_PREFS_NAME, 0).getString(str, str2);
     }
-
     public static void setLong(Context context, String str, long i) {
         SharedPreferences.Editor edit = context.getSharedPreferences(SHARED_PREFS_NAME, 0).edit();
         edit.putLong(str, i);

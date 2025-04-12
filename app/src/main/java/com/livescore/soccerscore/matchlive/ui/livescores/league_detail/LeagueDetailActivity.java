@@ -4,26 +4,15 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 import com.livescore.soccerscore.matchlive.R;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueDetail;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
-import com.livescore.soccerscore.matchlive.api_data.model.team.TeamInMatch;
+import com.livescore.soccerscore.matchlive.model.league.LeagueModel;
 import com.livescore.soccerscore.matchlive.base.BaseActivity;
 import com.livescore.soccerscore.matchlive.database.league.LeagueDatabase;
-import com.livescore.soccerscore.matchlive.database.team.TeamDatabase;
 import com.livescore.soccerscore.matchlive.databinding.ActivityLeagueDetailBinding;
-import com.livescore.soccerscore.matchlive.databinding.ActivityTeamDetailBinding;
-import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.TeamDetailActivity;
-import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.TeamDetailAdapter;
 import com.livescore.soccerscore.matchlive.util.SPUtils;
 
 public class LeagueDetailActivity extends BaseActivity<ActivityLeagueDetailBinding> {

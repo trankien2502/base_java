@@ -7,7 +7,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -15,7 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.databinding.ItemEventBinding;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.EventDetail;
+import com.livescore.soccerscore.matchlive.model.fixture.timeline.EventDetail;
 
 import java.util.List;
 

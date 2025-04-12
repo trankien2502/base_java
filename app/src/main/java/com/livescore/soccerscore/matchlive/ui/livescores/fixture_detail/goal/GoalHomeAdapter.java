@@ -1,7 +1,5 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.goal;
 
-import static android.view.View.GONE;
-
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -10,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.livescore.soccerscore.matchlive.databinding.ItemGoalHomeBinding;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.EventDetail;
+import com.livescore.soccerscore.matchlive.model.fixture.timeline.EventDetail;
 
 import java.util.List;
 

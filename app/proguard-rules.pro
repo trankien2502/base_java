@@ -63,3 +63,7 @@
 # ---------- NẾU CALL API HOẶC DÙNG FIREBASE READTIME THÌ ADD CLASS VS MODEL SỬ DỤNG   -----------------
 #-keep class com.wheelfingerpicker.customspinwheel.ui.splash.SplashActivity.** { *; }
 #-keep class com.wheelfingerpicker.customspinwheel.ads.** { *; }
+-keep class com.livescore.soccerscore.matchlive.model.** { *; }
+-keepclassmembers class * {
+    public <init>();
+    }

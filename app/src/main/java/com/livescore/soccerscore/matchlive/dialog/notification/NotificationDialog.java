@@ -7,12 +7,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.airbnb.lottie.L;
 import com.livescore.soccerscore.matchlive.R;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
+import com.livescore.soccerscore.matchlive.model.fixture.FixtureModel;
 import com.livescore.soccerscore.matchlive.base.BaseDialog;
 import com.livescore.soccerscore.matchlive.databinding.DialogNotificationBinding;
-import com.livescore.soccerscore.matchlive.databinding.DialogPermissionBinding;
 import com.shawnlin.numberpicker.NumberPicker;
 
 
@@ -51,7 +49,6 @@ public class NotificationDialog extends BaseDialog<DialogNotificationBinding> {
                 fixtureModel.goals = false;
                 fixtureModel.red_card = false;
                 fixtureModel.end_match = false;
-                fixtureModel.is_before_match = false;
             } else {
                 fixtureModel.isAlarm = true;
                 fixtureModel.start_match = true;
@@ -70,12 +67,12 @@ public class NotificationDialog extends BaseDialog<DialogNotificationBinding> {
                 switchAlarm(fixtureModel);
             }
         });
-        binding.ivBeforeMatch.setOnClickListener(v -> {
-            if (fixtureModel.isAlarm) {
-                fixtureModel.is_before_match = !fixtureModel.is_before_match;
-                switchAlarm(fixtureModel);
-            }
-        });
+//        binding.ivBeforeMatch.setOnClickListener(v -> {
+//            if (fixtureModel.isAlarm) {
+//                fixtureModel.is_before_match = !fixtureModel.is_before_match;
+//                switchAlarm(fixtureModel);
+//            }
+//        });
         binding.ivEndFirstMatch.setOnClickListener(v -> {
             if (fixtureModel.isAlarm) {
                 fixtureModel.end_first_half = !fixtureModel.end_first_half;
@@ -146,7 +143,7 @@ public class NotificationDialog extends BaseDialog<DialogNotificationBinding> {
             binding.swNotification.setChecked(false);
         }
         if (fixtureModel.is_before_match) {
-            binding.ivBeforeMatch.setImageResource(R.drawable.check_box_s);
+//            binding.ivBeforeMatch.setImageResource(R.drawable.check_box_s);
             binding.tvBeforeMatch.setTextColor(Color.parseColor("#000000"));
             binding.tvHours.setTextColor(Color.parseColor("#000000"));
             binding.tvMinutes.setTextColor(Color.parseColor("#000000"));
@@ -159,7 +156,7 @@ public class NotificationDialog extends BaseDialog<DialogNotificationBinding> {
             binding.numberHour.setEnabled(true);
             binding.numberMinute.setEnabled(true);
         } else {
-            binding.ivBeforeMatch.setImageResource(R.drawable.check_box_sn);
+//            binding.ivBeforeMatch.setImageResource(R.drawable.check_box_sn);
             binding.tvBeforeMatch.setTextColor(Color.parseColor("#809EB4"));
             binding.tvHours.setTextColor(Color.parseColor("#809EB4"));
             binding.tvMinutes.setTextColor(Color.parseColor("#809EB4"));

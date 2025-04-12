@@ -5,8 +5,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static com.livescore.soccerscore.matchlive.MyApplication.CHANNEL_ID_SERVICE;
 
-import android.animation.AnimatorSet;
-import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.annotation.SuppressLint;
 import android.app.Notification;
@@ -15,11 +13,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
-import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -35,7 +30,6 @@ import android.view.View;
 import android.view.WindowManager;
 import android.view.WindowMetrics;
 import android.view.animation.DecelerateInterpolator;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,30 +41,24 @@ import com.livescore.soccerscore.matchlive.MyApplication;
 import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.api_data.ApiDataService;
 import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
-import com.livescore.soccerscore.matchlive.api_data.model.ScoreModel;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureBase;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
-import com.livescore.soccerscore.matchlive.api_data.model.team.TeamInMatch;
+import com.livescore.soccerscore.matchlive.model.ScoreModel;
+import com.livescore.soccerscore.matchlive.model.fixture.FixtureModel;
+import com.livescore.soccerscore.matchlive.model.team.TeamInMatch;
 import com.livescore.soccerscore.matchlive.databinding.LayoutCancelPinBinding;
 import com.livescore.soccerscore.matchlive.databinding.LayoutPinMatchBinding;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.EventDetail;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.FixtureDetailModel;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.FixtureDetailResponse;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.LineupDetail;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.stats.StatsDetail;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.timeline.OddDetail;
-import com.livescore.soccerscore.matchlive.ui.livescores.live.PeriodModel;
+import com.livescore.soccerscore.matchlive.model.fixture.timeline.EventDetail;
+import com.livescore.soccerscore.matchlive.model.fixture.timeline.FixtureDetailModel;
+import com.livescore.soccerscore.matchlive.model.fixture.timeline.FixtureDetailResponse;
+import com.livescore.soccerscore.matchlive.model.live.PeriodModel;
 import com.livescore.soccerscore.matchlive.ui.splash.SplashActivity;
 import com.livescore.soccerscore.matchlive.util.SystemUtil;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Set;
 
 import retrofit2.Call;
@@ -136,48 +124,53 @@ public class ScheduleService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Bundle bundle = intent.getBundleExtra(getString(R.string.bundle_alarm_obj));
-        if (bundle != null) {
-            FixtureModel fixtureModel = (FixtureModel) bundle.getSerializable(getString(R.string.arg_alarm_obj));
-            if (fixtureModel != null) {
-                boolean isDup = false;
-                for (FixtureModel fixtureModel1 : listFixture) {
-                    if (fixtureModel1.id == fixtureModel.id) {
-                        stopTrackingMatch(fixtureModel1);
-                        startTrackingMatch(fixtureModel);
-                        isDup = true;
+        if (intent != null && intent.getExtras() != null) {
+            Bundle bundle = intent.getBundleExtra(getString(R.string.bundle_alarm_obj));
+            if (bundle != null) {
+                FixtureModel fixtureModel = (FixtureModel) bundle.getSerializable(getString(R.string.arg_alarm_obj));
+                if (fixtureModel != null) {
+                    boolean isDup = false;
+                    for (FixtureModel fixtureModel1 : listFixture) {
+                        if (fixtureModel1.id == fixtureModel.id) {
+                            stopTrackingMatch(fixtureModel1);
+                            startTrackingMatch(fixtureModel);
+                            isDup = true;
+                        }
                     }
-                }
-                if (!isDup) {
-                    listFixture.add(fixtureModel);
-                    if (fixtureModel.isPin) {
-                        if (deleteView != null) {
-                            windowManager.removeView(deleteView);
-                            deleteView = null;
-                        }
-                        if (floatingView != null) {
-                            windowManager.removeView(floatingView);
-                            floatingView = null;
-                        }
-                        addDeletePin();
-                        addFloatingPin();
-                        if (fixtureModel.participants.size() >= 2) {
-                            if (fixtureModel.participants.get(0).getMeta().location.equals("home")) {
-                                Glide.with(this).load(fixtureModel.participants.get(0).getImage_path()).into(floatingBinding.ivHome);
-                                Glide.with(this).load(fixtureModel.participants.get(1).getImage_path()).into(floatingBinding.ivAway);
-                            } else {
-                                Glide.with(this).load(fixtureModel.participants.get(1).getImage_path()).into(floatingBinding.ivHome);
-                                Glide.with(this).load(fixtureModel.participants.get(0).getImage_path()).into(floatingBinding.ivAway);
+                    if (!isDup) {
+                        listFixture.add(fixtureModel);
+                        if (fixtureModel.isPin) {
+                            if (deleteView != null) {
+                                windowManager.removeView(deleteView);
+                                deleteView = null;
                             }
+                            if (floatingView != null) {
+                                windowManager.removeView(floatingView);
+                                floatingView = null;
+                            }
+                            addDeletePin();
+                            addFloatingPin();
+                            if (fixtureModel.participants.size() >= 2) {
+                                if (fixtureModel.participants.get(0).getMeta().location.equals("home")) {
+                                    Glide.with(this).load(fixtureModel.participants.get(0).getImage_path()).into(floatingBinding.ivHome);
+                                    Glide.with(this).load(fixtureModel.participants.get(1).getImage_path()).into(floatingBinding.ivAway);
+                                } else {
+                                    Glide.with(this).load(fixtureModel.participants.get(1).getImage_path()).into(floatingBinding.ivHome);
+                                    Glide.with(this).load(fixtureModel.participants.get(0).getImage_path()).into(floatingBinding.ivAway);
+                                }
+                            }
+                            startTrackingMatch(fixtureModel);
                         }
-                        startTrackingMatch(fixtureModel);
-                    }
-                    if (fixtureModel.isAlarm) {
-                        startTrackingMatch(fixtureModel);
+                        if (fixtureModel.isAlarm) {
+                            startTrackingMatch(fixtureModel);
+                        }
                     }
                 }
             }
+        } else {
+            Log.w("ScheduleService", "Intent is null, skipping...");
         }
+
         return START_STICKY;
     }
 

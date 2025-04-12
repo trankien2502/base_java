@@ -2,7 +2,6 @@ package com.livescore.soccerscore.matchlive.service;
 
 
 import android.app.Notification;
-import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -15,10 +14,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.livescore.soccerscore.matchlive.MyApplication;
 import com.livescore.soccerscore.matchlive.R;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureBase;
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
-
-import java.util.Calendar;
+import com.livescore.soccerscore.matchlive.model.fixture.FixtureModel;
 
 public class ScheduleBroadcastReceiver extends BroadcastReceiver {
     FixtureModel fixtureBase;

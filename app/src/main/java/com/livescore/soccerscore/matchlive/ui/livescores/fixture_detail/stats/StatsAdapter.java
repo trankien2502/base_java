@@ -2,7 +2,6 @@ package com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.stats;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
@@ -10,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.livescore.soccerscore.matchlive.databinding.ItemStatsBinding;
+import com.livescore.soccerscore.matchlive.model.fixture.stats.StatsHomeAndAway;
 
 import java.util.List;
 

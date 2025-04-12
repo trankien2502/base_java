@@ -11,7 +11,6 @@ import androidx.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
@@ -21,16 +20,11 @@ import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.databinding.FragmentTeamStatsBinding;
 import com.livescore.soccerscore.matchlive.dialog.LoadingDialog;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.stats.SeasonDetail;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.stats.SeasonResponse;
+import com.livescore.soccerscore.matchlive.model.fixture.stats.SeasonDetail;
+import com.livescore.soccerscore.matchlive.model.fixture.stats.SeasonResponse;
 import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.TeamDetailActivity;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;

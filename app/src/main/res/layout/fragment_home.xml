@@ -139,27 +139,37 @@
                 android:layout_marginHorizontal="16dp"
                 android:background="@drawable/bg_dialog"
                 android:orientation="vertical"
+                android:paddingTop="8dp"
                 android:paddingHorizontal="16dp"
                 android:paddingBottom="50dp">
 
-                <RelativeLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <!--                    <com.harrywhewell.scrolldatepicker.DayScrollDatePicker-->
-                    <!--                        android:id="@+id/datePicker"-->
-                    <!--                        android:layout_width="match_parent"-->
-                    <!--                        android:layout_height="wrap_content" />-->
+                    <devs.mulham.horizontalcalendar.HorizontalCalendarView
+                        android:id="@+id/calendarView"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@id/btnChooseDate"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:sizeBottomText="12sp"
+                        app:sizeMiddleText="12sp"
+                        app:textColorSelected="@color/white" />
 
                     <ImageView
                         android:id="@+id/btnChooseDate"
                         android:layout_width="48dp"
                         android:layout_height="48dp"
-                        android:layout_alignParentEnd="true"
-                        android:layout_centerVertical="true"
                         android:padding="12dp"
-                        android:src="@drawable/calendar" />
-                </RelativeLayout>
+                        android:src="@drawable/calendar"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rcvLeagueToday"

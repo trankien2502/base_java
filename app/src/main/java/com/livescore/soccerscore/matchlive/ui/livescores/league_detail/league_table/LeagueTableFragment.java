@@ -13,12 +13,14 @@ import com.google.gson.Gson;
 import com.livescore.soccerscore.matchlive.ads.IsNetWork;
 import com.livescore.soccerscore.matchlive.api_data.ApiDataService;
 import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
-import com.livescore.soccerscore.matchlive.api_data.model.PaginationModel;
+import com.livescore.soccerscore.matchlive.model.PaginationModel;
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.databinding.FragmentLeagueTableBinding;
 import com.livescore.soccerscore.matchlive.dialog.LoadingDialog;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.stats.SeasonDetail;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.stats.SeasonResponse;
+import com.livescore.soccerscore.matchlive.model.fixture.stats.SeasonDetail;
+import com.livescore.soccerscore.matchlive.model.fixture.stats.SeasonResponse;
+import com.livescore.soccerscore.matchlive.model.league.detail.StandingModel;
+import com.livescore.soccerscore.matchlive.model.league.detail.StandingResponse;
 import com.livescore.soccerscore.matchlive.ui.livescores.league_detail.LeagueDetailActivity;
 
 import java.util.ArrayList;

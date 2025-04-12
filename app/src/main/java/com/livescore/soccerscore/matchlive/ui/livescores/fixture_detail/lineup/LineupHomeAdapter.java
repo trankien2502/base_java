@@ -2,7 +2,6 @@ package com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.lineup;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -11,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.livescore.soccerscore.matchlive.R;
 import com.livescore.soccerscore.matchlive.databinding.ItemLineupHomeBinding;
-import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.LineupDetail;
+import com.livescore.soccerscore.matchlive.model.fixture.timeline.LineupDetail;
 
 import java.util.List;
 

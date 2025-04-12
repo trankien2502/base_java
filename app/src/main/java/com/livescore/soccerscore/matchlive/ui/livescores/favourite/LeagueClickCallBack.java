@@ -1,6 +1,6 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.favourite;
 
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
+import com.livescore.soccerscore.matchlive.model.league.LeagueModel;
 
 public interface LeagueClickCallBack {
     void select(LeagueModel leagueModel);

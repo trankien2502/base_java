@@ -11,7 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.livescore.soccerscore.matchlive.api_data.model.team.TeamModel;
+import com.livescore.soccerscore.matchlive.model.team.TeamModel;
 import com.livescore.soccerscore.matchlive.databinding.ItemSearchBinding;
 
 import java.util.List;

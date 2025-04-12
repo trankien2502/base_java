@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.livescore.soccerscore.matchlive.R;
-import com.livescore.soccerscore.matchlive.api_data.model.league.LeagueModel;
+import com.livescore.soccerscore.matchlive.model.league.LeagueModel;
 import com.livescore.soccerscore.matchlive.databinding.ItemTeamBinding;
 
 import java.util.List;
@@ -51,6 +51,7 @@ public class LeagueAdapter extends RecyclerView.Adapter<LeagueAdapter.TeamLeague
             holder.binding.ivFavourite.setImageResource(R.drawable.favorite_s);
         else holder.binding.ivFavourite.setImageResource(R.drawable.favorite_sn);
         holder.binding.tvName.setText(teamModel.getName());
+        holder.binding.tvName.setSelected(true);
         Glide.with(context).load(teamModel.getImage_path()).error(R.drawable.img_logo).into(holder.binding.ivPic);
         holder.binding.layoutItem.setOnClickListener(v -> teamClickCallBack.select(teamModel));
         holder.binding.ivFavourite.setOnClickListener(v -> teamClickCallBack.follow(position, teamModel));

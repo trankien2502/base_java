@@ -1,6 +1,6 @@
 package com.livescore.soccerscore.matchlive.dialog.notification;
 
-import com.livescore.soccerscore.matchlive.api_data.model.fixture.FixtureModel;
+import com.livescore.soccerscore.matchlive.model.fixture.FixtureModel;
 
 public interface DialogNotificationCallBack {
     void cancel();
