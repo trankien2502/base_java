@@ -40,7 +40,7 @@ public class NoInternetActivity extends AppCompatActivity {
         //make fully Android Transparent Status bar
         setWindowFlag(this, WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS, false);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
-        Log.e("check_no_internet","count me");
+        Log.e("check_no_internet", "count me");
         // Thiết lập màu trong suốt cho thanh điều hướng
         getWindow().setNavigationBarColor(Color.TRANSPARENT);
 
@@ -115,26 +115,32 @@ public class NoInternetActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-//        if (ConstantRemote.open_resume && CheckAds.getInstance().isShowAds(this)) {
-//            AppOpenManager.getInstance().enableAppResumeWithActivity(getClass());
-//        } else {
-//            AppOpenManager.getInstance().disableAppResumeWithActivity(getClass());
-//        }
+
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         networkReceiver = new NetworkReceiver();
         IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
-
-        // Đăng ký với cờ phù hợp
         ContextCompat.registerReceiver(
                 this,
                 networkReceiver,
                 filter,
-                ContextCompat.RECEIVER_NOT_EXPORTED // Đảm bảo receiver không được export
+                ContextCompat.RECEIVER_NOT_EXPORTED
         );
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
         unregisterReceiver(networkReceiver);
     }
 
@@ -185,7 +191,7 @@ public class NoInternetActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Log.e("check_no_internet","destroy");
+        Log.e("check_no_internet", "destroy");
         instance = null;
     }
 

@@ -10,4 +10,7 @@ public class TopSearchModel {
         this.name = name;
         this.isTeam = isTeam;
     }
+
+    public TopSearchModel() {
+    }
 }

@@ -1,22 +1,32 @@
 package com.livescore.soccerscore.matchlive.util;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.livescore.soccerscore.matchlive.R;
+import com.livescore.soccerscore.matchlive.dialog.GoToSettingDialog;
+import com.livescore.soccerscore.matchlive.model.team.TeamInMatch;
 
 import java.lang.reflect.Type;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class SPUtils {
     public static final String SHARED_PREFS_NAME = "Live Soccer Scores: Live Match";
     public static String LIST_RECENT = "LIST_RECENT";
     public static String INTENT_TEAM = "INTENT_TEAM";
+    public static String INTENT_LIVE_NOW = "INTENT_LIVE_NOW";
     public static String INTENT_FIXTURE = "INTENT_FIXTURE";
     public static String INTENT_LEAGUE = "INTENT_LEAGUE";
     public static String NOTIFICATION = "NOTIFICATION";
@@ -38,6 +48,7 @@ public class SPUtils {
     public static String getString(Context context, String str, String str2) {
         return context.getSharedPreferences(SHARED_PREFS_NAME, 0).getString(str, str2);
     }
+
     public static void setLong(Context context, String str, long i) {
         SharedPreferences.Editor edit = context.getSharedPreferences(SHARED_PREFS_NAME, 0).edit();
         edit.putLong(str, i);
@@ -87,8 +98,7 @@ public class SPUtils {
     public static ArrayList<String> getList(Context context, String KEY_LIST) {
         String json = context.getSharedPreferences(SHARED_PREFS_NAME, 0).getString(KEY_LIST, null);
         if (json == null) return new ArrayList<>();
-        Type type = new TypeToken<ArrayList<String>>() {
-        }.getType();
+        Type type = TypeToken.getParameterized(ArrayList.class, String.class).getType();
         return gson.fromJson(json, type);
     }
 
@@ -96,6 +106,7 @@ public class SPUtils {
     public static void removeList(Context context, String KEY_LIST) {
         context.getSharedPreferences(SHARED_PREFS_NAME, 0).edit().remove(KEY_LIST).apply();
     }
+
     public static void showKeyboard(Context context, View view) {
         if (view == null) return;
 
@@ -116,5 +127,18 @@ public class SPUtils {
         if (imm != null) {
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
+    }
+
+    public static void showDialogGotoSetting(Context context, int type, GoToSettingCallBack goToSettingCallBack) {
+        GoToSettingDialog dialog = new GoToSettingDialog(context, true);
+        SystemUtil.setLocale(context);
+        dialog.initDialog(type, goToSettingCallBack);
+        if (type == 1) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_noti);
+        } else if (type == 2) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_overlay);
+        }
+        dialog.show();
+
     }
 }

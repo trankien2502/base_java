@@ -6,6 +6,35 @@
     android:layout_height="match_parent"
     tools:context=".ui.livescores.team_detail.stats.TeamStatsFragment">
 
+    <LinearLayout
+        android:id="@+id/noData"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="72dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="113dp"
+            android:layout_height="80dp"
+            android:src="@drawable/img_no_data_favourite" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/sf_pro_text_medium"
+            android:includeFontPadding="false"
+            android:text="@string/no_fixture"
+            android:textColor="#292D32"
+            android:textSize="12sp" />
+
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rcvFixture"
         android:layout_width="match_parent"

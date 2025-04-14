@@ -1,30 +1,37 @@
 package com.livescore.soccerscore.matchlive.model.team;
 
+import androidx.annotation.Keep;
+
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
+
+@Keep
 public class TeamInMatch extends TeamModel {
     @SerializedName("meta")
-    public Object meta;
+    public Meta meta;
     @SerializedName("country")
-    public Object country;
-    public Meta getMeta() {
-        return new Gson().fromJson(new Gson().toJson(meta), Meta.class);
-    }
-    public Country getCountry() {
-        Gson gson = new Gson();
-        if (country != null) {
-            return gson.fromJson(new Gson().toJson(country), Country.class);
-        } else return new Country();
+    public Country country;
 
+    public Meta getMeta() {
+//        return new Gson().fromJson(new Gson().toJson(meta), Meta.class);
+        return meta;
+    }
+
+    public Country getCountry() {
+//        Gson gson = new Gson();
+//        if (country != null) {
+//            return gson.fromJson(new Gson().toJson(country), Country.class);
+//        } else return new Country();
+        return country;
     }
 
     public TeamInMatch() {
+
     }
 
-    public void setCountry(Country country) {
-        this.country = country;
-    }
+
     @Override
     public String toString() {
         return "TeamInMatch{" +
@@ -37,13 +44,16 @@ public class TeamInMatch extends TeamModel {
                 '}';
     }
 
-    public static class Meta {
+    public static class Meta implements Serializable {
         @SerializedName("location")
         public String location;
         @SerializedName("winner")
         public boolean winner;
         @SerializedName("position")
         public int position;
+
+        public Meta() {
+        }
 
         @Override
         public String toString() {
@@ -54,11 +64,15 @@ public class TeamInMatch extends TeamModel {
                     '}';
         }
     }
-    public static class Country {
+
+    public static class Country implements Serializable{
         @SerializedName("id")
         public long id;
         @SerializedName("name")
         public String name;
+
+        public Country() {
+        }
 
         @Override
         public String toString() {

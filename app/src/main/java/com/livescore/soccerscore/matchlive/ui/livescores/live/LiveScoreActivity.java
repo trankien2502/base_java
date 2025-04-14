@@ -48,6 +48,7 @@ public class LiveScoreActivity extends BaseActivity<ActivityLiveScoreBinding> {
                 Toast.makeText(getBaseContext(), "select " + fixtureModel.id, Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getBaseContext(), MatchDetailActivity.class);
                 intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
+                intent.putExtra(SPUtils.INTENT_LIVE_NOW,true);
                 resultLauncher.launch(intent);
             }
         });

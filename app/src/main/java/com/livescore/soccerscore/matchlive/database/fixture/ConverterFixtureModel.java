@@ -5,6 +5,7 @@ import androidx.room.TypeConverter;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.livescore.soccerscore.matchlive.model.ScoreModel;
+import com.livescore.soccerscore.matchlive.model.fixture.FixtureModel;
 import com.livescore.soccerscore.matchlive.model.team.TeamInMatch;
 
 import java.lang.reflect.Type;
@@ -18,7 +19,7 @@ public class ConverterFixtureModel {
     @TypeConverter
     public static String fromTeamInMatchList(List<TeamInMatch> list) {
         if (list == null || list.isEmpty()) {
-            return "[]"; // hoặc có thể return null nếu bạn muốn lưu null trong DB
+            return null; // hoặc có thể return null nếu bạn muốn lưu null trong DB
         }
         return gson.toJson(list);
     }
@@ -28,15 +29,14 @@ public class ConverterFixtureModel {
         if (json == null || json.isEmpty()) {
             return Collections.emptyList(); // hoặc return null nếu bạn muốn là null
         }
-        Type type = new TypeToken<List<TeamInMatch>>() {
-        }.getType();
+        Type type = TypeToken.getParameterized(List.class, TeamInMatch.class).getType();
         return gson.fromJson(json, type);
     }
 
     @TypeConverter
     public static String fromScoresList(List<ScoreModel> list) {
         if (list == null || list.isEmpty()) {
-            return "[]"; // hoặc có thể return null nếu bạn muốn lưu null trong DB
+            return null; // hoặc có thể return null nếu bạn muốn lưu null trong DB
         }
         return gson.toJson(list);
     }
@@ -46,20 +46,19 @@ public class ConverterFixtureModel {
         if (json == null || json.isEmpty()) {
             return Collections.emptyList(); // hoặc return null nếu bạn muốn là null
         }
-        Type type = new TypeToken<List<ScoreModel>>() {
-        }.getType();
+        Type type = TypeToken.getParameterized(List.class, ScoreModel.class).getType();
         return gson.fromJson(json, type);
     }
 
     @TypeConverter
-    public static String fromStateModel(Object state) {
+    public static String fromStateModel(FixtureModel.StateModel state) {
         if (state == null) return null;
         return gson.toJson(state);
     }
 
     @TypeConverter
-    public static Object toStateModel(String json) {
+    public static FixtureModel.StateModel toStateModel(String json) {
         if (json == null || json.isEmpty()) return null;
-        return gson.fromJson(json, Object.class);
+        return gson.fromJson(json, FixtureModel.StateModel.class);
     }
 }

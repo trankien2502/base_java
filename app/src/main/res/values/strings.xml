@@ -158,6 +158,7 @@
     <string name="asisitive_touch_s_service_is_running">Live Score \'s Service is running</string>
     <string name="tap_to_open">Tap to open</string>
     <string name="start_first_half">Start first half</string>
+    <string name="no_fixture">No matches yet.</string>
 
 
 </resources>

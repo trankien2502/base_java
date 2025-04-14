@@ -1,5 +1,6 @@
 package com.livescore.soccerscore.matchlive.model.team;
 
+import androidx.annotation.Keep;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -7,7 +8,7 @@ import androidx.room.PrimaryKey;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-
+@Keep
 @Entity(tableName = "team")
 public class TeamModel implements Serializable {
     @PrimaryKey
@@ -56,13 +57,6 @@ public class TeamModel implements Serializable {
         isFavourite = favourite;
     }
 
-//    public Meta getMeta() {
-//        return meta;
-//    }
-//
-//    public void setMeta(Meta meta) {
-//        this.meta = meta;
-//    }
 
 
     @Override

@@ -7,6 +7,7 @@ import android.util.Log;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.livescore.soccerscore.matchlive.base.BaseActivity;
 import com.livescore.soccerscore.matchlive.dialog.exit.ExitAppDialog;
@@ -81,6 +82,8 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     public ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == RESULT_OK) {
             //ads
+//            if (state == STATE_FAVOURITE)
+            changeState();
             Log.d("activity_check", "home");
         }
     });
@@ -128,6 +131,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     }
 
     private void replaceFragment(Fragment fragment) {
+        getSupportFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.frContentHome, fragment)
                 .commit();

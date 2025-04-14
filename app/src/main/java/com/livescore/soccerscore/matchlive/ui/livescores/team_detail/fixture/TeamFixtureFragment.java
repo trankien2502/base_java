@@ -1,5 +1,9 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.team_detail.fixture;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +17,11 @@ import com.google.gson.Gson;
 import com.livescore.soccerscore.matchlive.ads.IsNetWork;
 import com.livescore.soccerscore.matchlive.api_data.ApiDataService;
 import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
+import com.livescore.soccerscore.matchlive.database.fixture.FixtureDatabase;
+import com.livescore.soccerscore.matchlive.dialog.MatchPinWarnDialog;
+import com.livescore.soccerscore.matchlive.dialog.MatchPinnedDialog;
+import com.livescore.soccerscore.matchlive.dialog.notification.DialogNotificationCallBack;
+import com.livescore.soccerscore.matchlive.dialog.notification.NotificationDialog;
 import com.livescore.soccerscore.matchlive.model.fixture.FixtureModel;
 import com.livescore.soccerscore.matchlive.base.BaseFragment;
 import com.livescore.soccerscore.matchlive.databinding.FragmentTeamFixtureBinding;
@@ -22,10 +31,13 @@ import com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.MatchDet
 import com.livescore.soccerscore.matchlive.ui.livescores.home.FixtureAdapter;
 import com.livescore.soccerscore.matchlive.ui.livescores.home.FixtureClickCallBack;
 import com.livescore.soccerscore.matchlive.ui.livescores.team_detail.TeamDetailActivity;
+import com.livescore.soccerscore.matchlive.util.GoToSettingCallBack;
+import com.livescore.soccerscore.matchlive.util.PermissionManager;
 import com.livescore.soccerscore.matchlive.util.SPUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -44,25 +56,7 @@ public class TeamFixtureFragment extends BaseFragment<FragmentTeamFixtureBinding
 
     @Override
     public void initView() {
-        fixtureAdapter = new FixtureAdapter(requireContext(), list, new FixtureClickCallBack() {
-            @Override
-            public void select(int pos, FixtureModel fixtureModel) {
-                Toast.makeText(requireContext(), "select " + fixtureModel.id, Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(requireContext(), MatchDetailActivity.class);
-                intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
-                startArc(intent);
-            }
-
-            @Override
-            public void pin(int pos, FixtureModel fixtureModel) {
-                Toast.makeText(requireContext(), "pin " + fixtureModel.name, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void alarm(int pos, FixtureModel fixtureModel) {
-                Toast.makeText(requireContext(), "alarm " + fixtureModel.name, Toast.LENGTH_SHORT).show();
-            }
-        });
+        initAdapter();
         long teamId = TeamDetailActivity.instance.teamModel != null ? TeamDetailActivity.instance.teamModel.getId() : 0;
         if (IsNetWork.haveNetworkConnection(requireContext())) {
             loadingDialog = new LoadingDialog(requireContext(), false);
@@ -73,6 +67,7 @@ public class TeamFixtureFragment extends BaseFragment<FragmentTeamFixtureBinding
             Log.e("call_api_data", "No internet to call api");
         }
     }
+
 
     @Override
     public void bindView() {
@@ -85,67 +80,13 @@ public class TeamFixtureFragment extends BaseFragment<FragmentTeamFixtureBinding
             main.resultLauncher.launch(intent);
         }
     }
-//    public void fetchFixtureScheduleTeam(int teamId) {
-//        try {
-//            ApiDataService.apiService.callScheduleTeam(teamId, ConstantApiData.KEY,ConstantApiData.TIMEZONE).enqueue(new Callback<SeasonResponse>() {
-//                @Override
-//                public void onResponse(@NonNull Call<SeasonResponse> call, @NonNull Response<SeasonResponse> response) {
-//                    if (response.isSuccessful() && response.body() != null) {
-//                        Log.e("API_RESPONSE", "Raw JSON: " + new Gson().toJson(response.body()));
-//                        SeasonResponse seasonResponse = response.body();
-//                        Log.e("API_RESPONSE", "data: " + seasonResponse.seasons);
-//                        if (seasonResponse.seasons != null) {
-//                            for (SeasonModel seasonModel : seasonResponse.seasons) {
-//                                if (seasonModel != null) {
-//                                    for (RoundModel roundModel : seasonModel.rounds) {
-//                                        if (roundModel != null) {
-//                                            if (roundModel.fixtures != null) {
-//                                                for (FixtureModel fixtureModel : roundModel.fixtures) {
-//                                                    for (FixtureModel.StateModel stateModel : ConstantApiData.listState) {
-//                                                        if (fixtureModel.state_id == stateModel.id) {
-//                                                            fixtureModel.setState(stateModel);
-//                                                            break;
-//                                                        }
-//                                                    }
-//                                                }
-//                                                list.addAll(roundModel.fixtures);
-//                                            }
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                            for (FixtureModel fixtureModel : list) {
-//                                Log.e("API_RESPONSE", "fixturesModel: " + fixtureModel);
-//
-//                            }
-//                        }
-//                        loadingDialog.dismiss();
-//                        binding.rcvFixture.setAdapter(fixtureAdapter);
-//                    } else {
-//                        loadingDialog.dismiss();
-//                        binding.rcvFixture.setAdapter(fixtureAdapter);
-//                        Log.e("call_api_data", "call false: Code: " + response.code());
-//                    }
-//                }
-//
-//                @Override
-//                public void onFailure(@NonNull Call<SeasonResponse> call, @NonNull Throwable t) {
-//                    loadingDialog.dismiss();
-//                    binding.rcvFixture.setAdapter(fixtureAdapter);
-//                    Log.e("call_api_data", "onfailure" + t);
-//                }
-//            });
-//
-//        } catch (Exception e) {
-//            loadingDialog.dismiss();
-//            binding.rcvFixture.setAdapter(fixtureAdapter);
-//            Log.e("call_api_data", "catch: ", e);
-//        }
-//    }
 
+
+    @SuppressLint("NotifyDataSetChanged")
     public void fetchFixtureTeam(long teamId) {
+        List<FixtureModel> fixtureModelList = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getAllFixture();
         try {
-            ApiDataService.apiService.callTeamFixture(teamId, ConstantApiData.KEY,ConstantApiData.TIMEZONE, "upcoming.participants;upcoming.scores;upcoming.state").enqueue(new Callback<TeamFixtureResponse>() {
+            ApiDataService.apiService.callTeamFixture(teamId, ConstantApiData.KEY, ConstantApiData.TIMEZONE, "upcoming.participants;upcoming.scores;upcoming.state").enqueue(new Callback<TeamFixtureResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<TeamFixtureResponse> call, @NonNull Response<TeamFixtureResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -153,16 +94,40 @@ public class TeamFixtureFragment extends BaseFragment<FragmentTeamFixtureBinding
                         TeamFixtureResponse teamFixtureResponse = response.body();
                         Log.e("API_RESPONSE", "data: " + teamFixtureResponse.getData());
                         if (teamFixtureResponse.data != null) {
-                            list.addAll(teamFixtureResponse.getData().upcoming);
+
+                            List<FixtureModel> todayList = teamFixtureResponse.getData().upcoming;
+                            for (int i = 0; i < todayList.size(); i++) {
+                                FixtureModel fixtureModel = todayList.get(i);
+                                Iterator<FixtureModel> iterator = fixtureModelList.iterator();
+                                while (iterator.hasNext()) {
+                                    FixtureModel fixtureModelDB = iterator.next();
+                                    if (fixtureModel.id == fixtureModelDB.id) {
+                                        todayList.set(i, fixtureModelDB);
+                                        iterator.remove();
+                                        break;
+                                    }
+                                }
+                            }
+                            list.addAll(todayList);
                         }
                         for (FixtureModel fixtureModel : list) {
                             Log.e("API_RESPONSE", "data: " + fixtureModel);
                         }
                         loadingDialog.dismiss();
-                        binding.rcvFixture.setAdapter(fixtureAdapter);
+                        fixtureAdapter.notifyDataSetChanged();
+                        if (list.isEmpty())
+                            binding.noData.setVisibility(VISIBLE);
+                        else {
+                            binding.noData.setVisibility(GONE);
+                        }
                     } else {
                         loadingDialog.dismiss();
-                        binding.rcvFixture.setAdapter(fixtureAdapter);
+                        if (list.isEmpty())
+                            binding.noData.setVisibility(VISIBLE);
+                        else {
+                            binding.noData.setVisibility(GONE);
+                        }
+                        fixtureAdapter.notifyDataSetChanged();
                         try {
                             Log.e("call_api_data", "call false: Code: " + response.errorBody().string());
                         } catch (IOException e) {
@@ -174,15 +139,189 @@ public class TeamFixtureFragment extends BaseFragment<FragmentTeamFixtureBinding
                 @Override
                 public void onFailure(@NonNull Call<TeamFixtureResponse> call, @NonNull Throwable t) {
                     loadingDialog.dismiss();
-                    binding.rcvFixture.setAdapter(fixtureAdapter);
+                    if (list.isEmpty())
+                        binding.noData.setVisibility(VISIBLE);
+                    else {
+                        binding.noData.setVisibility(GONE);
+                    }
+                    fixtureAdapter.notifyDataSetChanged();
                     Log.e("call_api_data", "onfailure" + t);
                 }
             });
 
         } catch (Exception e) {
             loadingDialog.dismiss();
-            binding.rcvFixture.setAdapter(fixtureAdapter);
+            if (list.isEmpty())
+                binding.noData.setVisibility(VISIBLE);
+            else {
+                binding.noData.setVisibility(GONE);
+            }
+            fixtureAdapter.notifyDataSetChanged();
             Log.e("call_api_data", "catch: ", e);
         }
+    }
+
+    private void initAdapter() {
+        fixtureAdapter = new FixtureAdapter(requireContext(), list, new FixtureClickCallBack() {
+            @Override
+            public void select(int pos, FixtureModel fixtureModel) {
+                Toast.makeText(requireContext(), "select " + fixtureModel.id, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(requireContext(), MatchDetailActivity.class);
+                intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
+                startArc(intent);
+            }
+
+            @Override
+            public void pin(int pos, FixtureModel fixtureModel) {
+                if (PermissionManager.checkOverlayPermission(requireContext())) {
+                    if (fixtureModel.isPin) {
+                        fixtureModel.isPin = false;
+                        if (fixtureModel.isAlarm) {
+                            FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel);
+                            fixtureModel.schedule(requireContext());
+                            fixtureAdapter.notifyItemChanged(pos);
+                        } else {
+                            FixtureDatabase.getInstance(requireContext()).fixtureDAO().delete(fixtureModel.id);
+                            fixtureModel.cancelNotification(requireContext());
+                            list.remove(pos);
+                            fixtureAdapter.notifyItemRemoved(pos);
+                        }
+                    } else {
+                        FixtureModel fixtureBase = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureByPin();
+                        FixtureModel fixture23 = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureById(fixtureModel.id);
+
+                        if (fixtureBase == null) {
+                            if (fixture23 != null) {
+                                fixture23.isPin = true;
+                                FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixture23);
+                                fixture23.schedule(requireContext());
+                                list.set(pos, fixture23);
+                            } else {
+                                fixtureModel.isPin = true;
+                                FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel);
+                                fixtureModel.schedule(requireContext());
+                                list.set(pos, fixtureModel);
+                            }
+                            fixtureAdapter.notifyItemChanged(pos);
+                            showPinnedMatch();
+                        } else {
+                            if (fixture23 != null) {
+                                if (fixtureBase.id != fixture23.id) {
+                                    MatchPinWarnDialog dialog = new MatchPinWarnDialog(requireContext(), false);
+                                    dialog.binding.btnCancel.setOnClickListener(v -> {
+                                        dialog.dismiss();
+                                    });
+                                    dialog.binding.btnReplace.setOnClickListener(v -> {
+                                        fixtureModel.isPin = true;
+                                        fixtureAdapter.notifyItemChanged(pos);
+                                        FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel);
+                                        fixtureModel.schedule(requireContext());
+                                        dialog.dismiss();
+                                        for (int i = 0; i < list.size(); i++) {
+                                            if (list.get(i).id != fixtureModel.id && list.get(i).isPin) {
+                                                list.get(i).isPin = false;
+                                                if (list.get(i).isAlarm) {
+                                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(list.get(i));
+                                                    list.get(i).schedule(requireContext());
+                                                    fixtureAdapter.notifyItemChanged(i);
+                                                } else {
+                                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().delete(list.get(i).id);
+                                                    list.get(i).cancelNotification(requireContext());
+                                                    fixtureAdapter.notifyItemChanged(i);
+                                                }
+                                                break;
+                                            }
+                                        }
+                                    });
+                                    dialog.show();
+                                }
+                            }
+                        }
+
+                    }
+                } else {
+                    SPUtils.showDialogGotoSetting(requireContext(), 2, new GoToSettingCallBack() {
+                        @Override
+                        public void goToSetting(Intent intent) {
+                            startArc(intent);
+                        }
+                    });
+                }
+                if (list.isEmpty())
+                    binding.noData.setVisibility(VISIBLE);
+                else {
+                    binding.noData.setVisibility(GONE);
+                }
+
+            }
+
+            @Override
+            public void alarm(int pos, FixtureModel fixtureModel) {
+                if (PermissionManager.checkNotificationPermission(requireContext())) {
+                    FixtureModel fixtureBase = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureById(fixtureModel.id);
+                    NotificationDialog dialog = new NotificationDialog(requireContext(), false);
+                    dialog.initFixture(fixtureModel);
+                    dialog.initCallBack(new DialogNotificationCallBack() {
+                        @Override
+                        public void cancel() {
+                            dialog.dismiss();
+                        }
+
+                        @Override
+                        public void save(FixtureModel fixtureModel1) {
+                            Log.d("alarmcheck", "save: " + fixtureModel1);
+                            if (fixtureModel1.isAlarm) {
+                                if (fixtureBase != null) {
+                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel1);
+                                } else
+                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel1);
+                                fixtureModel1.schedule(requireContext());
+                                list.set(pos, fixtureModel1);
+                                fixtureAdapter.notifyItemChanged(pos);
+                            } else {
+                                if (fixtureBase != null) {
+                                    if (fixtureBase.isPin) {
+                                        FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel1);
+                                        Log.d("alarmcheck", "schedule: " + fixtureModel1);
+                                        fixtureModel1.schedule(requireContext());
+                                        list.set(pos, fixtureModel1);
+                                        fixtureAdapter.notifyItemChanged(pos);
+                                    } else {
+                                        FixtureDatabase.getInstance(requireContext()).fixtureDAO().delete(fixtureBase.id);
+                                        fixtureBase.cancelNotification(requireContext());
+                                        list.remove(pos);
+                                        fixtureAdapter.notifyItemRemoved(pos);
+                                    }
+
+                                }
+                            }
+                            if (list.isEmpty())
+                                binding.noData.setVisibility(VISIBLE);
+                            else {
+                                binding.noData.setVisibility(GONE);
+                            }
+                            dialog.dismiss();
+                        }
+                    });
+                    dialog.show();
+                } else {
+                    SPUtils.showDialogGotoSetting(requireContext(), 1, new GoToSettingCallBack() {
+                        @Override
+                        public void goToSetting(Intent intent) {
+                            startArc(intent);
+                        }
+                    });
+                }
+            }
+        });
+        binding.rcvFixture.setAdapter(fixtureAdapter);
+    }
+
+    public void showPinnedMatch() {
+        MatchPinnedDialog dialog = new MatchPinnedDialog(requireContext(), false);
+        dialog.binding.btnOK.setOnClickListener(v -> {
+            dialog.dismiss();
+        });
+        dialog.show();
     }
 }

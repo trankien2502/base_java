@@ -1,7 +1,9 @@
 package com.livescore.soccerscore.matchlive.dialog.notification;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -17,6 +19,8 @@ import com.shawnlin.numberpicker.NumberPicker;
 public class NotificationDialog extends BaseDialog<DialogNotificationBinding> {
 
     FixtureModel fixtureModel;
+    String[] displayedValuesHour;
+    String[] displayedValuesMinute;
     DialogNotificationCallBack callBack;
 
     public NotificationDialog(@NonNull Context context, boolean canAble) {
@@ -33,8 +37,25 @@ public class NotificationDialog extends BaseDialog<DialogNotificationBinding> {
         return DialogNotificationBinding.inflate(getLayoutInflater());
     }
 
+    @SuppressLint("DefaultLocale")
     @Override
     protected void initView() {
+        displayedValuesHour = new String[24];
+        for (int i = 0; i < 24; i++) {
+            displayedValuesHour[i] = String.format("%02d", i);
+        }
+        displayedValuesMinute = new String[60];
+        for (int i = 0; i < 60; i++) {
+            displayedValuesMinute[i] = String.format("%02d", i);
+        }
+        binding.numberHour.setDisplayedValues(displayedValuesHour);
+        binding.numberMinute.setDisplayedValues(displayedValuesMinute);
+//        Typeface typeface = Typeface.createFromAsset(getContext().getAssets(), "sf_pro_text_medium.otf");
+        Typeface typeface = Typeface.defaultFromStyle(Typeface.BOLD);
+        binding.numberMinute.setTypeface(typeface);
+        binding.numberHour.setTypeface(typeface);
+        binding.numberMinute.setSelectedTypeface(typeface);
+        binding.numberHour.setSelectedTypeface(typeface);
         if (fixtureModel != null) switchAlarm(fixtureModel);
     }
 

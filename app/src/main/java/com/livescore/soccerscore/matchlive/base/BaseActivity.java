@@ -138,12 +138,14 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        if (!IsNetWork.haveNetworkConnection(this)) {
-            Intent intent = new Intent(this, NoInternetActivity.class);
-            startActivity(intent);
-        }
+    protected void onStop() {
+        super.onStop();
+        unregisterReceiver(networkReceiver);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         networkReceiver = new NetworkReceiver();
         IntentFilter filter = new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE");
 
@@ -154,6 +156,16 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
                 filter,
                 ContextCompat.RECEIVER_NOT_EXPORTED // Đảm bảo receiver không được export
         );
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+//        if (!IsNetWork.haveNetworkConnection(this)) {
+//            Intent intent = new Intent(this, NoInternetActivity.class);
+//            startActivity(intent);
+//        }
+
 //        if (ConstantRemote.open_resume && CheckAds.getInstance().isShowAds(this)) {
 //            AppOpenManager.getInstance().enableAppResumeWithActivity(getClass());
 //        } else {
@@ -164,7 +176,7 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
     @Override
     protected void onPause() {
         super.onPause();
-        unregisterReceiver(networkReceiver);
+
     }
 
     public void finishThisActivity() {

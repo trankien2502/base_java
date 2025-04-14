@@ -255,6 +255,7 @@ public class ScheduleService extends Service {
                                             if (mapEvent.containsKey(fixtureModel.id)) {
                                                 List<EventDetail> result = new ArrayList<>();
                                                 Set<String> idsInList1 = new HashSet<>();
+
                                                 for (EventDetail item : Objects.requireNonNull(mapEvent.get(fixtureModel.id))) {
                                                     idsInList1.add(item.id);
                                                 }
@@ -269,10 +270,9 @@ public class ScheduleService extends Service {
                                                 mapEvent.put(fixtureModel.id, fixtureDetailModel.events);
                                             } else {
                                                 mapEvent.put(fixtureModel.id, fixtureDetailModel.events);
+                                                sendNotificationEvent(fixtureDetailModel.events, fixtureModel);
                                             }
                                         }
-
-
                                     }
                                     if (fixtureRunnables.get(fixtureModel.id) != null && floatingView != null && fixtureModel.isPin || fixtureModel.isAlarm) {
                                         handler.postDelayed(Objects.requireNonNull(fixtureRunnables.get(fixtureModel.id)), 60000);
@@ -295,18 +295,24 @@ public class ScheduleService extends Service {
                         @Override
                         public void onFailure(@NonNull Call<FixtureDetailResponse> call, @NonNull Throwable t) {
                             Log.e("call_api_data", "onfailure" + t);
+                            if (fixtureRunnables.get(fixtureModel.id) != null && floatingView != null && fixtureModel.isPin || fixtureModel.isAlarm) {
+                                handler.postDelayed(Objects.requireNonNull(fixtureRunnables.get(fixtureModel.id)), 60000);
+                            }
                         }
                     });
 
         } catch (Exception e) {
             Log.e("call_api_data", "catch: ", e);
+            if (fixtureRunnables.get(fixtureModel.id) != null && floatingView != null && fixtureModel.isPin || fixtureModel.isAlarm) {
+                handler.postDelayed(Objects.requireNonNull(fixtureRunnables.get(fixtureModel.id)), 60000);
+            }
         }
     }
 
     private void sendNotificationEvent(List<EventDetail> eventDetailList, FixtureModel fixtureModel) {
         if (!eventDetailList.isEmpty()) {
             for (EventDetail eventDetail : eventDetailList) {
-                if (eventDetail.getType().developer_name.equals("PENALTY") || eventDetail.getType().developer_name.equals("GOAL") || eventDetail.getType().developer_name.equals("OWNGOAL")) {
+                if (eventDetail.getType().developer_name.equals("PENALTY") || eventDetail.getType().developer_name.equals("GOAL") || eventDetail.getType().developer_name.equals("OWNGOAL") || eventDetail.getType().developer_name.equals("PENALTY_SHOOTOUT_GOAL")) {
                     if (fixtureModel.goals)
                         send(fixtureModel.name, "GOAL " + eventDetail.player_name);
                 } else if (eventDetail.getType().developer_name.equals("YELLOWREDCARD")) {
@@ -332,7 +338,7 @@ public class ScheduleService extends Service {
             }
             if (fixtureModel.end_first_half) {
                 if (fixtureDetailModel.periods.size() == 1) {
-                    if (!fixtureDetailModel.periods.get(0).has_timer && !fixtureModel.is_send_end_first_half) {
+                    if (fixtureDetailModel.periods.get(0).minutes > 1 && !fixtureDetailModel.periods.get(0).has_timer && !fixtureModel.is_send_end_first_half) {
                         send(fixtureModel.name, getString(R.string.at_the_end_of_first_half_match));
                         fixtureModel.is_send_end_first_half = true;
                     }
@@ -340,7 +346,7 @@ public class ScheduleService extends Service {
             }
             if (fixtureModel.start_second_half) {
                 if (fixtureDetailModel.periods.size() == 2) {
-                    if (fixtureDetailModel.periods.get(1).minutes == 45 && !fixtureModel.is_send_start_second_half) {
+                    if (fixtureDetailModel.periods.get(1).minutes >= 45 && fixtureDetailModel.periods.get(0).has_timer && !fixtureModel.is_send_start_second_half) {
                         send(fixtureModel.name, getString(R.string.at_the_start_of_second_half_match));
                         fixtureModel.is_send_start_second_half = true;
                     }

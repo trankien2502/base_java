@@ -1,11 +1,9 @@
-package com.livescore.soccerscore.matchlive.model;
+package com.livescore.soccerscore.matchlive.model.score;
 
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 
-import java.io.Serializable;
-
-public class ScoreModel implements Serializable {
+public class ScoreModel {
     @SerializedName("description")
     public String description;
     @SerializedName("id")
@@ -40,21 +38,4 @@ public class ScoreModel implements Serializable {
     }
 
 
-    public static class Score implements Serializable{
-        @SerializedName("goals")
-        public int goals;
-        @SerializedName("participant")
-        public String participant;
-
-        public Score() {
-        }
-
-        @Override
-        public String toString() {
-            return "Score{" +
-                    "goals=" + goals +
-                    ", participant='" + participant + '\'' +
-                    '}';
-        }
-    }
 }

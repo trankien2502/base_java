@@ -46,6 +46,9 @@ public class FixtureDetailModel extends FixtureLiveModel {
         @SerializedName("city_name")
         public String city_name;
 
+        public Venue() {
+        }
+
         @Override
         public String toString() {
             return "Venue{" +

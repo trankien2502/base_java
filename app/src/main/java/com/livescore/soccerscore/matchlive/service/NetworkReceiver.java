@@ -11,7 +11,6 @@ public class NetworkReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (isNetworkAvailable(context)) {
-            // Nếu có internet, gửi broadcast để đóng activity
             if (NoInternetActivity.instance != null) {
                 NoInternetActivity.instance.finish();
             }

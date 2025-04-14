@@ -1,5 +1,8 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.annotation.SuppressLint;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -34,6 +37,8 @@ import com.livescore.soccerscore.matchlive.util.SPUtils;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -68,6 +73,7 @@ public class MatchDetailActivity extends BaseActivity<ActivityMatchDeatilBinding
 
     @Override
     public void initView() {
+        binding.tvScore.setSelected(true);
         adapter = new MatchDetailAdapter(this);
         EventTracking.logEvent(this, "home_view");
         binding.main.setPadding(
@@ -77,6 +83,9 @@ public class MatchDetailActivity extends BaseActivity<ActivityMatchDeatilBinding
                 binding.main.getPaddingBottom()
         );
         long fixtureId = getIntent().getLongExtra(SPUtils.INTENT_FIXTURE, 0);
+        boolean isLiveNow = getIntent().getBooleanExtra(SPUtils.INTENT_LIVE_NOW, false);
+        if (isLiveNow) binding.tvDate.setVisibility(GONE);
+        else binding.tvDate.setVisibility(VISIBLE);
         loadingDialog = new LoadingDialog(this, false);
         if (IsNetWork.haveNetworkConnection(this)) {
             loadingDialog.show();
@@ -119,7 +128,7 @@ public class MatchDetailActivity extends BaseActivity<ActivityMatchDeatilBinding
     public void fetchFixtureDetail(long id) {
         try {
             ApiDataService.apiService.
-                    callFixtureDetail(id, ConstantApiData.KEY,ConstantApiData.TIMEZONE, "participants;periods;league.country;venue;state;scores;events.type;events.period;lineups.position;lineups.player;odds;statistics.type", "markets:1;bookmakers:2")
+                    callFixtureDetail(id, ConstantApiData.KEY, ConstantApiData.TIMEZONE, "participants;periods;league.country;venue;state;scores;events.type;events.period;lineups.position;lineups.player;odds;statistics.type", "markets:1;bookmakers:2")
                     .enqueue(new Callback<FixtureDetailResponse>() {
                         @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
                         @Override
@@ -197,8 +206,6 @@ public class MatchDetailActivity extends BaseActivity<ActivityMatchDeatilBinding
             awayId = fixtureDetailModel.participants.get(1).getId();
             Glide.with(this).load(fixtureDetailModel.participants.get(0).getImage_path()).into(binding.ivHome);
             Glide.with(this).load(fixtureDetailModel.participants.get(1).getImage_path()).into(binding.ivAway);
-            Glide.with(this).load(fixtureDetailModel.participants.get(0).getImage_path()).into(binding.ivHome1);
-            Glide.with(this).load(fixtureDetailModel.participants.get(1).getImage_path()).into(binding.ivAway1);
             binding.tvHome.setText(fixtureDetailModel.participants.get(0).getName());
             binding.tvAway.setText(fixtureDetailModel.participants.get(1).getName());
         } else {
@@ -206,8 +213,6 @@ public class MatchDetailActivity extends BaseActivity<ActivityMatchDeatilBinding
             awayId = fixtureDetailModel.participants.get(0).getId();
             Glide.with(this).load(fixtureDetailModel.participants.get(1).getImage_path()).into(binding.ivHome);
             Glide.with(this).load(fixtureDetailModel.participants.get(0).getImage_path()).into(binding.ivAway);
-            Glide.with(this).load(fixtureDetailModel.participants.get(1).getImage_path()).into(binding.ivHome1);
-            Glide.with(this).load(fixtureDetailModel.participants.get(0).getImage_path()).into(binding.ivAway1);
             binding.tvHome.setText(fixtureDetailModel.participants.get(1).getName());
             binding.tvAway.setText(fixtureDetailModel.participants.get(0).getName());
         }
@@ -231,7 +236,6 @@ public class MatchDetailActivity extends BaseActivity<ActivityMatchDeatilBinding
                 }
             }
             binding.tvScore.setText(scoreHome + " - " + scoreAway);
-            binding.tvScore1.setText(scoreHome + " - " + scoreAway);
         }
         try {
             SimpleDateFormat inputFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -247,19 +251,26 @@ public class MatchDetailActivity extends BaseActivity<ActivityMatchDeatilBinding
         }
 
         if (!fixtureDetailModel.events.isEmpty()) {
+            Collections.sort(fixtureDetailModel.events, new Comparator<EventDetail>() {
+                @Override
+                public int compare(EventDetail o1, EventDetail o2) {
+                    return Integer.compare(o1.minute, o2.minute);
+                }
+            });
             List<EventDetail> listHome = new ArrayList<>();
             List<EventDetail> listAway = new ArrayList<>();
             for (EventDetail eventDetail : fixtureDetailModel.events) {
                 if (eventDetail.participant_id == homeId) {
-                    if (eventDetail.getType().developer_name.equals("PENALTY") || eventDetail.getType().developer_name.equals("GOAL") || eventDetail.getType().developer_name.equals("OWNGOAL")) {
+                    if (eventDetail.getType().developer_name.equals("PENALTY") || eventDetail.getType().developer_name.equals("GOAL") || eventDetail.getType().developer_name.equals("OWNGOAL") || eventDetail.getType().developer_name.equals("PENALTY_SHOOTOUT_GOAL")) {
                         listHome.add(eventDetail);
                     }
                 } else if (eventDetail.participant_id == awayId) {
-                    if (eventDetail.getType().developer_name.equals("PENALTY") || eventDetail.getType().developer_name.equals("GOAL") || eventDetail.getType().developer_name.equals("OWNGOAL")) {
+                    if (eventDetail.getType().developer_name.equals("PENALTY") || eventDetail.getType().developer_name.equals("GOAL") || eventDetail.getType().developer_name.equals("OWNGOAL") || eventDetail.getType().developer_name.equals("PENALTY_SHOOTOUT_GOAL")) {
                         listAway.add(eventDetail);
                     }
                 }
             }
+
             GoalAwayAdapter goalAwayAdapter = new GoalAwayAdapter(this, awayId, listAway);
             binding.rcvBallAway.setAdapter(goalAwayAdapter);
             GoalHomeAdapter goalHomeAdapter = new GoalHomeAdapter(this, homeId, listHome);

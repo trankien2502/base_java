@@ -32,7 +32,7 @@ public class FixtureModel extends FixtureBase implements Serializable {
     @SerializedName("scores")
     public List<ScoreModel> scores;
     @SerializedName("state")
-    public Object state;
+    public StateModel state;
     @SerializedName("start_match")
     public boolean start_match;
     @SerializedName("end_first_half")
@@ -62,11 +62,11 @@ public class FixtureModel extends FixtureBase implements Serializable {
     }
 
     public StateModel getState() {
-        Gson gson = new Gson();
-        if (state != null) {
-            return gson.fromJson(new Gson().toJson(state), StateModel.class);
-        } else return new StateModel();
-
+//        Gson gson = new Gson();
+//        if (state != null) {
+//            return gson.fromJson(new Gson().toJson(state), StateModel.class);
+//        } else return new StateModel();
+        return state;
     }
 
     public String getDate() {
@@ -110,6 +110,7 @@ public class FixtureModel extends FixtureBase implements Serializable {
 
     @SuppressLint("ScheduleExactAlarm")
     public void schedule(Context context) {
+        Log.e("alarmcheck", "start schedule");
         cancelNotification(context);
         try {
             long now = System.currentTimeMillis();
@@ -170,11 +171,12 @@ public class FixtureModel extends FixtureBase implements Serializable {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            Log.e("alarmcheck", "error: ", e);
         }
     }
 
 
-    public static class StateModel {
+    public static class StateModel implements Serializable{
         @SerializedName("id")
         public long id;
         @SerializedName("name")
@@ -183,6 +185,9 @@ public class FixtureModel extends FixtureBase implements Serializable {
         public String state;
         @SerializedName("short_name")
         public String short_name;
+
+        public StateModel() {
+        }
 
         @Override
         public String toString() {

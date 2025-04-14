@@ -23,7 +23,7 @@
             android:id="@+id/ivHomeShowEvent"
             android:layout_width="26dp"
             android:layout_height="2dp"
-            android:src="@drawable/away_show_event"
+            android:src="@drawable/home_show_event"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

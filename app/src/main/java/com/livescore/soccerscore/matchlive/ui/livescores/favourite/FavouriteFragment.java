@@ -121,14 +121,17 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
     @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
     private void changeFavouriteListTeam(int position, TeamModel teamModel) {
         if (teamModel.isFavourite()) {
-            for (TeamModel teamModel1 : listTeamFavourite)
-                if (teamModel1.getId() == teamModel.getId()) {
-                    teamModel = teamModel1;
+            int pos = 0;
+            for (int i = 0; i < listTeamFavourite.size(); i++) {
+                if (listTeamFavourite.get(i).getId() == teamModel.getId()) {
+                    teamModel = listTeamFavourite.get(i);
+                    pos = i;
                     break;
                 }
-            listTeamFavourite.remove(teamModel);
+            }
+            listTeamFavourite.remove(pos);
             TeamDatabase.getInstance(requireContext()).teamDAO().delete(teamModel.getId());
-            teamAdapterFavourite.notifyItemRemoved(position);
+            teamAdapterFavourite.notifyItemRemoved(pos);
             for (int i = 0; i < listAllTeam.size(); i++)
                 if (listAllTeam.get(i).getId() == teamModel.getId()) {
                     listAllTeam.get(i).setFavourite(false);
@@ -149,20 +152,23 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
                 }
         }
         checkEmptyTeam();
-        binding.tvFavouriteTeam.setText(getString(R.string.favourite) + " (" + listTeamFavourite.size() + ")");
+        binding.tvFavouriteTeam.setText(getString(R.string.favourite) + " (" + TeamDatabase.getInstance(requireContext()).teamDAO().getAllTeamFavourite().size() + ")");
     }
 
     @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
     private void changeFavouriteListLeague(int position, LeagueModel leagueModel) {
         if (leagueModel.isFavourite()) {
-            for (LeagueModel leagueModel1 : listLeagueFavourite)
-                if (leagueModel1.getId() == leagueModel.getId()) {
-                    leagueModel = leagueModel1;
+            int pos = 0;
+            for (int i = 0; i < listLeagueFavourite.size(); i++) {
+                if (listLeagueFavourite.get(i).getId() == leagueModel.getId()) {
+                    leagueModel = listLeagueFavourite.get(i);
+                    pos = i;
                     break;
                 }
-            listLeagueFavourite.remove(leagueModel);
+            }
+            listLeagueFavourite.remove(pos);
             LeagueDatabase.getInstance(requireContext()).leagueDAO().delete(leagueModel.getId());
-            leagueAdapterFavourite.notifyItemRemoved(position);
+            leagueAdapterFavourite.notifyItemRemoved(pos);
             for (int i = 0; i < listAllLeague.size(); i++)
                 if (listAllLeague.get(i).getId() == leagueModel.getId()) {
                     listAllLeague.get(i).setFavourite(false);
@@ -183,7 +189,8 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
                 }
         }
         checkEmptyLeague();
-        binding.tvFavouriteLeague.setText(getString(R.string.favourite) + " (" + listLeagueFavourite.size() + ")");
+        binding.tvFavouriteLeague.setText(getString(R.string.favourite) + " (" + LeagueDatabase.getInstance(requireContext()).leagueDAO().getAllLeagueFavourite().size() + ")");
+
     }
 
     private void checkEmptyTeam() {
@@ -191,11 +198,32 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
             if (isSearch) {
                 binding.noFavouriteTeam.setVisibility(GONE);
                 binding.noResultFavouriteTeam.setVisibility(VISIBLE);
+
             } else {
                 binding.noFavouriteTeam.setVisibility(VISIBLE);
                 binding.noResultFavouriteTeam.setVisibility(GONE);
             }
+            int heightInDp = 136;
+            int heightInPx = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, heightInDp, binding.clFavouriteTeam.getResources().getDisplayMetrics());
+
+            ViewGroup.LayoutParams params = binding.clFavouriteTeam.getLayoutParams();
+            params.height = heightInPx;
+            binding.clFavouriteTeam.setLayoutParams(params);
         } else {
+            if (listTeamFavourite.size()>=6){
+                int heightInDp = 308;
+                int heightInPx = (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP, heightInDp, binding.clFavouriteTeam.getResources().getDisplayMetrics());
+
+                ViewGroup.LayoutParams params = binding.clFavouriteTeam.getLayoutParams();
+                params.height = heightInPx;
+                binding.clFavouriteTeam.setLayoutParams(params);
+            } else {
+                ViewGroup.LayoutParams params = binding.clFavouriteTeam.getLayoutParams();
+                params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                binding.clFavouriteTeam.setLayoutParams(params);
+            }
             binding.noFavouriteTeam.setVisibility(GONE);
             binding.noResultFavouriteTeam.setVisibility(GONE);
         }
@@ -230,9 +258,29 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
                 binding.noResultFavouriteLeague.setVisibility(GONE);
                 binding.noFavouriteLeague.setVisibility(VISIBLE);
             }
+            int heightInDp = 136;
+            int heightInPx = (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP, heightInDp, binding.clFavouriteLeague.getResources().getDisplayMetrics());
+
+            ViewGroup.LayoutParams params = binding.clFavouriteLeague.getLayoutParams();
+            params.height = heightInPx;
+            binding.clFavouriteLeague.setLayoutParams(params);
         } else {
             binding.noResultFavouriteLeague.setVisibility(GONE);
             binding.noFavouriteLeague.setVisibility(GONE);
+            if (listLeagueFavourite.size()>=6){
+                int heightInDp = 308;
+                int heightInPx = (int) TypedValue.applyDimension(
+                        TypedValue.COMPLEX_UNIT_DIP, heightInDp, binding.clFavouriteLeague.getResources().getDisplayMetrics());
+
+                ViewGroup.LayoutParams params = binding.clFavouriteLeague.getLayoutParams();
+                params.height = heightInPx;
+                binding.clFavouriteLeague.setLayoutParams(params);
+            } else {
+                ViewGroup.LayoutParams params = binding.clFavouriteLeague.getLayoutParams();
+                params.height = ViewGroup.LayoutParams.WRAP_CONTENT;
+                binding.clFavouriteLeague.setLayoutParams(params);
+            }
         }
 
         if (listAllLeague.isEmpty()) {
@@ -410,7 +458,7 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
 
     private void fetchTeamPageSearch(String str, int page) {
         try {
-            ApiDataService.apiService.callTeamSearch(str, ConstantApiData.KEY,ConstantApiData.TIMEZONE, page, "country").enqueue(new Callback<TeamResponse>() {
+            ApiDataService.apiService.callTeamSearch(str, ConstantApiData.KEY, ConstantApiData.TIMEZONE, page, "country").enqueue(new Callback<TeamResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<TeamResponse> call, @NonNull Response<TeamResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -470,7 +518,7 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
 
     private void fetchTeamPage(int page) {
         try {
-            ApiDataService.apiService.callTeam(ConstantApiData.KEY,ConstantApiData.TIMEZONE, page, "country").enqueue(new Callback<TeamResponse>() {
+            ApiDataService.apiService.callTeam(ConstantApiData.KEY, ConstantApiData.TIMEZONE, page, "country").enqueue(new Callback<TeamResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<TeamResponse> call, @NonNull Response<TeamResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -530,7 +578,7 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
 
     private void fetchLeaguePageSearch(String str, int page) {
         try {
-            ApiDataService.apiService.callLeagueSearch(str, ConstantApiData.KEY,ConstantApiData.TIMEZONE, page, "country").enqueue(new Callback<LeagueResponse>() {
+            ApiDataService.apiService.callLeagueSearch(str, ConstantApiData.KEY, ConstantApiData.TIMEZONE, page, "country").enqueue(new Callback<LeagueResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<LeagueResponse> call, @NonNull Response<LeagueResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -590,7 +638,7 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
 
     private void fetchLeaguePage(int page) {
         try {
-            ApiDataService.apiService.callLeague(ConstantApiData.KEY,ConstantApiData.TIMEZONE, page, "country").enqueue(new Callback<LeagueResponse>() {
+            ApiDataService.apiService.callLeague(ConstantApiData.KEY, ConstantApiData.TIMEZONE, page, "country").enqueue(new Callback<LeagueResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<LeagueResponse> call, @NonNull Response<LeagueResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {

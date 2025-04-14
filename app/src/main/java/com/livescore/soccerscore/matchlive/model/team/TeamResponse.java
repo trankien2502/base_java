@@ -1,9 +1,11 @@
 package com.livescore.soccerscore.matchlive.model.team;
 
+import androidx.annotation.Keep;
+
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
-
+@Keep
 public class TeamResponse {
     @SerializedName("data")
     public List<TeamInMatch> data;

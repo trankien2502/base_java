@@ -1,12 +1,13 @@
 package com.livescore.soccerscore.matchlive.model.league;
 
+import androidx.annotation.Keep;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
-
+@Keep
 @Entity(tableName = "league")
 public class LeagueModel implements Serializable {
     @PrimaryKey
