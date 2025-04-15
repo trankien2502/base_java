@@ -4,10 +4,14 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -73,6 +77,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
     List<LeagueTodayModel> list = new ArrayList<>();
     List<FixtureLiveModel> listLive = new ArrayList<>();
     LeagueTodayAdapter adapter;
+    private Calendar current;
     LiveMatchAdapter liveMatchAdapter;
     int currentPage = 1;
     String selectedDate = "";
@@ -95,8 +100,9 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void initView() {
-        initHorizontalCalendarPicker();
         initAdapter();
+        current = Calendar.getInstance();
+        initHorizontalCalendarPicker();
         if (IsNetWork.haveNetworkConnection(requireContext())) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             selectedDate = sdf.format(new Date(System.currentTimeMillis()));
@@ -146,17 +152,41 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                 calendar.set(Calendar.DAY_OF_MONTH, day);
                 calendar.set(Calendar.HOUR_OF_DAY, hour);
                 calendar.set(Calendar.MINUTE, minute);
-                calendar.set(Calendar.SECOND, 0);
-                calendar.set(Calendar.MILLISECOND, 0);
+                calendar.set(Calendar.SECOND, 1);
+                calendar.set(Calendar.MILLISECOND, 1);
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
                 selectedDate = sdf.format(calendar.getTimeInMillis());
-                horizontalCalendar.selectDate(calendar, true);
+                Log.e("check_date", "selectDate: " + selectedDate);
+//                horizontalCalendar.selectDate(calendar, true);
+                dateChoose(calendar, current);
                 return null;
             });
             noteDateTimeDialog.show();
         });
     }
 
+    @SuppressLint("NotifyDataSetChanged")
+    private void dateChoose(Calendar calendarChoose, Calendar calendarCurrent) {
+        current = calendarChoose;
+        Log.e("check_date", "current date: " + date(current.getTimeInMillis()));
+        if (calendarChoose.getTimeInMillis() < calendarCurrent.getTimeInMillis()) {
+            horizontalCalendar.selectDate(calendarChoose, true, true);
+        } else {
+            calendarChoose.add(Calendar.DAY_OF_YEAR, -2);
+            horizontalCalendar.selectDate(calendarChoose, true, true);
+        }
+        if (IsNetWork.haveNetworkConnection(requireContext())) {
+            list.clear();
+            adapter.notifyDataSetChanged();
+            loadingDialog = new LoadingDialog(requireContext(), false);
+            loadingDialog.show();
+            currentPage = 1;
+            fetchFixtureDatePage(selectedDate, 1);
+        } else {
+            Log.e("call_api_data", "No internet to call api");
+        }
+
+    }
 
     public void startArc(Intent intent) {
         if (getContext() instanceof HomeActivity) {
@@ -174,10 +204,10 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
         try {
 //            if (!isCreateCalendarHorizontal){
             Calendar startDate = Calendar.getInstance();
-            startDate.add(Calendar.YEAR, -5);
+            startDate.add(Calendar.YEAR, -10);
 
             Calendar endDate = Calendar.getInstance();
-            endDate.add(Calendar.YEAR, 5);
+            endDate.add(Calendar.YEAR, 8);
             horizontalCalendar = new HorizontalCalendar.Builder(requireActivity(), R.id.calendarView)
                     .range(startDate, endDate)
                     .datesNumberOnScreen(5)
@@ -190,7 +220,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                     .textSize(16, 16, 12)
                     .textColor(Color.BLACK, Color.BLACK)
                     .end()
-                    //.defaultSelectedDate(calendar)
+                    .defaultSelectedDate(Calendar.getInstance())
                     .addEvents(new CalendarEventsPredicate() {
                         Random rnd = new Random();
 
@@ -209,28 +239,32 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                     })
                     .build();
 
-            horizontalCalendar.selectDate(Calendar.getInstance(), true);
+            horizontalCalendar.selectDate(Calendar.getInstance(), true, false);
             horizontalCalendar.setCalendarListener(new HorizontalCalendarListener() {
                 @SuppressLint("NotifyDataSetChanged")
                 @Override
-                public void onDateSelected(Calendar date, int position) {
-                    date.add(Calendar.DAY_OF_YEAR, 1);
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                    selectedDate = sdf.format(date.getTimeInMillis());
-                    Toast.makeText(requireContext(), selectedDate, Toast.LENGTH_SHORT).show();
-                    if (IsNetWork.haveNetworkConnection(requireContext())) {
-                        list.clear();
-                        adapter.notifyDataSetChanged();
-                        loadingDialog = new LoadingDialog(requireContext(), false);
-                        loadingDialog.show();
-                        currentPage = 1;
-                        fetchFixtureDatePage(selectedDate, 1);
-                        Toast.makeText(requireContext(), selectedDate, Toast.LENGTH_SHORT).show();
-                    } else {
-                        Log.e("call_api_data", "No internet to call api");
+                public void onDateSelected(Calendar date, int position, boolean isChoose) {
+                    if (!isChoose) {
+                        date.add(Calendar.DAY_OF_YEAR, 1);
+                        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+                        selectedDate = sdf.format(date.getTimeInMillis());
+                        Log.e("check_date", "onDateSelect: " + selectedDate);
+                        if (IsNetWork.haveNetworkConnection(requireContext())) {
+                            list.clear();
+                            adapter.notifyDataSetChanged();
+                            loadingDialog = new LoadingDialog(requireContext(), false);
+                            loadingDialog.show();
+                            currentPage = 1;
+                            fetchFixtureDatePage(selectedDate, 1);
+                        } else {
+                            Log.e("call_api_data", "No internet to call api");
+                        }
+                        current = date;
+                        Log.e("check_date", "current date: " + date(current.getTimeInMillis()));
                     }
                 }
             });
+
 //                isCreateCalendarHorizontal
 //            }
 
@@ -239,6 +273,14 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
             e.printStackTrace();
             Log.e("date_pick", "error: ", e);
         }
+    }
+
+    private String date(long millis) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+        String formattedDate = sdf.format(new Date(millis));
+
+        Log.d("TimeConvert", "Thời gian: " + formattedDate);
+        return formattedDate;
     }
 
     public void fetchFixtureDatePage(String date, int page) {
@@ -271,6 +313,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                                     }
                                 }
                             }
+
                             Log.e("API_RESPONSE", "data: " + teamResponse.data);
                             Log.e("API_RESPONSE", "pagination: " + teamResponse.pagination);
                             Log.e("call_api_data", "call true:");
@@ -284,27 +327,47 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                             if (oldPos - 1 >= 0)
                                 adapter.notifyItemChanged(oldPos - 1);
                             adapter.notifyItemRangeInserted(oldPos, teamResponse.data.size());
-                            loadingDialog.dismiss();
+                            if (loadingDialog.isShowing())
+                                loadingDialog.dismiss();
+                            if (list.isEmpty()) {
+                                binding.noDataToday.setVisibility(VISIBLE);
+                            } else binding.noDataToday.setVisibility(GONE);
 //                            binding.rcvLeagueToday.post(() -> loadingDialog.dismiss());
                         } else {
-                            loadingDialog.dismiss();
+                            if (loadingDialog.isShowing())
+                                loadingDialog.dismiss();
+                            if (list.isEmpty()) {
+                                binding.noDataToday.setVisibility(VISIBLE);
+                            } else binding.noDataToday.setVisibility(GONE);
                             Log.e("call_api_data", "data list null");
                         }
                     } else {
-                        loadingDialog.dismiss();
+                        if (loadingDialog.isShowing())
+                            loadingDialog.dismiss();
+                        if (list.isEmpty()) {
+                            binding.noDataToday.setVisibility(VISIBLE);
+                        } else binding.noDataToday.setVisibility(GONE);
                         Log.e("call_api_data", "call false: Code: " + response.code());
                     }
                 }
 
                 @Override
                 public void onFailure(@NonNull Call<FixtureResponse> call, @NonNull Throwable t) {
-                    loadingDialog.dismiss();
+                    if (loadingDialog.isShowing())
+                        loadingDialog.dismiss();
+                    if (list.isEmpty()) {
+                        binding.noDataToday.setVisibility(VISIBLE);
+                    } else binding.noDataToday.setVisibility(GONE);
                     Log.e("call_api_data", "onfailure" + t);
                 }
             });
 
         } catch (Exception e) {
-            loadingDialog.dismiss();
+            if (loadingDialog.isShowing())
+                loadingDialog.dismiss();
+            if (list.isEmpty()) {
+                binding.noDataToday.setVisibility(VISIBLE);
+            } else binding.noDataToday.setVisibility(GONE);
             Log.e("call_api_data", "catch: ", e);
         }
     }
@@ -319,7 +382,6 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                         Log.e("API_RESPONSE", "Raw JSON: " + new Gson().toJson(response.body()));
                         LiveResponse teamResponse = response.body();
                         if (teamResponse.data != null) {
-//                            listLive.addAll(teamResponse.data);
                             for (FixtureLiveModel fixtureLiveModel : teamResponse.data) {
                                 if (!fixtureLiveModel.getState().short_name.equals("NS") && !fixtureLiveModel.getState().short_name.equals("FT"))
                                     listLive.add(fixtureLiveModel);
@@ -334,12 +396,21 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                                 binding.loadingLive.setVisibility(GONE);
                                 binding.tvLiveNow.setText(getString(R.string.live_now) + " (" + listLive.size() + ")");
                             });
+                            if (listLive.isEmpty()) {
+                                binding.noDataLive.setVisibility(VISIBLE);
+                            } else binding.noDataLive.setVisibility(GONE);
                         } else {
                             binding.loadingLive.setVisibility(GONE);
                             Log.e("call_api_data", "data live null");
+                            if (listLive.isEmpty()) {
+                                binding.noDataLive.setVisibility(VISIBLE);
+                            } else binding.noDataLive.setVisibility(GONE);
                         }
                     } else {
                         binding.loadingLive.setVisibility(GONE);
+                        if (listLive.isEmpty()) {
+                            binding.noDataLive.setVisibility(VISIBLE);
+                        } else binding.noDataLive.setVisibility(GONE);
                         Log.e("call_api_data", "call false: Code: " + response.code());
                     }
                 }
@@ -347,12 +418,18 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                 @Override
                 public void onFailure(@NonNull Call<LiveResponse> call, @NonNull Throwable t) {
                     binding.loadingLive.setVisibility(GONE);
+                    if (listLive.isEmpty()) {
+                        binding.noDataLive.setVisibility(VISIBLE);
+                    } else binding.noDataLive.setVisibility(GONE);
                     Log.e("call_api_data", "onfailure" + t);
                 }
             });
 
         } catch (Exception e) {
             binding.loadingLive.setVisibility(GONE);
+            if (listLive.isEmpty()) {
+                binding.noDataLive.setVisibility(VISIBLE);
+            } else binding.noDataLive.setVisibility(GONE);
             Log.e("call_api_data", "catch: ", e);
         }
     }
@@ -369,7 +446,6 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
         adapter = new LeagueTodayAdapter(requireContext(), list, new LeagueHomeClickCallBack() {
             @Override
             public void select(LeagueTodayModel leagueTodayModel) {
-                Toast.makeText(requireContext(), "league: " + leagueTodayModel.name, Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -386,7 +462,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
         }, new FixtureClickCallBack() {
             @Override
             public void select(int pos, FixtureModel fixtureModel) {
-                Toast.makeText(requireContext(), "select " + fixtureModel.id, Toast.LENGTH_SHORT).show();
+                Log.e("check_id", "select " + fixtureModel.id);
                 Intent intent = new Intent(requireContext(), MatchDetailActivity.class);
                 intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
                 startArc(intent);
@@ -424,18 +500,19 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 
                         if (fixtureBase == null) {
                             if (fixture23 != null) {
-                                fixture23.isPin = true;
-                                FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixture23);
-                                fixture23.schedule(requireContext());
+                                fixtureModel.isPin = true;
+                                FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel);
+                                fixtureModel.schedule(requireContext());
                                 for (FixtureModel fixtureModel2 : list.get(pos).getToday()) {
-                                    if (fixture23.id == fixtureModel2.id) {
-                                        fixtureModel2 = fixture23;
+                                    if (fixtureModel.id == fixtureModel2.id) {
+                                        fixtureModel2 = fixtureModel;
                                         break;
                                     }
                                 }
                                 adapter.notifyItemChanged(pos);
                             } else {
                                 fixtureModel.isPin = true;
+                                fixtureModel.create_at = System.currentTimeMillis();
                                 FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel);
                                 fixtureModel.schedule(requireContext());
                                 for (FixtureModel fixtureModel2 : list.get(pos).getToday()) {
@@ -454,10 +531,10 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                             });
                             if (fixture23 != null) {
                                 dialog.binding.btnReplace.setOnClickListener(v -> {
-                                    fixture23.isPin = true;
+                                    fixtureModel.isPin = true;
                                     for (FixtureModel fixtureModel2 : list.get(pos).getToday()) {
-                                        if (fixture23.id == fixtureModel2.id) {
-                                            fixtureModel2 = fixture23;
+                                        if (fixtureModel.id == fixtureModel2.id) {
+                                            fixtureModel2 = fixtureModel;
                                             break;
                                         }
                                     }
@@ -476,7 +553,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                                     out:
                                     for (int i = 0; i < list.size(); i++) {
                                         for (FixtureModel fixtureModel1 : list.get(i).getToday()) {
-                                            if (fixtureModel1.id != fixture23.id && fixtureModel1.isPin) {
+                                            if (fixtureModel1.id != fixtureModel.id && fixtureModel1.isPin) {
                                                 fixtureModel1.isPin = false;
                                                 adapter.notifyItemChanged(i);
                                                 break out;
@@ -502,6 +579,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                                         FixtureDatabase.getInstance(requireContext()).fixtureDAO().deletePin();
                                         fixtureBase.cancelNotification(requireContext());
                                     }
+                                    fixtureModel.create_at = System.currentTimeMillis();
                                     FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel);
                                     fixtureModel.schedule(requireContext());
                                     dialog.dismiss();
@@ -526,6 +604,14 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 
             @Override
             public void alarm(int pos, FixtureModel fixtureModel) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+                    if (!alarmManager.canScheduleExactAlarms()) {
+                        Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                        startArc(intent);
+                        return;
+                    }
+                }
                 if (PermissionManager.checkNotificationPermission(requireContext())) {
                     FixtureModel fixtureBase = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureById(fixtureModel.id);
                     NotificationDialog dialog = new NotificationDialog(requireContext(), false);
@@ -542,15 +628,15 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                             if (fixtureModel1.isAlarm) {
                                 if (fixtureBase != null) {
                                     FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel1);
-                                } else
+                                } else {
+                                    fixtureModel1.create_at = System.currentTimeMillis();
                                     FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel1);
+                                }
                                 fixtureModel1.schedule(requireContext());
-//                            Log.d("alarmcheck", "schedule: " + fixtureModel1);
                             } else {
                                 if (fixtureBase != null) {
                                     if (fixtureBase.isPin) {
                                         FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel1);
-//                                    Log.d("alarmcheck", "schedule: " + fixtureModel1);
                                         fixtureModel1.schedule(requireContext());
                                     } else {
                                         FixtureDatabase.getInstance(requireContext()).fixtureDAO().delete(fixtureModel1.id);
@@ -583,7 +669,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
         liveMatchAdapter = new LiveMatchAdapter(requireContext(), listLive, new LiveMatchClickCallBack() {
             @Override
             public void detail(FixtureLiveModel fixtureModel) {
-                Toast.makeText(requireContext(), "select " + fixtureModel.id, Toast.LENGTH_SHORT).show();
+                Log.e("check_id", "select " + fixtureModel.id);
                 Intent intent = new Intent(requireContext(), MatchDetailActivity.class);
                 intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
                 intent.putExtra(SPUtils.INTENT_LIVE_NOW, true);

@@ -1,5 +1,8 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.table;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,6 +43,7 @@ public class TableFixtureFragment extends BaseFragment<FragmentTableFixtureBindi
     List<SeasonDetail> listSeason = new ArrayList<>();
     public FixtureDetailModel fixtureDetailModel;
     StandingTableAdapter adapter;
+    int count = 0;
 
     @Override
     public FragmentTableFixtureBinding setBinding(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState) {
@@ -48,12 +52,22 @@ public class TableFixtureFragment extends BaseFragment<FragmentTableFixtureBindi
 
     @Override
     public void initView() {
-
         adapter = new StandingTableAdapter(requireContext(), list);
         binding.rcvStanding.setAdapter(adapter);
         loadingDialog = new LoadingDialog(requireContext(), false);
-        if (IsNetWork.haveNetworkConnection(requireContext())) {
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (IsNetWork.haveNetworkConnection(requireContext()) && count == 0) {
             list.clear();
+            if (!this.isVisible()) {
+                Log.e("show_dialog", "not show");
+                return;
+            }
+            Log.e("show_dialog", "show");
             loadingDialog.show();
             if (MatchDetailActivity.instance != null) {
                 if (MatchDetailActivity.instance.fixtureDetailModel != null) {
@@ -78,9 +92,10 @@ public class TableFixtureFragment extends BaseFragment<FragmentTableFixtureBindi
     }
 
     public void fetchStanding(int page, long leagueId, long seasonId) {
+        count++;
         try {
             String filters = "standingLeagues:" + leagueId + ";standingdetailTypes:129,133,134,179; standingSeasons:" + seasonId;
-            ApiDataService.apiService.callStandingLeague(ConstantApiData.KEY,ConstantApiData.TIMEZONE, "participant;details.type", filters, page).enqueue(new Callback<StandingResponse>() {
+            ApiDataService.apiService.callStandingLeague(ConstantApiData.KEY, ConstantApiData.TIMEZONE, "participant;details.type", filters, page).enqueue(new Callback<StandingResponse>() {
                 @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
                 @Override
                 public void onResponse(@NonNull Call<StandingResponse> call, @NonNull Response<StandingResponse> response) {
@@ -110,6 +125,9 @@ public class TableFixtureFragment extends BaseFragment<FragmentTableFixtureBindi
                                     binding.rcvStanding.post(() -> {
                                         loadingDialog.dismiss();
                                     });
+                                    if (list.isEmpty()) {
+                                        binding.noData.setVisibility(VISIBLE);
+                                    } else binding.noData.setVisibility(GONE);
                                 }
                             } else {
                                 Collections.sort(list, new Comparator<StandingModel>() {
@@ -122,10 +140,21 @@ public class TableFixtureFragment extends BaseFragment<FragmentTableFixtureBindi
                                 binding.rcvStanding.post(() -> {
                                     loadingDialog.dismiss();
                                 });
+                                if (list.isEmpty()) {
+                                    binding.noData.setVisibility(VISIBLE);
+                                } else binding.noData.setVisibility(GONE);
                             }
-                        } else loadingDialog.dismiss();
+                        } else {
+                            loadingDialog.dismiss();
+                            if (list.isEmpty()) {
+                                binding.noData.setVisibility(VISIBLE);
+                            } else binding.noData.setVisibility(GONE);
+                        }
                     } else {
                         loadingDialog.dismiss();
+                        if (list.isEmpty()) {
+                            binding.noData.setVisibility(VISIBLE);
+                        } else binding.noData.setVisibility(GONE);
                         Log.e("call_api_data", "call false: Code: " + response.code());
                     }
                 }
@@ -133,11 +162,17 @@ public class TableFixtureFragment extends BaseFragment<FragmentTableFixtureBindi
                 @Override
                 public void onFailure(@NonNull Call<StandingResponse> call, @NonNull Throwable t) {
                     loadingDialog.dismiss();
+                    if (list.isEmpty()) {
+                        binding.noData.setVisibility(VISIBLE);
+                    } else binding.noData.setVisibility(GONE);
                     Log.e("call_api_data", "onfailure" + t);
                 }
             });
 
         } catch (Exception e) {
+            if (list.isEmpty()) {
+                binding.noData.setVisibility(VISIBLE);
+            } else binding.noData.setVisibility(GONE);
             loadingDialog.dismiss();
             Log.e("call_api_data", "catch: ", e);
         }

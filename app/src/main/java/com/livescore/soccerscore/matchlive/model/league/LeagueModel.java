@@ -7,6 +7,7 @@ import androidx.room.PrimaryKey;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
+
 @Keep
 @Entity(tableName = "league")
 public class LeagueModel implements Serializable {
@@ -17,6 +18,7 @@ public class LeagueModel implements Serializable {
     public int sport_id;
     @SerializedName("country_id")
     public int country_id;
+    @SerializedName("countryName")
     public String countryName;
     @SerializedName("name")
     public String name;

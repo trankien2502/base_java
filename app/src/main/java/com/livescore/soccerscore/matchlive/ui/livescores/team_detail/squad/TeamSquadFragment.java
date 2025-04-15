@@ -1,5 +1,8 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.team_detail.squad;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,6 +33,7 @@ public class TeamSquadFragment extends BaseFragment<FragmentTeamSquadBinding> {
     LoadingDialog loadingDialog;
     List<SquadModel> squadModelList = new ArrayList<>();
     SquadAdapter adapter;
+    int count = 0;
 
     @Override
     public FragmentTeamSquadBinding setBinding(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState) {
@@ -38,9 +42,16 @@ public class TeamSquadFragment extends BaseFragment<FragmentTeamSquadBinding> {
 
     @Override
     public void initView() {
-        long teamId = TeamDetailActivity.instance.teamModel != null ? TeamDetailActivity.instance.teamModel.getId() : 0;
         adapter = new SquadAdapter(requireContext(), squadModelList);
-        if (IsNetWork.haveNetworkConnection(requireContext())) {
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        long teamId = TeamDetailActivity.instance.teamModel != null ? TeamDetailActivity.instance.teamModel.getId() : 0;
+
+        if (IsNetWork.haveNetworkConnection(requireContext()) && count == 0) {
             loadingDialog = new LoadingDialog(requireContext(), false);
             loadingDialog.show();
             squadModelList.clear();
@@ -56,8 +67,9 @@ public class TeamSquadFragment extends BaseFragment<FragmentTeamSquadBinding> {
     }
 
     public void fetchSquadPage(long teamId) {
+        count++;
         try {
-            ApiDataService.apiService.callSquad(teamId, ConstantApiData.KEY,ConstantApiData.TIMEZONE, "player;position").enqueue(new Callback<SquadResponse>() {
+            ApiDataService.apiService.callSquad(teamId, ConstantApiData.KEY, ConstantApiData.TIMEZONE, "player;position").enqueue(new Callback<SquadResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<SquadResponse> call, @NonNull Response<SquadResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -76,8 +88,14 @@ public class TeamSquadFragment extends BaseFragment<FragmentTeamSquadBinding> {
 //                        }
                         loadingDialog.dismiss();
                         binding.rcvSquad.setAdapter(adapter);
+                        if (squadModelList.isEmpty()) {
+                            binding.noData.setVisibility(VISIBLE);
+                        } else binding.noData.setVisibility(GONE);
                     } else {
                         loadingDialog.dismiss();
+                        if (squadModelList.isEmpty()) {
+                            binding.noData.setVisibility(VISIBLE);
+                        } else binding.noData.setVisibility(GONE);
                         binding.rcvSquad.setAdapter(adapter);
                         Log.e("call_api_data", "call false: Code: " + response.code());
                     }
@@ -86,6 +104,9 @@ public class TeamSquadFragment extends BaseFragment<FragmentTeamSquadBinding> {
                 @Override
                 public void onFailure(@NonNull Call<SquadResponse> call, @NonNull Throwable t) {
                     loadingDialog.dismiss();
+                    if (squadModelList.isEmpty()) {
+                        binding.noData.setVisibility(VISIBLE);
+                    } else binding.noData.setVisibility(GONE);
                     binding.rcvSquad.setAdapter(adapter);
                     Log.e("call_api_data", "onfailure" + t);
                 }
@@ -93,6 +114,9 @@ public class TeamSquadFragment extends BaseFragment<FragmentTeamSquadBinding> {
 
         } catch (Exception e) {
             loadingDialog.dismiss();
+            if (squadModelList.isEmpty()) {
+                binding.noData.setVisibility(VISIBLE);
+            } else binding.noData.setVisibility(GONE);
             binding.rcvSquad.setAdapter(adapter);
             Log.e("call_api_data", "catch: ", e);
         }

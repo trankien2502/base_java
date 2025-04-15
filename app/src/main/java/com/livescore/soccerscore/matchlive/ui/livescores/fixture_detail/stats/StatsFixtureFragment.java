@@ -1,5 +1,8 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.stats;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,6 +46,7 @@ public class StatsFixtureFragment extends BaseFragment<FragmentStatsFixtureBindi
             if (MatchDetailActivity.instance.fixtureDetailModel != null) {
                 fixtureDetailModel = MatchDetailActivity.instance.fixtureDetailModel;
                 if (!fixtureDetailModel.statistics.isEmpty()) {
+                    binding.noData.setVisibility(GONE);
                     for (StatsDetail statsDetail : fixtureDetailModel.statistics) {
                         StatsHomeAndAway stats = new StatsHomeAndAway();
                         if (map.containsKey(statsDetail.type_id)) {
@@ -67,6 +71,8 @@ public class StatsFixtureFragment extends BaseFragment<FragmentStatsFixtureBindi
                     Log.e("API_RESPONSE", "stats: " + map.values().size());
                     Log.e("API_RESPONSE", "stats: " + list.size());
 
+                } else {
+                    binding.noData.setVisibility(VISIBLE);
                 }
             }
         }

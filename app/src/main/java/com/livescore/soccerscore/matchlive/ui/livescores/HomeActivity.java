@@ -83,7 +83,7 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         if (result.getResultCode() == RESULT_OK) {
             //ads
 //            if (state == STATE_FAVOURITE)
-            changeState();
+//            changeState();
             Log.d("activity_check", "home");
         }
     });

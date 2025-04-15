@@ -1,5 +1,8 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.fixture_detail.lineup;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -64,6 +67,8 @@ public class LineupFragment extends BaseFragment<FragmentLineupBinding> {
                     binding.tvAway.setText(fixtureDetailModel.participants.get(0).getName());
                 }
                 if (!fixtureDetailModel.lineups.isEmpty()) {
+                    binding.llLineUp.setVisibility(VISIBLE);
+                    binding.noDataLineup.setVisibility(GONE);
                     Collections.sort(fixtureDetailModel.lineups, new Comparator<LineupDetail>() {
                         @Override
                         public int compare(LineupDetail o1, LineupDetail o2) {
@@ -77,12 +82,24 @@ public class LineupFragment extends BaseFragment<FragmentLineupBinding> {
                             listAway.add(lineupDetail);
                         }
                     }
+                    if (listHome.isEmpty() && listAway.isEmpty()) {
+                        binding.llLineUp.setVisibility(GONE);
+                        binding.noDataLineup.setVisibility(VISIBLE);
+                    } else {
+                        binding.llLineUp.setVisibility(VISIBLE);
+                        binding.noDataLineup.setVisibility(GONE);
+                    }
                     awayAdapter.notifyDataSetChanged();
                     homeAdapter.notifyDataSetChanged();
                     binding.tvLineupHome.setText(getFormationField(listHome));
                     binding.tvLineupAway.setText(getFormationField(listAway));
+                } else {
+                    binding.llLineUp.setVisibility(GONE);
+                    binding.noDataLineup.setVisibility(VISIBLE);
                 }
                 if (!fixtureDetailModel.events.isEmpty()) {
+                    binding.llSub.setVisibility(VISIBLE);
+                    binding.noDataSub.setVisibility(GONE);
                     Collections.sort(fixtureDetailModel.events, new Comparator<EventDetail>() {
                         @Override
                         public int compare(EventDetail o1, EventDetail o2) {
@@ -98,6 +115,9 @@ public class LineupFragment extends BaseFragment<FragmentLineupBinding> {
                     }
                     substitutionHomeAdapter.notifyDataSetChanged();
                     substitutionAwayAdapter.notifyDataSetChanged();
+                } else {
+                    binding.llSub.setVisibility(GONE);
+                    binding.noDataSub.setVisibility(VISIBLE);
                 }
             }
         }

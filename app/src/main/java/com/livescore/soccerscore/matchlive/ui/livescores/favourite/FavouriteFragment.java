@@ -83,10 +83,16 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
     @Override
     public void initView() {
         loadingDialog = new LoadingDialog(requireContext(), false);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
         listTeamFavourite = TeamDatabase.getInstance(requireContext()).teamDAO().getAllTeamFavourite();
         listLeagueFavourite = LeagueDatabase.getInstance(requireContext()).leagueDAO().getAllLeagueFavourite();
         initAdapter();
         changeState();
+        Log.e("check_resume", "on Resume");
     }
 
     private void setFavouriteTeamLoad() {
@@ -211,7 +217,7 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
             params.height = heightInPx;
             binding.clFavouriteTeam.setLayoutParams(params);
         } else {
-            if (listTeamFavourite.size()>=6){
+            if (listTeamFavourite.size() >= 6) {
                 int heightInDp = 308;
                 int heightInPx = (int) TypedValue.applyDimension(
                         TypedValue.COMPLEX_UNIT_DIP, heightInDp, binding.clFavouriteTeam.getResources().getDisplayMetrics());
@@ -268,7 +274,7 @@ public class FavouriteFragment extends BaseFragment<FragmentFavouriteBinding> {
         } else {
             binding.noResultFavouriteLeague.setVisibility(GONE);
             binding.noFavouriteLeague.setVisibility(GONE);
-            if (listLeagueFavourite.size()>=6){
+            if (listLeagueFavourite.size() >= 6) {
                 int heightInDp = 308;
                 int heightInPx = (int) TypedValue.applyDimension(
                         TypedValue.COMPLEX_UNIT_DIP, heightInDp, binding.clFavouriteLeague.getResources().getDisplayMetrics());

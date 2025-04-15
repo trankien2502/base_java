@@ -24,8 +24,10 @@ import com.livescore.soccerscore.matchlive.ads.IsNetWork;
 import com.livescore.soccerscore.matchlive.api_data.ApiDataService;
 import com.livescore.soccerscore.matchlive.api_data.ConstantApiData;
 import com.livescore.soccerscore.matchlive.model.PaginationModel;
+import com.livescore.soccerscore.matchlive.model.league.LeagueDetail;
 import com.livescore.soccerscore.matchlive.model.league.LeagueModel;
 import com.livescore.soccerscore.matchlive.model.league.LeagueResponse;
+import com.livescore.soccerscore.matchlive.model.team.TeamInMatch;
 import com.livescore.soccerscore.matchlive.model.team.TeamModel;
 import com.livescore.soccerscore.matchlive.model.team.TeamResponse;
 import com.livescore.soccerscore.matchlive.base.BaseActivity;
@@ -329,6 +331,9 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
                         TeamResponse teamResponse = response.body();
                         if (teamResponse.data != null) {
                             int oldPos = listTeamModel.size();
+                            for (TeamInMatch team : teamResponse.data) {
+                                team.countryName = team.getCountry().name;
+                            }
                             listTeamModel.addAll(teamResponse.data);
                             Log.e("call_api_data", "call true:");
                             Gson gson = new Gson();
@@ -387,6 +392,9 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
                         LeagueResponse leagueResponse = response.body();
                         if (leagueResponse.data != null) {
                             int oldPos = listTeamModel.size();
+                            for (LeagueDetail leagueDetail : leagueResponse.data) {
+                                leagueDetail.countryName = leagueDetail.getCountry().name;
+                            }
                             listLeagueModel.addAll(leagueResponse.data);
                             Log.e("call_api_data", "call true:");
                             Gson gson = new Gson();

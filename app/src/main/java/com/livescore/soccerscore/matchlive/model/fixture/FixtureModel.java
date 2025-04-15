@@ -58,6 +58,9 @@ public class FixtureModel extends FixtureBase implements Serializable {
     @SerializedName("is_send_start_second_half")
     public boolean is_send_start_second_half;
 
+    @SerializedName("create_at")
+    public Long create_at;
+
     public FixtureModel() {
     }
 
@@ -176,7 +179,7 @@ public class FixtureModel extends FixtureBase implements Serializable {
     }
 
 
-    public static class StateModel implements Serializable{
+    public static class StateModel implements Serializable {
         @SerializedName("id")
         public long id;
         @SerializedName("name")

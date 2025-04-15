@@ -165,7 +165,7 @@ public class TeamFixtureFragment extends BaseFragment<FragmentTeamFixtureBinding
         fixtureAdapter = new FixtureAdapter(requireContext(), list, new FixtureClickCallBack() {
             @Override
             public void select(int pos, FixtureModel fixtureModel) {
-                Toast.makeText(requireContext(), "select " + fixtureModel.id, Toast.LENGTH_SHORT).show();
+                Log.e("check_id","select " + fixtureModel.id);
                 Intent intent = new Intent(requireContext(), MatchDetailActivity.class);
                 intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
                 startArc(intent);

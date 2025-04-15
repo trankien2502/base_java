@@ -4,8 +4,12 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -50,7 +54,7 @@ public class NotificationFragment extends BaseFragment<FragmentNotificationBindi
         adapter = new FixtureAdapter(requireContext(), list, new FixtureClickCallBack() {
             @Override
             public void select(int pos, FixtureModel fixtureModel) {
-                Toast.makeText(requireContext(), "select " + fixtureModel.id, Toast.LENGTH_SHORT).show();
+                Log.e("check_id","select " + fixtureModel.id);
                 Intent intent = new Intent(requireContext(), MatchDetailActivity.class);
                 intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
                 startArc(intent);
@@ -142,6 +146,14 @@ public class NotificationFragment extends BaseFragment<FragmentNotificationBindi
 
             @Override
             public void alarm(int pos, FixtureModel fixtureModel) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    AlarmManager alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+                    if (!alarmManager.canScheduleExactAlarms()) {
+                        Intent intent = new Intent(Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
+                        startArc(intent);
+                        return;
+                    }
+                }
                 if (PermissionManager.checkNotificationPermission(requireContext())) {
                     FixtureModel fixtureBase = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureById(fixtureModel.id);
                     NotificationDialog dialog = new NotificationDialog(requireContext(), false);

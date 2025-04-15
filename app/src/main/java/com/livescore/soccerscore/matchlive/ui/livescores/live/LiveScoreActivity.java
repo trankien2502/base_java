@@ -1,5 +1,8 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.live;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.util.Log;
@@ -45,10 +48,10 @@ public class LiveScoreActivity extends BaseActivity<ActivityLiveScoreBinding> {
         liveMatchAdapter = new LiveMatchActivityAdapter(this, listLive, new LiveMatchClickCallBack() {
             @Override
             public void detail(FixtureLiveModel fixtureModel) {
-                Toast.makeText(getBaseContext(), "select " + fixtureModel.id, Toast.LENGTH_SHORT).show();
+                Log.e("check_id","select " + fixtureModel.id);
                 Intent intent = new Intent(getBaseContext(), MatchDetailActivity.class);
                 intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
-                intent.putExtra(SPUtils.INTENT_LIVE_NOW,true);
+                intent.putExtra(SPUtils.INTENT_LIVE_NOW, true);
                 resultLauncher.launch(intent);
             }
         });
@@ -89,7 +92,7 @@ public class LiveScoreActivity extends BaseActivity<ActivityLiveScoreBinding> {
 
     public void fetchLiveMatch() {
         try {
-            ApiDataService.apiService.callLiveMatch(ConstantApiData.KEY,ConstantApiData.TIMEZONE, "participants;scores;state;periods").enqueue(new Callback<LiveResponse>() {
+            ApiDataService.apiService.callLiveMatch(ConstantApiData.KEY, ConstantApiData.TIMEZONE, "participants;scores;state;periods").enqueue(new Callback<LiveResponse>() {
                 @SuppressLint({"NotifyDataSetChanged", "SetTextI18n"})
                 @Override
                 public void onResponse(@NonNull Call<LiveResponse> call, @NonNull Response<LiveResponse> response) {
@@ -98,8 +101,9 @@ public class LiveScoreActivity extends BaseActivity<ActivityLiveScoreBinding> {
                         LiveResponse teamResponse = response.body();
                         if (teamResponse.data != null) {
 //                            listLive.addAll(teamResponse.data);
-                            for (FixtureLiveModel fixtureLiveModel: teamResponse.data){
-                                if (!fixtureLiveModel.getState().short_name.equals("NS")&&!fixtureLiveModel.getState().short_name.equals("FT")) listLive.add(fixtureLiveModel);
+                            for (FixtureLiveModel fixtureLiveModel : teamResponse.data) {
+                                if (!fixtureLiveModel.getState().short_name.equals("NS") && !fixtureLiveModel.getState().short_name.equals("FT"))
+                                    listLive.add(fixtureLiveModel);
                             }
                             Log.e("API_RESPONSE", "data: " + teamResponse.data);
                             Log.e("call_api_data", "call true:");
@@ -110,11 +114,20 @@ public class LiveScoreActivity extends BaseActivity<ActivityLiveScoreBinding> {
                             binding.rcvLive.post(() -> {
                                 loadingDialog.dismiss();
                             });
+                            if (listLive.isEmpty()) {
+                                binding.noData.setVisibility(VISIBLE);
+                            } else binding.noData.setVisibility(GONE);
                         } else {
                             loadingDialog.dismiss();
+                            if (listLive.isEmpty()) {
+                                binding.noData.setVisibility(VISIBLE);
+                            } else binding.noData.setVisibility(GONE);
                         }
                     } else {
                         loadingDialog.dismiss();
+                        if (listLive.isEmpty()) {
+                            binding.noData.setVisibility(VISIBLE);
+                        } else binding.noData.setVisibility(GONE);
                         Log.e("call_api_data", "call false: Code: " + response.code());
                     }
                 }
@@ -122,12 +135,18 @@ public class LiveScoreActivity extends BaseActivity<ActivityLiveScoreBinding> {
                 @Override
                 public void onFailure(@NonNull Call<LiveResponse> call, @NonNull Throwable t) {
                     loadingDialog.dismiss();
+                    if (listLive.isEmpty()) {
+                        binding.noData.setVisibility(VISIBLE);
+                    } else binding.noData.setVisibility(GONE);
                     Log.e("call_api_data", "onfailure" + t);
                 }
             });
 
         } catch (Exception e) {
             loadingDialog.dismiss();
+            if (listLive.isEmpty()) {
+                binding.noData.setVisibility(VISIBLE);
+            } else binding.noData.setVisibility(GONE);
             Log.e("call_api_data", "catch: ", e);
         }
     }

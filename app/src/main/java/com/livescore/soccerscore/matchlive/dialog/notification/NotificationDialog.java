@@ -129,7 +129,6 @@ public class NotificationDialog extends BaseDialog<DialogNotificationBinding> {
             if (fixtureModel.before_match == 0) {
                 Toast.makeText(getContext(), R.string.please_choose_time_before_match_greater_than_0, Toast.LENGTH_SHORT).show();
             } else {
-                Toast.makeText(getContext(), "time: " + fixtureModel.is_before_match, Toast.LENGTH_SHORT).show();
                 callBack.save(fixtureModel);
             }
         });

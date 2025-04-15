@@ -58,7 +58,7 @@ public class TimelineFragment extends BaseFragment<FragmentTimelineBinding> {
                 }
                 Log.e("check_api_null", "fixtureDetail: " + fixtureDetailModel);
                 String result = fixtureDetailModel.result_info != null ? fixtureDetailModel.result_info : "";
-                if (result.equals("null") || result.isEmpty()) {
+                if (result.equals("null") || result.isEmpty() || !fixtureDetailModel.getState().short_name.equals("FT") && !fixtureDetailModel.getState().short_name.equals("AET")) {
                     if (fixtureDetailModel.odds != null) {
                         if (!fixtureDetailModel.odds.isEmpty()) {
                             binding.llGuess.setVisibility(VISIBLE);
@@ -123,6 +123,8 @@ public class TimelineFragment extends BaseFragment<FragmentTimelineBinding> {
     private void getEventFirstAndHalf() {
         if (fixtureDetailModel != null) {
             if (!fixtureDetailModel.events.isEmpty()) {
+                binding.llEvent.setVisibility(VISIBLE);
+                binding.noData.setVisibility(GONE);
                 for (EventDetail eventDetail : fixtureDetailModel.events) {
                     if (eventDetail.getPeriod() != null) {
                         if (eventDetail.getPeriod().sort_order == 1) {
@@ -146,7 +148,13 @@ public class TimelineFragment extends BaseFragment<FragmentTimelineBinding> {
                         return Integer.compare(o2.minute, o1.minute);
                     }
                 });
+            } else {
+                binding.llEvent.setVisibility(GONE);
+                binding.noData.setVisibility(VISIBLE);
             }
+        } else {
+            binding.llEvent.setVisibility(GONE);
+            binding.noData.setVisibility(VISIBLE);
         }
     }
 

@@ -17,13 +17,15 @@ public interface FixtureDAO {
     @Query("DELETE FROM fixture")
     void deleteAll();
 
-    @Query("SELECT * FROM fixture")
+    @Query("SELECT * FROM fixture  ORDER BY create_at DESC")
     List<FixtureModel> getAllFixture();
 
     @Query("SELECT * FROM fixture where id = :id")
     FixtureModel getFixtureById(long id);
+
     @Query("SELECT * FROM fixture where isPin = 1")
     FixtureModel getFixtureByPin();
+
     @Query("SELECT * FROM fixture WHERE starting_at LIKE '%' || :date || '%'")
     List<FixtureModel> getFixturesByDate(String date);
 
