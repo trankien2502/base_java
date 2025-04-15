@@ -43,7 +43,7 @@
             android:gravity="center"
             android:includeFontPadding="false"
             android:text="@string/if_you_enjoy_this_know_your_device_would_you_mind_rating_us_on_the_google_play_then"
-            android:textColor="#939191"
+            android:textColor="#000000"
             android:textSize="14sp" />
 
         <RatingBar
@@ -99,7 +99,7 @@
                 android:minHeight="48dp"
                 android:paddingHorizontal="12dp"
                 android:text="@string/not_now"
-                android:textColor="#cdcdcd"
+                android:textColor="#000000"
                 android:textSize="16sp"
                 android:textStyle="bold" />
 

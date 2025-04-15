@@ -36,23 +36,11 @@ public class IntroActivity extends BaseActivity<ActivityIntroBinding> {
     public void initView() {
         EventTracking.logEvent(IntroActivity.this, "Intro1_view");
         listImage = new ArrayList<>();
-//        if (IsNetWork.haveNetworkConnection(this) && !ConstantIdAds.listIDAdsNativeIntroFull.isEmpty() && ConstantRemote.native_intro_full && CheckAds.getInstance().isShowAds(getBaseContext())) {
-//            binding.circle4.setVisibility(View.VISIBLE);
-//            listImage.add(R.drawable.img_intro_1);
-//            listImage.add(R.drawable.img_intro_2);
-//            listImage.add(R.drawable.img_intro_3);
-//            listImage.add(R.drawable.img_intro_3);
-//            dots = new ImageView[]{findViewById(R.id.circle1), findViewById(R.id.circle2), findViewById(R.id.circle3), findViewById(R.id.circle4)};
-//            title = new String[]{getResources().getString(R.string.intro_1), getResources().getString(R.string.intro_2), getResources().getString(R.string.intro_3), getResources().getString(R.string.intro_3)};
-//            content = new String[]{getResources().getString(R.string.content_intro_1), getResources().getString(R.string.content_intro_2), getResources().getString(R.string.content_intro_3), getResources().getString(R.string.content_intro_3)};
-//        } else {
-//
-//        }
         listImage.add(R.drawable.img_intro_1);
         listImage.add(R.drawable.img_intro_2);
         listImage.add(R.drawable.img_intro_3);
         listImage.add(R.drawable.img_intro_4);
-        dots = new ImageView[]{findViewById(R.id.circle1), findViewById(R.id.circle2), findViewById(R.id.circle3),findViewById(R.id.circle4)};
+        dots = new ImageView[]{findViewById(R.id.circle1), findViewById(R.id.circle2), findViewById(R.id.circle3), findViewById(R.id.circle4)};
         title = new String[]{getResources().getString(R.string.intro_1), getResources().getString(R.string.intro_2), getResources().getString(R.string.intro_3), getResources().getString(R.string.intro_4)};
         content = new String[]{getResources().getString(R.string.content_intro_1), getResources().getString(R.string.content_intro_2), getResources().getString(R.string.content_intro_3), getResources().getString(R.string.content_intro_4)};
         binding.viewHeight.post(() -> {
@@ -74,27 +62,6 @@ public class IntroActivity extends BaseActivity<ActivityIntroBinding> {
                             adapter.setList(listImage);
                         }
                     }
-//                    if (IsNetWork.haveNetworkConnection(IntroActivity.this) && !ConstantIdAds.listIDAdsNativeIntroFull.isEmpty() && ConstantRemote.native_intro_full && CheckAds.getInstance().isShowAds(getBaseContext())) {
-//                        if (position == 2 || (position == 1 && positionOffset > 0)) {
-//                            binding.nativeIntro.setVisibility(View.INVISIBLE);
-//                            binding.tvIntro.setVisibility(View.GONE);
-//                            binding.tvIntroContent.setVisibility(View.GONE);
-//                            binding.rlBottom3.setVisibility(View.GONE);
-//                        } else {
-//                            if ((position == 0 && positionOffset > 0) || position == 1) {
-//                                binding.nativeIntro.setVisibility(View.INVISIBLE);
-//                            } else {
-//                                if (IsNetWork.haveNetworkConnection(IntroActivity.this) && !ConstantIdAds.listIDAdsNativeIntro.isEmpty() && ConstantRemote.inter_intro && CheckAds.getInstance().isShowAds(getBaseContext())) {
-//                                    binding.nativeIntro.setVisibility(View.VISIBLE);
-//                                } else {
-//                                    binding.nativeIntro.setVisibility(View.INVISIBLE);
-//                                }
-//                            }
-//                            binding.tvIntro.setVisibility(View.VISIBLE);
-//                            binding.tvIntroContent.setVisibility(View.VISIBLE);
-//                            binding.rlBottom3.setVisibility(View.VISIBLE);
-//                        }
-//                    }
 
                 }
 
@@ -102,23 +69,14 @@ public class IntroActivity extends BaseActivity<ActivityIntroBinding> {
                 public void onPageSelected(int position) {
                     super.onPageSelected(position);
                     changeContentInit(position);
-//                    if (IsNetWork.haveNetworkConnection(IntroActivity.this) && !ConstantIdAds.listIDAdsNativeIntroFull.isEmpty() && ConstantRemote.native_intro_full && CheckAds.getInstance().isShowAds(getBaseContext())) {
-//                        if (position == 0) {
-//                            EventTracking.logEvent(IntroActivity.this, "Intro1_view");
-//                        } else if (position == 1) {
-//                            EventTracking.logEvent(IntroActivity.this, "Intro2_view");
-//                        } else if (position == 3) {
-//                            EventTracking.logEvent(IntroActivity.this, "Intro3_view");
-//                        }
-//                    } else {
-//
-//                    }
                     if (position == 0) {
                         EventTracking.logEvent(IntroActivity.this, "Intro1_view");
                     } else if (position == 1) {
                         EventTracking.logEvent(IntroActivity.this, "Intro2_view");
-                    } else {
+                    } else if (position == 2) {
                         EventTracking.logEvent(IntroActivity.this, "Intro3_view");
+                    } else {
+                        EventTracking.logEvent(IntroActivity.this, "Intro4_view");
                     }
                 }
 
@@ -141,7 +99,7 @@ public class IntroActivity extends BaseActivity<ActivityIntroBinding> {
             } else if (binding.viewPager.getCurrentItem() == 1) {
                 EventTracking.logEvent(IntroActivity.this, "Intro2_next_click");
                 binding.viewPager.setCurrentItem(binding.viewPager.getCurrentItem() + 1);
-            }else if (binding.viewPager.getCurrentItem() == 2) {
+            } else if (binding.viewPager.getCurrentItem() == 2) {
                 EventTracking.logEvent(IntroActivity.this, "Intro3_next_click");
                 binding.viewPager.setCurrentItem(binding.viewPager.getCurrentItem() + 1);
             } else {

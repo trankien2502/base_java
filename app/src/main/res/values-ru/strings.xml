@@ -12,6 +12,7 @@
     <string name="rate">Ставка</string>
     <string name="share">Делиться</string>
     <string name="about">О</string>
+    <string name="team_lost">Команда проиграла</string>
     <string name="feedback">Обратная связь</string>
     <string name="report_bugs_and_tell_us_what_to_improve">Сообщайте об ошибках и рассказывайте нам, что нужно улучшить</string>
     <string name="share_with_friends">Поделитесь с друзьями</string>

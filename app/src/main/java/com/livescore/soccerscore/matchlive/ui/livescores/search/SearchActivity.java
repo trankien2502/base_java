@@ -214,10 +214,14 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
     }
 
     private void initDataTopSearch() {
-        listTopSearch.add(new TopSearchModel(R.drawable.img_logo, "Arsenal", true));
-        listTopSearch.add(new TopSearchModel(R.drawable.img_logo, "Champions League", false));
-        listTopSearch.add(new TopSearchModel(R.drawable.img_logo, "La Liga", false));
-        listTopSearch.add(new TopSearchModel(R.drawable.img_logo, "West Ham United", true));
+        listTopSearch.add(new TopSearchModel(R.drawable.img_arsenal, "Arsenal", true));
+        listTopSearch.add(new TopSearchModel(R.drawable.img_champion_league, "Champions League", false));
+        listTopSearch.add(new TopSearchModel(R.drawable.img_laliga, "La Liga", false));
+        listTopSearch.add(new TopSearchModel(R.drawable.img_westham, "West Ham United", true));
+        listTopSearch.add(new TopSearchModel(R.drawable.img_fcb, "Barcelona", true));
+        listTopSearch.add(new TopSearchModel(R.drawable.img_mc, "Manchester City", true));
+        listTopSearch.add(new TopSearchModel(R.drawable.img_chelsa, "Chelsea", true));
+        listTopSearch.add(new TopSearchModel(R.drawable.img_liverpool, "Liverpool", true));
     }
 
     private void initAdapter() {
@@ -242,7 +246,8 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
                     }
                 } else {
                     new Handler().postDelayed(() -> loadingDialog.dismiss(), 500);
-                }loadingDialog.show();
+                }
+                loadingDialog.show();
                 if (isHasMoreTeam) {
                     if (IsNetWork.haveNetworkConnection(getBaseContext())) {
                         currentPageTeam++;
@@ -322,7 +327,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
 
     private void fetchTeamPage(String str, int page) {
         try {
-            ApiDataService.apiService.callTeamSearch(str, ConstantApiData.KEY,ConstantApiData.TIMEZONE, page, "country").enqueue(new Callback<TeamResponse>() {
+            ApiDataService.apiService.callTeamSearch(str, ConstantApiData.KEY, ConstantApiData.TIMEZONE, page, "country").enqueue(new Callback<TeamResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<TeamResponse> call, @NonNull Response<TeamResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -332,7 +337,8 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
                         if (teamResponse.data != null) {
                             int oldPos = listTeamModel.size();
                             for (TeamInMatch team : teamResponse.data) {
-                                team.countryName = team.getCountry().name;
+                                if (team.getCountry() != null)
+                                    team.countryName = team.getCountry().name;
                             }
                             listTeamModel.addAll(teamResponse.data);
                             Log.e("call_api_data", "call true:");
@@ -383,7 +389,7 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
 
     private void fetchLeaguePage(String str, int page) {
         try {
-            ApiDataService.apiService.callLeagueSearch(str, ConstantApiData.KEY,ConstantApiData.TIMEZONE, page, "country").enqueue(new Callback<LeagueResponse>() {
+            ApiDataService.apiService.callLeagueSearch(str, ConstantApiData.KEY, ConstantApiData.TIMEZONE, page, "country").enqueue(new Callback<LeagueResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<LeagueResponse> call, @NonNull Response<LeagueResponse> response) {
                     if (response.isSuccessful() && response.body() != null) {
@@ -393,7 +399,8 @@ public class SearchActivity extends BaseActivity<ActivitySearchBinding> {
                         if (leagueResponse.data != null) {
                             int oldPos = listTeamModel.size();
                             for (LeagueDetail leagueDetail : leagueResponse.data) {
-                                leagueDetail.countryName = leagueDetail.getCountry().name;
+                                if (leagueDetail.getCountry() != null)
+                                    leagueDetail.countryName = leagueDetail.getCountry().name;
                             }
                             listLeagueModel.addAll(leagueResponse.data);
                             Log.e("call_api_data", "call true:");

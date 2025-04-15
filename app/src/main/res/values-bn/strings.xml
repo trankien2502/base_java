@@ -99,6 +99,7 @@
     <string name="load_more">আরো লোড</string>
     <string name="club">ক্লাব</string>
     <string name="match_pinned">ম্যাচ পিন!</string>
+    <string name="team_lost">দল হেরেছে</string>
     <string name="match_pin_one">একের পর এক ম্যাচ!</string>
     <string name="do_you_want">আপনি কি পুরানোটির পরিবর্তে এই ম্যাচটিকে পিন করতে চান?</string>
     <string name="when_the_game_start_the_score_will_stay_visible_on_your_screen_no_matter_what_you_re_doing">গেম শুরু হলে, স্কোরটি আপনার স্ক্রিনে দৃশ্যমান থাকবে, আপনি যাই করছেন না কেন।</string>

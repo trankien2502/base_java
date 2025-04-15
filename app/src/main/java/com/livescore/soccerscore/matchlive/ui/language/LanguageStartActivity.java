@@ -45,6 +45,7 @@ public class LanguageStartActivity extends BaseActivity<ActivityLanguageStartBin
         LanguageStartAdapter languageStartAdapter = new LanguageStartAdapter(listLanguage, languageModel -> {
             codeLang = languageModel.getCode();
             nameLang = languageModel.getName();
+            EventTracking.logEvent(getBaseContext(), "language_fo_item_click");
             binding.pointer.setVisibility(GONE);
         }, this);
         binding.rcvLangStart.setLayoutManager(linearLayoutManager);

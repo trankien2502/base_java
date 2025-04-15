@@ -26,6 +26,16 @@ public class SystemUtil {
         }
     }
 
+    public static void changeLang(String lang, Context context) {
+        if (lang.equalsIgnoreCase("")) return;
+        myLocale = new Locale(lang);
+        saveLocale(context, lang);
+        Locale.setDefault(myLocale);
+        Configuration config = new Configuration();
+        config.locale = myLocale;
+        context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
+    }
+
     public static void changeLang(Context context, String lang) {
         if (lang.equalsIgnoreCase("")) return;
 
@@ -34,10 +44,13 @@ public class SystemUtil {
 
         if (localeParts.length > 1) {
             config.locale = new Locale(localeParts[0], localeParts[1]);
+            myLocale = new Locale(localeParts[0], localeParts[1]);
         } else {
             config.locale = new Locale(lang);
+            myLocale = new Locale(lang);
         }
-
+        saveLocale(context, lang);
+        Locale.setDefault(myLocale);
         context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
     }
 

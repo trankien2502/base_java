@@ -45,7 +45,7 @@ public class PermissionActivity extends BaseActivity<ActivityPermissionBinding> 
     @Override
     public void bindView() {
         binding.tvContinue.setOnClickListener(v -> {
-            EventTracking.logEvent(this, "permission_continue_click");
+            EventTracking.logEvent(this, "permission_continue_view");
             startNextActivity(HomeActivity.class, null);
             finishAffinity();
         });

@@ -51,6 +51,7 @@ import com.livescore.soccerscore.matchlive.ui.livescores.search.SearchActivity;
 import com.livescore.soccerscore.matchlive.util.GoToSettingCallBack;
 import com.livescore.soccerscore.matchlive.util.PermissionManager;
 import com.livescore.soccerscore.matchlive.util.SPUtils;
+import com.livescore.soccerscore.matchlive.util.SystemUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -203,6 +204,7 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
     private void initHorizontalCalendarPicker() {
         try {
 //            if (!isCreateCalendarHorizontal){
+//            SystemUtil.setLocale(requireContext());
             Calendar startDate = Calendar.getInstance();
             startDate.add(Calendar.YEAR, -10);
 

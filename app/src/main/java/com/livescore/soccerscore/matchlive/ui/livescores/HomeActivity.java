@@ -45,8 +45,6 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     public void initView() {
         adapter = new HomeAdapter(this);
         EventTracking.logEvent(this, "home_view");
-//        binding.frContentHome.setAdapter(adapter);
-//        binding.frContentHome.setUserInputEnabled(false);
         changeState();
     }
 
@@ -55,21 +53,22 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
         binding.llHome.setOnClickListener(view -> {
             state = STATE_HOME;
             changeState();
+            EventTracking.logEvent(this, "home_click");
         });
         binding.llNotification.setOnClickListener(view -> {
             state = STATE_NOTIFICATION;
             changeState();
-
+            EventTracking.logEvent(this, "home_notif_click");
         });
         binding.llFavourite.setOnClickListener(view -> {
             state = STATE_FAVOURITE;
             changeState();
-
+            EventTracking.logEvent(this, "home_favorite_click");
         });
         binding.llSetting.setOnClickListener(view -> {
             state = STATE_SETTING;
             changeState();
-
+            EventTracking.logEvent(this, "home_setting_click");
         });
 
     }
