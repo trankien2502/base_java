@@ -22,17 +22,22 @@ public class SystemUtil {
             config.locale = locale;
             context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
         } else {
-            changeLang(language, context);
+            changeLang(context, language);
         }
     }
 
-    public static void changeLang(String lang, Context context) {
+    public static void changeLang(Context context, String lang) {
         if (lang.equalsIgnoreCase("")) return;
-        myLocale = new Locale(lang);
-        saveLocale(context, lang);
-        Locale.setDefault(myLocale);
+
+        String[] localeParts = lang.split("-");
         Configuration config = new Configuration();
-        config.locale = myLocale;
+
+        if (localeParts.length > 1) {
+            config.locale = new Locale(localeParts[0], localeParts[1]);
+        } else {
+            config.locale = new Locale(lang);
+        }
+
         context.getResources().updateConfiguration(config, context.getResources().getDisplayMetrics());
     }
 

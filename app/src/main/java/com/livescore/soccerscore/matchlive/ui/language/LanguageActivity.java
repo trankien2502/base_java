@@ -67,13 +67,13 @@ public class LanguageActivity extends BaseActivity<ActivityLanguageBinding> {
     private void initData() {
         listLanguage = new ArrayList<>();
         String lang = Locale.getDefault().getLanguage();
-        listLanguage.add(new LanguageModel(getString(R.string.china_simplified), "zh-CN", false));
-        listLanguage.add(new LanguageModel(getString(R.string.china_traditional), "zh-TW", false));
+        listLanguage.add(new LanguageModel(getString(R.string.china_simplified), "zh-rCN", false));
+        listLanguage.add(new LanguageModel(getString(R.string.china_traditional), "zh-rTW", false));
         listLanguage.add(new LanguageModel(getString(R.string.hindi), "hi", false));
         listLanguage.add(new LanguageModel(getString(R.string.english), "en", false));
         listLanguage.add(new LanguageModel(getString(R.string.spanish), "es", false));
-        listLanguage.add(new LanguageModel(getString(R.string.portuguese_brazil), "pt-BR", false));
-        listLanguage.add(new LanguageModel(getString(R.string.portuguese_portugal), "pt-PT", false));
+        listLanguage.add(new LanguageModel(getString(R.string.portuguese_brazil), "pt-rBR", false));
+        listLanguage.add(new LanguageModel(getString(R.string.portuguese_portugal), "pt-rPT", false));
         listLanguage.add(new LanguageModel(getString(R.string.french), "fr", false));
         listLanguage.add(new LanguageModel(getString(R.string.bengali), "bn", false));
         listLanguage.add(new LanguageModel(getString(R.string.russian), "ru", false));

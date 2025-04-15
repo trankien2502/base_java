@@ -171,7 +171,7 @@ public class LeagueFixtureFragment extends BaseFragment<FragmentLeagueFixtureBin
         fixtureAdapter = new FixtureAdapter(requireContext(), list, new FixtureClickCallBack() {
             @Override
             public void select(int pos, FixtureModel fixtureModel) {
-                Log.e("check_id","select " + fixtureModel.id);
+                Log.e("check_id", "select " + fixtureModel.id);
                 Intent intent = new Intent(requireContext(), MatchDetailActivity.class);
                 intent.putExtra(SPUtils.INTENT_FIXTURE, fixtureModel.id);
                 startArc(intent);
@@ -197,51 +197,71 @@ public class LeagueFixtureFragment extends BaseFragment<FragmentLeagueFixtureBin
                         FixtureModel fixture23 = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureById(fixtureModel.id);
 
                         if (fixtureBase == null) {
+                            fixtureModel.isPin = true;
                             if (fixture23 != null) {
-                                fixture23.isPin = true;
-                                FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixture23);
-                                fixture23.schedule(requireContext());
-                                list.set(pos, fixture23);
+                                FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel);
                             } else {
-                                fixtureModel.isPin = true;
+                                fixtureModel.create_at = System.currentTimeMillis();
                                 FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel);
-                                fixtureModel.schedule(requireContext());
-                                list.set(pos, fixtureModel);
                             }
+                            fixtureModel.schedule(requireContext());
                             fixtureAdapter.notifyItemChanged(pos);
                             showPinnedMatch();
                         } else {
+                            MatchPinWarnDialog dialog = new MatchPinWarnDialog(requireContext(), false);
+                            dialog.binding.btnCancel.setOnClickListener(v -> {
+                                dialog.dismiss();
+                            });
                             if (fixture23 != null) {
-                                if (fixtureBase.id != fixture23.id) {
-                                    MatchPinWarnDialog dialog = new MatchPinWarnDialog(requireContext(), false);
-                                    dialog.binding.btnCancel.setOnClickListener(v -> {
-                                        dialog.dismiss();
-                                    });
-                                    dialog.binding.btnReplace.setOnClickListener(v -> {
-                                        fixtureModel.isPin = true;
-                                        fixtureAdapter.notifyItemChanged(pos);
-                                        FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel);
-                                        fixtureModel.schedule(requireContext());
-                                        dialog.dismiss();
-                                        for (int i = 0; i < list.size(); i++) {
-                                            if (list.get(i).id != fixtureModel.id && list.get(i).isPin) {
-                                                list.get(i).isPin = false;
-                                                if (list.get(i).isAlarm) {
-                                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(list.get(i));
-                                                    list.get(i).schedule(requireContext());
-                                                    fixtureAdapter.notifyItemChanged(i);
-                                                } else {
-                                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().delete(list.get(i).id);
-                                                    list.get(i).cancelNotification(requireContext());
-                                                    fixtureAdapter.notifyItemChanged(i);
-                                                }
-                                                break;
-                                            }
+                                dialog.binding.btnReplace.setOnClickListener(v -> {
+                                    fixtureModel.isPin = true;
+                                    fixtureModel.schedule(requireContext());
+                                    fixtureAdapter.notifyItemChanged(pos);
+                                    dialog.dismiss();
+                                    for (int i = 0; i < list.size(); i++) {
+                                        if (list.get(i).id != fixtureModel.id && list.get(i).isPin) {
+                                            list.get(i).isPin = false;
+                                            fixtureAdapter.notifyItemChanged(i);
+                                            break;
                                         }
-                                    });
-                                    dialog.show();
-                                }
+                                    }
+                                    if (fixtureBase.isAlarm) {
+                                        fixtureBase.isPin = false;
+                                        FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureBase);
+                                        fixtureBase.schedule(requireContext());
+                                    } else {
+                                        FixtureDatabase.getInstance(requireContext()).fixtureDAO().deletePin();
+                                        fixtureBase.cancelNotification(requireContext());
+                                    }
+                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel);
+                                });
+                            } else {
+                                dialog.binding.btnReplace.setOnClickListener(v -> {
+                                    fixtureModel.isPin = true;
+                                    fixtureModel.create_at = System.currentTimeMillis();
+                                    fixtureModel.schedule(requireContext());
+                                    fixtureAdapter.notifyItemChanged(pos);
+                                    dialog.dismiss();
+                                    for (int i = 0; i < list.size(); i++) {
+                                        if (list.get(i).id != fixtureModel.id && list.get(i).isPin) {
+                                            list.get(i).isPin = false;
+                                            fixtureAdapter.notifyItemChanged(i);
+                                            break;
+                                        }
+                                    }
+                                    FixtureModel pinNow = FixtureDatabase.getInstance(requireContext()).fixtureDAO().getFixtureByPin();
+                                    if (pinNow.isAlarm) {
+                                        pinNow.isPin = false;
+                                        FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(pinNow);
+                                        pinNow.schedule(requireContext());
+                                    } else {
+                                        FixtureDatabase.getInstance(requireContext()).fixtureDAO().deletePin();
+                                        pinNow.cancelNotification(requireContext());
+                                    }
+                                    FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel);
+                                });
                             }
+                            dialog.show();
                         }
 
                     }
@@ -287,8 +307,11 @@ public class LeagueFixtureFragment extends BaseFragment<FragmentLeagueFixtureBin
                             if (fixtureModel1.isAlarm) {
                                 if (fixtureBase != null) {
                                     FixtureDatabase.getInstance(requireContext()).fixtureDAO().update(fixtureModel1);
-                                } else
+                                } else {
+                                    fixtureModel.create_at = System.currentTimeMillis();
                                     FixtureDatabase.getInstance(requireContext()).fixtureDAO().insert(fixtureModel1);
+                                }
+
                                 fixtureModel1.schedule(requireContext());
                                 list.set(pos, fixtureModel1);
                                 fixtureAdapter.notifyItemChanged(pos);

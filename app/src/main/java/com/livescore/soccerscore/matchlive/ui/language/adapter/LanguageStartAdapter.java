@@ -58,8 +58,8 @@ public class LanguageStartAdapter extends RecyclerView.Adapter<LanguageStartAdap
             case "es":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_es).into(holder.icLang);
                 break;
-            case "zh-CN":
-            case "zh-TW":
+            case "zh-rCN":
+            case "zh-rTW":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_zh).into(holder.icLang);
                 break;
             case "id":
@@ -71,8 +71,8 @@ public class LanguageStartAdapter extends RecyclerView.Adapter<LanguageStartAdap
             case "de":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_ge).into(holder.icLang);
                 break;
-            case "pt-BR":
-            case "pt-PT":
+            case "pt-rBR":
+            case "pt-rPT":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_pt).into(holder.icLang);
                 break;
             case "en":
