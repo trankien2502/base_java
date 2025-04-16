@@ -346,7 +346,7 @@ public class ScheduleService extends Service {
             }
             if (fixtureModel.start_second_half) {
                 if (fixtureDetailModel.periods.size() == 2) {
-                    if (fixtureDetailModel.periods.get(1).minutes >= 45 && fixtureDetailModel.periods.get(0).has_timer && !fixtureModel.is_send_start_second_half) {
+                    if (fixtureDetailModel.periods.get(1).minutes > 45 && fixtureDetailModel.periods.get(1).has_timer && !fixtureModel.is_send_start_second_half) {
                         send(fixtureModel.name, getString(R.string.at_the_start_of_second_half_match));
                         fixtureModel.is_send_start_second_half = true;
                     }
