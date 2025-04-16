@@ -101,14 +101,15 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
     @SuppressLint("NotifyDataSetChanged")
     @Override
     public void initView() {
+        loadingDialog = new LoadingDialog(requireContext(), false);
         initAdapter();
         current = Calendar.getInstance();
         initHorizontalCalendarPicker();
         if (IsNetWork.haveNetworkConnection(requireContext())) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
             selectedDate = sdf.format(new Date(System.currentTimeMillis()));
-            loadingDialog = new LoadingDialog(requireContext(), false);
-            loadingDialog.show();
+            if (!loadingDialog.isShowing())
+                loadingDialog.show();
             list.clear();
             currentPage = 1;
             fetchFixtureDatePage(selectedDate, 1);
@@ -179,8 +180,8 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
         if (IsNetWork.haveNetworkConnection(requireContext())) {
             list.clear();
             adapter.notifyDataSetChanged();
-            loadingDialog = new LoadingDialog(requireContext(), false);
-            loadingDialog.show();
+            if (!loadingDialog.isShowing())
+                loadingDialog.show();
             currentPage = 1;
             fetchFixtureDatePage(selectedDate, 1);
         } else {
@@ -254,8 +255,8 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
                         if (IsNetWork.haveNetworkConnection(requireContext())) {
                             list.clear();
                             adapter.notifyDataSetChanged();
-                            loadingDialog = new LoadingDialog(requireContext(), false);
-                            loadingDialog.show();
+                            if (!loadingDialog.isShowing())
+                                loadingDialog.show();
                             currentPage = 1;
                             fetchFixtureDatePage(selectedDate, 1);
                         } else {
@@ -452,8 +453,8 @@ public class HomeFragment extends BaseFragment<FragmentHomeBinding> {
 
             @Override
             public void load() {
-                loadingDialog = new LoadingDialog(requireContext(), false);
-                loadingDialog.show();
+                if (!loadingDialog.isShowing())
+                    loadingDialog.show();
                 if (isEnableToLoadMore) {
                     currentPage++;
                     fetchFixtureDatePage(selectedDate, currentPage);

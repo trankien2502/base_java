@@ -161,8 +161,8 @@ public class LeagueFixtureFragment extends BaseFragment<FragmentLeagueFixtureBin
     }
 
     public void startArc(Intent intent) {
-        if (getContext() instanceof HomeActivity) {
-            HomeActivity main = (HomeActivity) getContext();
+        if (getContext() instanceof LeagueDetailActivity) {
+            LeagueDetailActivity main = (LeagueDetailActivity) getContext();
             main.resultLauncher.launch(intent);
         }
     }

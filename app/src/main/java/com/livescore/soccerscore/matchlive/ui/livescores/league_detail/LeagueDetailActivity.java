@@ -1,9 +1,13 @@
 package com.livescore.soccerscore.matchlive.ui.livescores.league_detail;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -112,4 +116,10 @@ public class LeagueDetailActivity extends BaseActivity<ActivityLeagueDetailBindi
         setResult(RESULT_OK);
         finish();
     }
+    public ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == RESULT_OK) {
+            //ads
+            Log.d("activity_check", "home");
+        }
+    });
 }
