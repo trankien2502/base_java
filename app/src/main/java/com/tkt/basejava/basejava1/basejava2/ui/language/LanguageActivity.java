@@ -67,14 +67,21 @@ public class LanguageActivity extends BaseActivity<ActivityLanguageBinding> {
     private void initData() {
         listLanguage = new ArrayList<>();
         String lang = Locale.getDefault().getLanguage();
-        listLanguage.add(new LanguageModel("English", "en", false));
-        listLanguage.add(new LanguageModel("China", "zh", false));
-        listLanguage.add(new LanguageModel("French", "fr", false));
-        listLanguage.add(new LanguageModel("German", "de", false));
-        listLanguage.add(new LanguageModel("Hindi", "hi", false));
-        listLanguage.add(new LanguageModel("Indonesia", "in", false));
-        listLanguage.add(new LanguageModel("Portuguese", "pt", false));
-        listLanguage.add(new LanguageModel("Spanish", "es", false));
+        listLanguage.add(new LanguageModel(getString(R.string.china_simplified), "zh-rCN", false));
+        listLanguage.add(new LanguageModel(getString(R.string.china_traditional), "zh-rTW", false));
+        listLanguage.add(new LanguageModel(getString(R.string.hindi), "hi", false));
+        listLanguage.add(new LanguageModel(getString(R.string.english), "en", false));
+        listLanguage.add(new LanguageModel(getString(R.string.spanish), "es", false));
+        listLanguage.add(new LanguageModel(getString(R.string.portuguese_brazil), "pt-rBR", false));
+        listLanguage.add(new LanguageModel(getString(R.string.portuguese_portugal), "pt-rPT", false));
+        listLanguage.add(new LanguageModel(getString(R.string.french), "fr", false));
+        listLanguage.add(new LanguageModel(getString(R.string.bengali), "bn", false));
+        listLanguage.add(new LanguageModel(getString(R.string.russian), "ru", false));
+        listLanguage.add(new LanguageModel(getString(R.string.german), "de", false));
+        listLanguage.add(new LanguageModel(getString(R.string.japanese), "ja", false));
+        listLanguage.add(new LanguageModel(getString(R.string.turkey), "tr", false));
+        listLanguage.add(new LanguageModel(getString(R.string.korean), "ko", false));
+        listLanguage.add(new LanguageModel(getString(R.string.indonesia), "id", false));
 
         for (int i = 0; i < listLanguage.size(); i++) {
             if (listLanguage.get(i).getCode().equals(lang)) {

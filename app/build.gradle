@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
 //    id 'com.google.gms.google-services'
 //    id 'com.google.firebase.crashlytics'
+    id 'org.jetbrains.kotlin.android'
 }
 
 android {
@@ -16,7 +17,7 @@ android {
         versionName "1.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        multiDexEnabled true // ADD THIS LINE
+        multiDexEnabled true
         def formattedDate = new Date().format('MMM.dd.yyyy')
         archivesBaseName = "ASY1xx_BaseJava_v${versionName}(${versionCode})_${formattedDate}"
     }
@@ -47,7 +48,7 @@ android {
         }
 
         appRelease{
-            manifestPlaceholders = [app_id: "ca-app-pub-6263349256068158~5615734892"]
+            manifestPlaceholders = [app_id: ""]
             
             buildConfigField "Boolean", "build_debug", "false"
         }
@@ -76,6 +77,9 @@ android {
         viewBinding = true
         buildConfig = true
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 dependencies {
@@ -83,7 +87,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'com.google.android.material:material:1.11.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-//    implementation 'androidx.activity:activity:1.10.1'
+    implementation 'androidx.activity:activity:1.9.3'
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
@@ -97,6 +101,7 @@ dependencies {
     implementation "com.airbnb.android:lottie:6.3.0"
     implementation("io.reactivex.rxjava3:rxjava:3.1.5")
     implementation 'com.makeramen:roundedimageview:2.3.0'
+    implementation 'io.github.ShawnLin013:number-picker:2.4.13'
 
     //database
     implementation 'androidx.room:room-runtime:2.4.2'
@@ -131,7 +136,7 @@ dependencies {
 //    implementation 'com.facebook.android:facebook-android-sdk:16.0.1'
 
     //ads
-    //implementation 'com.github.tutrandinh:SappModuleAds:1.2.9'
+    //implementation 'com.haiyan:ads:1.0.0'
 //    implementation 'com.google.android.gms:play-services-ads:21.1.0'
 //    implementation 'com.applovin:applovin-sdk:11.4.2'
 //    implementation 'com.facebook.shimmer:shimmer:0.5.0'

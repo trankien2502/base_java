@@ -1,19 +1,20 @@
 package com.tkt.basejava.basejava1.basejava2.ui.language;
 
+import static android.view.View.GONE;
+
 import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-
+import com.tkt.basejava.basejava1.basejava2.R;
 import com.tkt.basejava.basejava1.basejava2.base.BaseActivity;
+import com.tkt.basejava.basejava1.basejava2.databinding.ActivityLanguageStartBinding;
 import com.tkt.basejava.basejava1.basejava2.ui.intro.IntroActivity;
 import com.tkt.basejava.basejava1.basejava2.ui.language.adapter.LanguageStartAdapter;
 import com.tkt.basejava.basejava1.basejava2.ui.language.model.LanguageModel;
 import com.tkt.basejava.basejava1.basejava2.util.EventTracking;
 import com.tkt.basejava.basejava1.basejava2.util.SPUtils;
 import com.tkt.basejava.basejava1.basejava2.util.SystemUtil;
-import com.tkt.basejava.basejava1.basejava2.R;
-import com.tkt.basejava.basejava1.basejava2.databinding.ActivityLanguageStartBinding;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,14 +33,20 @@ public class LanguageStartActivity extends BaseActivity<ActivityLanguageStartBin
 
     @Override
     public void initView() {
-        EventTracking.logEvent(this,"language_fo_open");
+        EventTracking.logEvent(this, "language_fo_open");
         initData();
-        binding.tvTitle.setText(getString(R.string.language));
+
+//        binding.view.setOnClickListener(v -> {
+//            binding.view.setVisibility(GONE);
+//            binding.pointer.setVisibility(GONE);
+//        });
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         LanguageStartAdapter languageStartAdapter = new LanguageStartAdapter(listLanguage, languageModel -> {
             codeLang = languageModel.getCode();
             nameLang = languageModel.getName();
-            }, this);
+            EventTracking.logEvent(getBaseContext(), "language_fo_item_click");
+            binding.pointer.setVisibility(GONE);
+        }, this);
         binding.rcvLangStart.setLayoutManager(linearLayoutManager);
         binding.rcvLangStart.setAdapter(languageStartAdapter);
     }
@@ -47,13 +54,13 @@ public class LanguageStartActivity extends BaseActivity<ActivityLanguageStartBin
     @Override
     public void bindView() {
         binding.ivGone.setOnClickListener(view -> {
-            EventTracking.logEvent(this,"language_fo_save_click");
-            if (codeLang==null || codeLang.isEmpty()){
+            EventTracking.logEvent(this, "language_fo_save_click");
+            if (codeLang == null || codeLang.isEmpty()) {
                 Toast.makeText(this, R.string.please_select_a_language, Toast.LENGTH_SHORT).show();
                 return;
             }
             SystemUtil.saveLocale(getBaseContext(), codeLang);
-            SPUtils.setString(this,SPUtils.LANGUAGE,nameLang);
+            SPUtils.setString(this, SPUtils.LANGUAGE, nameLang);
             startNextActivity(IntroActivity.class, null);
             finishAffinity();
         });
@@ -67,21 +74,28 @@ public class LanguageStartActivity extends BaseActivity<ActivityLanguageStartBin
     private void initData() {
         listLanguage = new ArrayList<>();
         String lang = Locale.getDefault().getLanguage();
-        listLanguage.add(new LanguageModel("English", "en", false));
-        listLanguage.add(new LanguageModel("China", "zh", false));
-        listLanguage.add(new LanguageModel("French", "fr", false));
-        listLanguage.add(new LanguageModel("German", "de", false));
-        listLanguage.add(new LanguageModel("Hindi", "hi", false));
-        listLanguage.add(new LanguageModel("Indonesia", "in", false));
-        listLanguage.add(new LanguageModel("Portuguese", "pt", false));
-        listLanguage.add(new LanguageModel("Spanish", "es", false));
+        listLanguage.add(new LanguageModel(getString(R.string.china_simplified), "zh-rCN", false));
+        listLanguage.add(new LanguageModel(getString(R.string.china_traditional), "zh-rTW", false));
+        listLanguage.add(new LanguageModel(getString(R.string.hindi), "hi", false));
+        listLanguage.add(new LanguageModel(getString(R.string.english), "en", false));
+        listLanguage.add(new LanguageModel(getString(R.string.spanish), "es", false));
+        listLanguage.add(new LanguageModel(getString(R.string.portuguese_brazil), "pt-rBR", false));
+        listLanguage.add(new LanguageModel(getString(R.string.portuguese_portugal), "pt-rPT", false));
+        listLanguage.add(new LanguageModel(getString(R.string.french), "fr", false));
+        listLanguage.add(new LanguageModel(getString(R.string.bengali), "bn", false));
+        listLanguage.add(new LanguageModel(getString(R.string.russian), "ru", false));
+        listLanguage.add(new LanguageModel(getString(R.string.german), "de", false));
+        listLanguage.add(new LanguageModel(getString(R.string.japanese), "ja", false));
+        listLanguage.add(new LanguageModel(getString(R.string.turkey), "tr", false));
+        listLanguage.add(new LanguageModel(getString(R.string.korean), "ko", false));
+        listLanguage.add(new LanguageModel(getString(R.string.indonesia), "id", false));
 
-        for (int i = 0; i < listLanguage.size(); i++) {
-            if (listLanguage.get(i).getCode().equals(lang)) {
-                listLanguage.add(0, listLanguage.get(i));
-                listLanguage.remove(i + 1);
-            }
-        }
+//        for (int i = 0; i < listLanguage.size(); i++) {
+//            if (listLanguage.get(i).getCode().equals(lang)) {
+//                listLanguage.add(0, listLanguage.get(i));
+//                listLanguage.remove(i + 1);
+//            }
+//        }
     }
 
 }

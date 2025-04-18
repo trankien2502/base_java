@@ -3,6 +3,9 @@ package com.tkt.basejava.basejava1.basejava2.util;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import com.tkt.basejava.basejava1.basejava2.R;
+import com.tkt.basejava.basejava1.basejava2.dialog.GoToSettingDialog;
+
 public class SPUtils {
     public static final String SHARED_PREFS_NAME = "Base Java TKT";
     public static String CAMERA = "CAMERA";
@@ -64,5 +67,17 @@ public class SPUtils {
 
     public static boolean getBoolean(Context context, String str, boolean b) {
         return context.getSharedPreferences(SHARED_PREFS_NAME, 0).getBoolean(str, b);
+    }
+    public static void showDialogGotoSetting(Context context, int type, GoToSettingCallBack goToSettingCallBack) {
+        GoToSettingDialog dialog = new GoToSettingDialog(context, true);
+        SystemUtil.setLocale(context);
+        dialog.initDialog(type, goToSettingCallBack);
+        if (type == 1) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_noti);
+        } else if (type == 2) {
+            dialog.binding.tvContent.setText(R.string.content_dialog_per_overlay);
+        }
+        dialog.show();
+
     }
 }

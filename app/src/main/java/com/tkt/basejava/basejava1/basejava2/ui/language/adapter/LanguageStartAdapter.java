@@ -37,7 +37,7 @@ public class LanguageStartAdapter extends RecyclerView.Adapter<LanguageStartAdap
         return new LanguageViewHolder(view);
     }
 
-    @SuppressLint("NewApi")
+    @SuppressLint({"NewApi", "NotifyDataSetChanged"})
     @Override
     public void onBindViewHolder(@NonNull LanguageViewHolder holder, int position) {
         LanguageModel languageModel = languageModelList.get(position);
@@ -58,10 +58,11 @@ public class LanguageStartAdapter extends RecyclerView.Adapter<LanguageStartAdap
             case "es":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_es).into(holder.icLang);
                 break;
-            case "zh":
+            case "zh-rCN":
+            case "zh-rTW":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_zh).into(holder.icLang);
                 break;
-            case "in":
+            case "id":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_in).into(holder.icLang);
                 break;
             case "hi":
@@ -70,11 +71,27 @@ public class LanguageStartAdapter extends RecyclerView.Adapter<LanguageStartAdap
             case "de":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_ge).into(holder.icLang);
                 break;
-            case "pt":
+            case "pt-rBR":
+            case "pt-rPT":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_pt).into(holder.icLang);
                 break;
             case "en":
                 Glide.with(context).asBitmap().load(R.drawable.ic_lang_en).into(holder.icLang);
+                break;
+            case "bn":
+                Glide.with(context).asBitmap().load(R.drawable.ic_lang_bn).into(holder.icLang);
+                break;
+            case "ru":
+                Glide.with(context).asBitmap().load(R.drawable.ic_lang_ru).into(holder.icLang);
+                break;
+            case "ja":
+                Glide.with(context).asBitmap().load(R.drawable.ic_lang_ja).into(holder.icLang);
+                break;
+            case "tr":
+                Glide.with(context).asBitmap().load(R.drawable.ic_lang_tr).into(holder.icLang);
+                break;
+            case "ko":
+                Glide.with(context).asBitmap().load(R.drawable.ic_lang_ko).into(holder.icLang);
                 break;
         }
 

@@ -16,8 +16,6 @@ import com.tkt.basejava.basejava1.basejava2.dialog.exit.ExitAppDialog;
 import com.tkt.basejava.basejava1.basejava2.dialog.exit.IClickDialogExit;
 import com.tkt.basejava.basejava1.basejava2.dialog.rate.IClickDialogRate;
 import com.tkt.basejava.basejava1.basejava2.dialog.rate.RatingDialog;
-import com.tkt.basejava.basejava1.basejava2.ui.home.touch.custom.CustomMenuActivity;
-import com.tkt.basejava.basejava1.basejava2.ui.home.touch.icon.FloatingIconActivity;
 import com.tkt.basejava.basejava1.basejava2.ui.setting.SettingActivity;
 import com.tkt.basejava.basejava1.basejava2.util.EventTracking;
 import com.tkt.basejava.basejava1.basejava2.util.PermissionManager;
@@ -57,32 +55,6 @@ public class HomeActivity extends BaseActivity<ActivityHomeBinding> {
     @Override
     public void bindView() {
         binding.ivSetting.setOnClickListener(view -> {
-            resultLauncher.launch(new Intent(this, SettingActivity.class));
-        });
-        binding.swTouch.setOnClickListener(view -> {
-            if (!PermissionManager.checkOverlayPermission(this)) {
-                showDialogGotoSetting(2);
-            } else {
-
-            }
-        });
-        binding.clMenuTouch.setOnClickListener(view -> {
-            resultLauncher.launch(new Intent(this, CustomMenuActivity.class));
-        });
-        binding.clIconTouch.setOnClickListener(view -> {
-            resultLauncher.launch(new Intent(this, FloatingIconActivity.class));
-        });
-        binding.swVolume.setOnClickListener(view -> {
-            if (!PermissionManager.checkOverlayPermission(this)) {
-                showDialogGotoSetting(2);
-            } else {
-
-            }
-        });
-        binding.clVolumeConfig.setOnClickListener(view -> {
-            resultLauncher.launch(new Intent(this, SettingActivity.class));
-        });
-        binding.clButtonVolume.setOnClickListener(view -> {
             resultLauncher.launch(new Intent(this, SettingActivity.class));
         });
     }

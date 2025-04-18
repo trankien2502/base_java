@@ -1,5 +1,7 @@
 buildscript {
-
+    ext {
+        kotlin_version = '1.9.24'
+    }
     repositories {
         google()
         jcenter()
@@ -11,9 +13,10 @@ buildscript {
         maven { url 'https://dl-maven-android.mintegral.com/repository/mbridge_android_sdk_oversea' }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.1'
+        classpath 'com.android.tools.build:gradle:8.2.2'
         classpath 'com.google.gms:google-services:4.3.14'
         classpath 'com.google.firebase:firebase-crashlytics-gradle:2.9.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -22,6 +25,14 @@ allprojects {
         google()
         jcenter()
         mavenCentral()
+        maven {
+            url "http://192.168.1.183:8081/repository/android-libs/"
+            allowInsecureProtocol true
+            credentials {
+                username "haiyan"
+                password "haiyan"
+            }
+        }
         maven { url 'https://jitpack.io' }
         maven { url 'https://maven.google.com/' }
         maven { url 'https://android-sdk.is.com/' }

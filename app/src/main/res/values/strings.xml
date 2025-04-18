@@ -2,13 +2,20 @@
     <string name="app_name" translatable="false">Base Java TKT</string>
 
     <string name="english" translatable="false">English</string>
-    <string name="french" translatable="false">French</string>
-    <string name="portuguese" translatable="false">Portuguese</string>
-    <string name="spanish" translatable="false">Spanish</string>
-    <string name="german" translatable="false">German</string>
-    <string name="hindi" translatable="false">Hindi</string>
-    <string name="indonesia" translatable="false">Indonesia</string>
-    <string name="china" translatable="false">China</string>
+    <string name="french" translatable="false">Français</string>
+    <string name="portuguese_brazil" translatable="false">Português (Brasil)</string>
+    <string name="portuguese_portugal" translatable="false">Português (Portugal)</string>
+    <string name="spanish" translatable="false">Español</string>
+    <string name="german" translatable="false">Deutsch</string>
+    <string name="japanese" translatable="false">日本語</string>
+    <string name="hindi" translatable="false">हिन्दी</string>
+    <string name="bengali" translatable="false">বাংলা</string>
+    <string name="korean" translatable="false">한국인</string>
+    <string name="turkey" translatable="false">Türkçe</string>
+    <string name="russian" translatable="false">Русский</string>
+    <string name="indonesia" translatable="false">Bahasa Indonesia</string>
+    <string name="china_simplified" translatable="false">简体中文</string>
+    <string name="china_traditional" translatable="false">繁體中文</string>
 
     <string name="Send_Email">Send Email</string>
     <string name="There_is_no">There is no</string>
@@ -64,21 +71,6 @@
     <string name="agree_and_continue">Agree and Continue</string>
     <string name="camera">Camera</string>
     <string name="home">Home</string>
-    <string name="enable_assistive_touch">Enable Assistive Touch</string>
-    <string name="quickly_access_essential_functions_with_a_floating_button">Quickly access essential functions with a floating button</string>
-    <string name="floating_icon">Floating Icon</string>
-    <string name="custom_menu">Custom Menu</string>
-    <string name="enable_assistive_volume">Enable Assistive Volume</string>
-    <string name="adjust_volume_easily_with_a_floating_button">Adjust volume easily with a floating button</string>
-    <string name="volume_config">Volume Config</string>
-    <string name="button_style">Button Style</string>
-    <string name="icon_style">Icon Style</string>
-    <string name="single_tap">Single-tap</string>
-    <string name="open_menu">Open menu</string>
-    <string name="double_tap">Double-tap</string>
-    <string name="none">None</string>
-    <string name="long_press">Long Press</string>
-    <string name="set_action_successfully">Set action successfully!</string>
 
 
 </resources>

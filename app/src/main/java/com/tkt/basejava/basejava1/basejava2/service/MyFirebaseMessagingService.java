@@ -1,4 +1,4 @@
-//package com.ghostdetctor.ghost_detector.service;
+
 //
 //import com.google.firebase.messaging.FirebaseMessagingService;
 //import com.google.firebase.messaging.RemoteMessage;
